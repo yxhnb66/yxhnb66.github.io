@@ -61,3 +61,119 @@ h1{margin:0;font-size:32px}
 </div>
 <div id="app"></div>
 </div>
+<script>
+const $=x=>document.querySelector(x),app=$("#app"),q=$("#q"),status=$("#status"),themeBtn=$("#themeBtn"),goBtn=$("#goBtn");
+let current=null,history=JSON.parse(localStorage.getItem("wm_h")||"[]"),fav=JSON.parse(localStorage.getItem("wm_f")||"[]");
+
+const local={
+apple:{cn:"苹果",pos:"名词",phonetic:"/ˈæpl/",def:"a round fruit with red, green, or yellow skin",ex:"I eat an apple every day.|我每天吃一个苹果。"},
+book:{cn:"书；书籍",pos:"名词",phonetic:"/bʊk/",def:"a set of written or printed pages bound together",ex:"I bought a new book.|我买了一本新书。"}
+};
+
+function save(){
+localStorage.setItem("wm_h",JSON.stringify(history));
+localStorage.setItem("wm_f",JSON.stringify(fav));
+}
+
+function isFav(w){return fav.some(x=>x.word===w)}
+function toggleFav(word,obj){
+let i=fav.findIndex(x=>x.word===word);
+if(i>=0) fav.splice(i,1);
+else fav.push({word,...obj});
+save();
+renderTab();
+}
+
+function pushHistory(word,obj){
+history=history.filter(x=>x.word!==word);
+history.unshift({word,...obj});
+if(history.length>60) history.length=60;
+save();
+}
+
+async function lookup(word){
+word=word.trim().toLowerCase();
+if(!word) return null;
+if(local[word]){
+status.textContent="";
+return {word,...local[word]};
+}
+status.textContent="查询中…";
+try{
+let res=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+if(!res.ok){status.textContent="未找到";return null;}
+let arr=await res.json();
+if(!arr||!arr.length){status.textContent="未找到";return null;}
+let it=arr[0];
+let phonetic=it.phonetic||((it.phonetics||[]).find(p=>p.text)||{}).text||"";
+let pos=it.meanings?.[0]?.partOfSpeech||"";
+let def=it.meanings?.[0]?.definitions?.[0]?.definition||"";
+let ex=it.meanings?.[0]?.definitions?.[0]?.example||"";
+status.textContent="";
+return {word,phonetic,pos,def,ex,cn:""};
+}catch(e){status.textContent="网络异常";return null;}
+}
+
+function renderCard(o){
+if(!o){app.innerHTML=`<div class="empty">没有查到内容</div>`;return;}
+current=o;
+let starText=isFav(o.word)?"⭐ 取消收藏":"☆ 加入收藏";
+app.innerHTML=`
+<div class="card word">
+<h2>${o.word}</h2>
+<div class="phonetic">${o.phonetic||''}</div>
+<div><span class="tag">${o.pos||''}</span>${o.cn?`<span class="tag">${o.cn}</span>`:""}</div>
+<div class="def">${o.def||""}</div>
+${o.ex?`<div class="ex">例句：${o.ex}</div>`:""}
+<div class="actions">
+<button class="small favBtn">${starText}</button>
+<button class="small copyBtn">📋复制单词</button>
+</div>
+</div>`;
+$(".favBtn").onclick=()=>toggleFav(o.word,o);
+$(".copyBtn").onclick=()=>{navigator.clipboard.writeText(o.word);status.textContent="已复制";};
+pushHistory(o.word,o);
+renderTab();
+}
+
+function renderTab(t="search"){
+document.querySelectorAll(".tab").forEach(tb=>tb.classList.toggle("active",tb.dataset.t===t));
+if(t==="history"){
+if(!history.length){app.innerHTML=`<div class="empty">暂无查询历史</div>`;return;}
+app.innerHTML=`
+<div class="list">
+${history.map((it,idx)=>`<div class="item"><span>${it.word}</span><button class="small re" data-i="${idx}">打开</button></div>`).join("")}
+</div>
+<div class="actions"><button class="small" id="clearHis">🗑️清空全部历史</button></div>`;
+document.querySelectorAll(".re").forEach(b=>b.onclick=()=>{let d=history[Number(b.dataset.i)];renderCard(d);});
+$("#clearHis").onclick=()=>{history=[];save();renderTab("history");};
+}else if(t==="fav"){
+if(!fav.length){app.innerHTML=`<div class="empty">暂无收藏单词</div>`;return;}
+app.innerHTML=`
+<div class="list">
+${fav.map((it,idx)=>`<div class="item"><span>${it.word}</span><button class="small re" data-i="${idx}">打开</button></div>`).join("")}
+</div>
+<div class="actions"><button class="small" id="clearFav">🗑️清空全部收藏</button></div>`;
+document.querySelectorAll(".re").forEach(b=>b.onclick=()=>{let d=fav[Number(b.dataset.i)];renderCard(d);});
+$("#clearFav").onclick=()=>{fav=[];save();renderTab("fav");};
+}else{app.innerHTML="";status.textContent="";}
+}
+
+async function doSearch(){
+let w=q.value.trim();
+if(!w) return;
+let res=await lookup(w);
+renderCard(res);
+}
+
+goBtn.onclick=doSearch;
+q.onkeydown=e=>{if(e.key==="Enter") doSearch();};
+document.querySelectorAll(".tab").forEach(tb=>tb.onclick=()=>renderTab(tb.dataset.t));
+
+themeBtn.onclick=()=>{
+document.body.classList.toggle("dark");
+themeBtn.textContent=document.body.classList.contains("dark")?"切换浅色":"切换深色";
+};
+</script>
+</body>
+</html>
