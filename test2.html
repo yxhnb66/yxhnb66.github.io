@@ -5,323 +5,368 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>我的极简课表</title>
     <style>
+        /* ========== 基础变量 ========== */
         :root {
-            --bg-color: #f0f2f5;
+            --bg-color: #f5f6fa;
+            --text-main: #222;
+            --text-sub: #888;
             --card-bg: rgba(255, 255, 255, 0.95);
-            --card-border: #e5e7eb;
-            --text-main: #333;
-            --text-sub: #777;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
             --primary: #007AFF;
-            --time-bg: #f8f9fa;
+            --primary-active: #005bb5;
+            --time-bg: #f1f3f5;
+            --border-color: #e5e7eb;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-        header {
-            padding: 15px 20px;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--card-border);
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); height: 100vh; display: flex; flex-direction: column; overflow: hidden; color: var(--text-main); }
+        
+        /* ========== 顶部标题栏 ========== */
+        .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: var(--text-main);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            padding: 15px 20px;
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            z-index: 10;
         }
-        .btn {
-            padding: 6px 16px;
-            border-radius: 16px;
-            border: none;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.2s;
+        .header h1 { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
+        .reset-btn {
+            background: #ff4757; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: transform 0.2s;
         }
-        .btn-reset { background: #e5e7eb; color: #374151; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn:active { transform: scale(0.95); }
+        .reset-btn:active { transform: scale(0.95); }
 
-        main {
+        /* ========== 课表网格区 ========== */
+        .schedule-container {
             flex: 1;
             overflow-y: auto;
-            position: relative;
-            padding: 20px;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            -webkit-overflow-scrolling: touch;
         }
-        .schedule-container {
+        .week-header {
             display: grid;
-            grid-template-columns: 50px repeat(7, 1fr);
+            grid-template-columns: 40px repeat(7, 1fr);
             gap: 8px;
-            min-width: 600px;
+            padding: 0 5px;
+            margin-bottom: 5px;
         }
-        .day-header {
+        .week-header div {
             text-align: center;
-            padding: 10px 0;
-            font-size: 1rem;
-            color: var(--text-main);
-            font-weight: 600;
-        }
-        .time-col {
-            background: var(--time-bg);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            font-size: 14px;
             color: var(--text-sub);
-            font-size: 0.9rem;
             font-weight: 500;
-            min-height: 100px;
         }
-        .class-cell {
-            background: var(--card-bg);
-            border-radius: 12px;
-            min-height: 100px;
+        
+        .time-row {
+            display: grid;
+            grid-template-columns: 40px repeat(7, 1fr);
+            gap: 8px;
+            align-items: stretch;
+        }
+        .time-label {
+            background-color: var(--time-bg);
+            color: var(--text-sub);
+            font-size: 12px;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
-            color: var(--card-border);
-            cursor: pointer;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid var(--card-border);
-        }
-        .class-cell:active, .class-cell:hover {
-            transform: scale(0.96);
-            border-color: var(--primary);
-            color: var(--primary);
-        }
-        .class-card {
-            background: var(--card-bg);
             border-radius: 12px;
-            padding: 12px;
+            height: 90px;
+        }
+        .course-cell {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            min-height: 90px;
+            padding: 8px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-            border: 1px solid var(--card-border);
-            animation: cardBounceIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-            opacity: 0;
-            transform: translateY(20px);
+            font-size: 12px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.1s;
+            border: 1px solid transparent;
         }
-        @keyframes cardBounceIn {
-            to { opacity: 1; transform: translateY(0); }
+        .course-cell:active { transform: scale(0.98); }
+        .course-cell.active { border-color: var(--primary); }
+        
+        .course-info { margin-top: auto; }
+        .course-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
+        .course-detail { color: var(--text-sub); font-size: 11px; line-height: 1.4; }
+        
+        .add-icon {
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--text-sub);
+            font-size: 18px;
+            font-weight: 300;
+            opacity: 0.5;
         }
-        .course-name { font-size: 1rem; font-weight: 600; color: var(--text-main); margin-bottom: 4px; }
-        .course-info { font-size: 0.8rem; color: var(--text-sub); margin-bottom: 2px; display: flex; align-items: center; gap: 4px;}
-        .course-note { font-size: 0.75rem; color: #666; margin-top: 4px; font-style: italic;}
+        .add-icon.blue-plus { color: var(--primary); opacity: 0.8; font-weight: bold;}
 
-        /* 弹窗样式 */
+        /* ========== 弹窗样式 ========== */
         .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+            display: none; align-items: flex-end; justify-content: center; z-index: 100;
         }
-        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-overlay.show { display: flex; animation: modal-in 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes modal-in { from { opacity: 0; } to { opacity: 1; } }
+        
         .modal-content {
-            background: var(--card-bg);
-            width: 90%;
-            max-width: 400px;
-            border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            transform: scale(0.8) translateY(20px);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--card-bg); width: 100%; max-width: 500px;
+            border-radius: 24px 24px 0 0; padding: 25px 20px 35px 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
         }
-        .modal-overlay.active .modal-content { transform: scale(1) translateY(0); }
-        .modal-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 20px; color: var(--text-main); }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; margin-bottom: 6px; font-size: 0.9rem; color: var(--text-sub); }
-        .input-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
-            font-size: 1rem;
-            background: #f8f9fa;
-            transition: border-color 0.2s;
+        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 6px; padding-left: 2px;}
+        .form-group input {
+            width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 12px;
+            font-size: 14px; outline: none; transition: border-color 0.2s; background: #fff;
         }
-        .input-group input:focus { outline: none; border-color: var(--primary); background: white; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px; }
+        .form-group input:focus { border-color: var(--primary); }
+        
+        .modal-actions { display: flex; gap: 12px; margin-top: 25px; }
+        .btn { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform 0.1s, background 0.2s; }
+        .btn:active { transform: scale(0.97); }
+        .btn-cancel { background: #f1f3f5; color: var(--text-main); }
+        .btn-save { background: var(--primary); color: white; }
+        .btn-save:active { background: var(--primary-active); }
 
-        /* yxhnb 专属跳动入场动画 */
-        #yxhnb-intro-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: var(--bg-color);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: opacity 0.8s ease-in-out;
+        /* ========== 极致的弹性碰撞入场特效 ========== */
+        #intro-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: var(--bg-color); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            pointer-events: auto;
+        }
+        #intro-overlay.hidden {
             pointer-events: none;
+            animation: fadeOut 0.5s cubic-bezier(0.4, 0, 1, 1) forwards;
         }
-        #yxhnb-text {
-            font-size: 4rem;
-            font-weight: 800;
-            letter-spacing: 6px;
-            color: var(--primary);
-            opacity: 0;
-            transform: scale(0.5);
-            animation: yxhnbBounceIn 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        .splash-text-container { display: flex; align-items: center; gap: 4px; }
+        .splash-text {
+            font-size: 42px; font-weight: 900; color: var(--primary);
+            transform-origin: center bottom; opacity: 0; transform: translateY(80px) scale(0.2) rotate(-30deg);
         }
-        @keyframes yxhnbBounceIn {
-            0% { opacity: 0; transform: scale(0.5) rotate(-10deg); }
-            60% { opacity: 1; transform: scale(1.1) rotate(5deg); }
-            80% { transform: scale(0.95) rotate(-2deg); }
-            100% { opacity: 1; transform: scale(1) rotate(0deg); }
+        /* 物理弹跳核心：让字母像果冻一样砸下来，回弹，再稳定 */
+        .splash-text.animate {
+            animation: elastic-crash 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
+        @keyframes elastic-crash {
+            0% { opacity: 0; transform: translateY(-150px) scale(1.4) rotate(15deg); }
+            40% { opacity: 1; transform: translateY(15px) scale(0.9) rotate(-5deg); }
+            65% { transform: translateY(-10px) scale(1.05) rotate(2deg); }
+            85% { transform: translateY(5px) scale(0.98) rotate(-1deg); }
+            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
+        }
+        /* 让每个字母的碰撞有细微的时间差，产生连锁碰撞感 */
+        .splash-text:nth-child(1) { animation-delay: 0s; }
+        .splash-text:nth-child(2) { animation-delay: 0.08s; }
+        .splash-text:nth-child(3) { animation-delay: 0.16s; }
+        .splash-text:nth-child(4) { animation-delay: 0.24s; }
+        .splash-text:nth-child(5) { animation-delay: 0.32s; }
+
+        #intro-btn {
+            margin-top: 50px; padding: 14px 36px; font-size: 16px; font-weight: bold; color: white;
+            background: var(--primary); border: none; border-radius: 30px; cursor: pointer;
+            box-shadow: 0 10px 25px rgba(0, 122, 255, 0.4); opacity: 0; transform: translateY(20px);
+            animation: btn-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.8s forwards;
+        }
+        @keyframes btn-pop { to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    <header>
-        <div>🎓 我的极简课表</div>
-        <button class="btn btn-reset" onclick="resetData()">重置数据</button>
-    </header>
-    <main id="schedule-main"></main>
+    
+    <!-- 极致弹性入场特效容器 -->
+    <div id="intro-overlay">
+        <div style="display: flex; flex-direction: column; align-items: center;">
+            <div class="splash-text-container">
+                <span class="splash-text">y</span>
+                <span class="splash-text">x</span>
+                <span class="splash-text">h</span>
+                <span class="splash-text">n</span>
+                <span class="splash-text">b</span>
+            </div>
+            <button id="intro-btn" onclick="closeIntro()">开启课程表</button>
+        </div>
+    </div>
 
+    <!-- 主体内容 -->
+    <header class="header">
+        <h1>🎓 我的极简课表</h1>
+        <button class="reset-btn" onclick="resetSchedule()">重置数据</button>
+    </header>
+    
+    <main class="schedule-container" id="schedule-container">
+        <div class="week-header">
+            <div></div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div>
+        </div>
+        <!-- 课表将通过 JS 动态生成 -->
+    </main>
+
+    <!-- 添加/修改课程 弹窗 -->
     <div class="modal-overlay" id="course-modal">
-        <div class="modal-content">
-            <div class="modal-title">添加/修改课程</div>
-            <div class="input-group">
-                <label>课程名称</label>
-                <input type="text" id="course-name" placeholder="例如：高等数学">
-            </div>
-            <div class="input-group">
-                <label>教室</label>
-                <input type="text" id="course-room" placeholder="例如：3-201">
-            </div>
-            <div class="input-group">
-                <label>老师</label>
-                <input type="text" id="course-teacher" placeholder="例如：张老师">
-            </div>
-            <div class="input-group">
-                <label>学分</label>
-                <input type="number" id="course-credit" placeholder="例如：5.0" step="0.5">
-            </div>
-            <div class="input-group">
-                <label>备注</label>
-                <input type="text" id="course-note" placeholder="例如：带好计算器">
-            </div>
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-title" id="modal-title">添加课程</div>
+            <div class="form-group"><label>课程名称</label><input type="text" id="input-name" placeholder="例如：高等数学"></div>
+            <div class="form-group"><label>教室</label><input type="text" id="input-room" placeholder="例如：3-201"></div>
+            <div class="form-group"><label>老师</label><input type="text" id="input-teacher" placeholder="例如：张老师"></div>
+            <div class="form-group"><label>学分</label><input type="number" id="input-credit" placeholder="例如：5.0"></div>
+            <div class="form-group"><label>备注</label><input type="text" id="input-note" placeholder="例如：带好计算器"></div>
             <div class="modal-actions">
-                <button class="btn btn-reset" onclick="closeModal()">取消</button>
-                <button class="btn btn-primary" onclick="saveCourse()">保存</button>
+                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn btn-save" onclick="saveCourse()">保存</button>
             </div>
         </div>
     </div>
 
-    <!-- yxhnb 专属跳动入场 -->
-    <div id="yxhnb-intro-overlay">
-        <div id="yxhnb-text">yxhnb</div>
-    </div>
-
     <script>
-        // 初始化入场动画与隐藏
-        setTimeout(() => {
-            const overlay = document.getElementById('yxhnb-intro-overlay');
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 800);
-        }, 2000);
-
+        // ================= 全局状态与初始化 =================
+        const totalSections = 12;
         const days = ['一', '二', '三', '四', '五', '六', '日'];
-        const timeSlots = [
-            "08:00-08:45", "08:55-09:40", "10:00-10:45", "10:55-11:40",
-            "14:00-14:45", "14:55-15:40", "16:00-16:45", "16:55-17:40",
-            "19:00-19:45", "19:55-20:40"
-        ];
-        let scheduleData = JSON.parse(localStorage.getItem('scheduleData')) || {};
-        let currentEditCell = null;
+        let scheduleData = {};
+        let currentEditId = null;
 
-        function init() {
-            const main = document.getElementById('schedule-main');
-            let html = `<div class="schedule-container">`;
-            html += `<div></div>`; // 占位
-            days.forEach(d => html += `<div class="day-header">${d}</div>`);
+        window.onload = function() {
+            loadData();
+            initScheduleGrid();
+        };
+
+        function loadData() {
+            const data = localStorage.getItem('yxhnb_schedule_v3');
+            scheduleData = data ? JSON.parse(data) : {};
+        }
+
+        function saveData() {
+            localStorage.setItem('yxhnb_schedule_v3', JSON.stringify(scheduleData));
+            renderCourses();
+        }
+
+        // ================= 课表网格渲染逻辑 =================
+        function initScheduleGrid() {
+            const container = document.getElementById('schedule-container');
+            container.innerHTML = `
+                <div class="week-header">
+                    <div></div>${days.map(d => `<div>${d}</div>`).join('')}
+                </div>`;
             
-            for (let i = 0; i < timeSlots.length; i++) {
-                html += `<div class="time-col">${i + 1}</div>`;
-                days.forEach((day, j) => {
-                    const key = `${day}-${i}`;
-                    html += `<div class="class-cell" data-key="${key}" onclick="openModal('${key}')">+</div>`;
-                });
+            for (let i = 1; i <= totalSections; i++) {
+                const row = document.createElement('div');
+                row.className = 'time-row';
+                row.innerHTML = `
+                    <div class="time-label">${i}</div>
+                    ${days.map((_, dayIndex) => {
+                        const cellId = `cell-${dayIndex}-${i}`;
+                        return `<div class="course-cell" id="${cellId}" onclick="openModal('${cellId}')">
+                                    <span class="add-icon" id="icon-${cellId}">+</span>
+                                    <div class="course-info" id="info-${cellId}"></div>
+                                </div>`;
+                    }).join('')}
+                `;
+                container.appendChild(row);
             }
-            html += `</div>`;
-            main.innerHTML = html;
-            renderCards();
+            renderCourses();
         }
 
-        function renderCards() {
-            document.querySelectorAll('.class-cell').forEach(cell => {
-                const key = cell.dataset.key;
-                if (scheduleData[key]) {
-                    const d = scheduleData[key];
-                    cell.innerHTML = `
-                        <div class="course-card">
-                            <div class="course-name">${d.name}</div>
-                            <div class="course-info">🏫 ${d.room}</div>
-                            <div class="course-info">👨‍🏫 ${d.teacher}</div>
-                            <div class="course-info">🌟 ${d.credit} 学分</div>
-                            ${d.note ? `<div class="course-note">📝 ${d.note}</div>` : ''}
-                        </div>`;
-                } else {
-                    cell.innerHTML = '+';
+        function renderCourses() {
+            for (let d = 0; d < 7; d++) {
+                for (let s = 1; s <= totalSections; s++) {
+                    const cellId = `cell-${d}-${s}`;
+                    const data = scheduleData[cellId];
+                    const infoDiv = document.getElementById(`info-${cellId}`);
+                    const iconSpan = document.getElementById(`icon-${cellId}`);
+
+                    if (data && data.name) {
+                        iconSpan.style.display = 'none';
+                        infoDiv.innerHTML = `
+                            <div class="course-name">${data.name}</div>
+                            <div class="course-detail">
+                                ${data.room ? `<div>🏫 ${data.room}</div>` : ''}
+                                ${data.teacher ? `<div>👨‍🏫 ${data.teacher}</div>` : ''}
+                                ${data.credit ? `<div>🌟 ${data.credit}</div>` : ''}
+                                ${data.note ? `<div>📝 ${data.note}</div>` : ''}
+                            </div>`;
+                    } else {
+                        iconSpan.style.display = 'block';
+                        iconSpan.innerHTML = '+';
+                        infoDiv.innerHTML = '';
+                    }
                 }
-            });
+            }
         }
 
-        function openModal(key) {
-            currentEditCell = key;
-            const d = scheduleData[key] || {};
-            document.getElementById('course-name').value = d.name || '';
-            document.getElementById('course-room').value = d.room || '';
-            document.getElementById('course-teacher').value = d.teacher || '';
-            document.getElementById('course-credit').value = d.credit || '';
-            document.getElementById('course-note').value = d.note || '';
-            document.getElementById('course-modal').classList.add('active');
+        function resetSchedule() {
+            if(confirm('确定要清空所有课程数据吗？此操作不可恢复。')) {
+                scheduleData = {};
+                saveData();
+            }
+        }
+
+        // ================= 弹窗交互逻辑 =================
+        function openModal(cellId) {
+            const modal = document.getElementById('course-modal');
+            const title = document.getElementById('modal-title');
+            currentEditId = cellId;
+            const data = scheduleData[cellId] || {};
+
+            title.innerText = data.name ? '修改课程' : '添加课程';
+            document.getElementById('input-name').value = data.name || '';
+            document.getElementById('input-room').value = data.room || '';
+            document.getElementById('input-teacher').value = data.teacher || '';
+            document.getElementById('input-credit').value = data.credit || '';
+            document.getElementById('input-note').value = data.note || '';
+
+            modal.classList.add('show');
         }
 
         function closeModal() {
-            document.getElementById('course-modal').classList.remove('active');
-            currentEditCell = null;
+            document.getElementById('course-modal').classList.remove('show');
         }
 
         function saveCourse() {
-            const name = document.getElementById('course-name').value.trim();
-            if (!name) {
-                if(currentEditCell && scheduleData[currentEditCell]) delete scheduleData[currentEditCell];
-                closeModal(); renderCards(); saveData(); return;
+            const name = document.getElementById('input-name').value.trim();
+            if (!name) return alert('课程名称不能为空！');
+
+            if (name) {
+                scheduleData[currentEditId] = {
+                    name: name,
+                    room: document.getElementById('input-room').value.trim(),
+                    teacher: document.getElementById('input-teacher').value.trim(),
+                    credit: document.getElementById('input-credit').value.trim(),
+                    note: document.getElementById('input-note').value.trim()
+                };
+            } else {
+                delete scheduleData[currentEditId];
             }
-            scheduleData[currentEditCell] = {
-                name: name,
-                room: document.getElementById('course-room').value.trim(),
-                teacher: document.getElementById('course-teacher').value.trim(),
-                credit: document.getElementById('course-credit').value.trim(),
-                note: document.getElementById('course-note').value.trim()
-            };
-            closeModal(); renderCards(); saveData();
+            saveData();
+            closeModal();
         }
 
-        function saveData() { localStorage.setItem('scheduleData', JSON.stringify(scheduleData)); }
-        function resetData() { if(confirm('确定要清空所有课表数据吗？')) { localStorage.removeItem('scheduleData'); scheduleData = {}; renderCards(); } }
+        // 点击遮罩层关闭弹窗
+        document.getElementById('course-modal').addEventListener('click', closeModal);
 
-        // 启动应用
-        init();
+        // ================= 弹性入场特效控制逻辑 =================
+        function closeIntro() {
+            const overlay = document.getElementById('intro-overlay');
+            overlay.classList.add('hidden');
+        }
+        
+        // 页面加载时触发动画
+        setTimeout(() => {
+            const texts = document.querySelectorAll('.splash-text');
+            texts.forEach(t => t.classList.add('animate'));
+        }, 100);
+
     </script>
 </body>
 </html>
