@@ -294,3 +294,50 @@ function startQuiz() {
     html += `</div><div id="quiz-status" class="status" style="margin-top:15px;"></div></div>`;
     app.innerHTML = html;
 }
+
+window.checkAnswer = function(btn, selected, correct) {
+    const btns = document.querySelectorAll(".option");
+    btns.forEach(b => b.disabled = true);
+    const statusEl = $("quiz-status");
+    if (selected === correct) {
+        btn.classList.add("correct");
+        statusEl.textContent = "🎉 回答正确！太棒了！";
+        statusEl.style.color = "#16a34a";
+    } else {
+        btn.classList.add("wrong");
+        btns.forEach(b => { if (b.textContent === correct) b.classList.add("correct"); });
+        statusEl.textContent = `❌ 答错啦，正确答案是：${correct}`;
+        statusEl.style.color = "#dc2626";
+    }
+    setTimeout(startQuiz, 2000);
+};
+
+// ========== 9. 初始化与 Tab 切换 ==========
+const themeBtn = $("theme");
+themeBtn.onclick = () => {
+    document.documentElement.classList.toggle("dark");
+    themeBtn.textContent = document.documentElement.classList.contains("dark") ? "☀️" : "🌙";
+    localStorage.setItem("wm_theme", document.documentElement.classList.contains("dark") ? "dark" : "light");
+};
+if (localStorage.getItem("wm_theme") === "dark") {
+    document.documentElement.classList.add("dark");
+    themeBtn.textContent = "☀️";
+}
+
+document.querySelectorAll(".tab").forEach(tab => {
+    tab.onclick = () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.remove("active"));
+        tab.classList.add("active");
+        const type = tab.dataset.t;
+        if (type === "search") renderSearch();
+        else if (type === "history") renderList(history, "history");
+        else if (type === "fav") renderList(fav, "fav");
+        else if (type === "quiz") startQuiz();
+    };
+});
+
+function renderSearch() {
+    app.innerHTML = `<div class="card empty">👆 输入单词开始搜索<br><small>试试搜索 apple, beautiful, future</small></div>`;
+}
+renderSearch();
+</script>
