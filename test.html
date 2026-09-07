@@ -103,3 +103,31 @@ async function searchWord(){
     if(!w) return;
     if(!/^[a-zA-Z][a-zA-Z' -]{0,49}$/.test(w)){
         app.innerHTML='<div class="card empty">请输入英文单词，例如 <b>apple</b>。</div>';
+     return;
+    }
+
+    // 缓存命中
+    const cached=cacheGet("wm_word_"+w);
+    if(cached){
+        current=cached;
+        history=[w,...history.filter(x=>x!==w)].slice(0,30); save();
+        status.textContent="⚡ 缓存命中 · 即时显示";
+        render(cached);
+        addChinese(cached,w).then(()=>{
+            cacheSet("wm_word_"+w,cached);
+            if(current===cached){render(cached);status.textContent="✓ 中文释义已更新";}
+        });
+        return;
+    }
+
+    // 本地词库兜底
+    const localData=localResult(w);
+    if(localData){
+        current=localData;
+        history=[w,...history.filter(x=>x!==w)].slice(0,30); save();
+        status.textContent="⚡ 本地词库 · 即时显示";
+        render(localData);
+    } else {
+        status.textContent="⚡ 正在并行查询大型词库……";
+        app.innerHTML='<div class="card empty">⚡ 正在查询，请稍候……</div>';
+    }
