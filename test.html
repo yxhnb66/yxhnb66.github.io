@@ -181,3 +181,60 @@ function normalizeOpenDictionary(d, w){
     }
     return { word: w, phonetic: d.pronunciation || "", meanings, synonyms, antonyms };
 }
+
+// ========== 5. 中文翻译增强 (MyMemory API) ==========
+async function addChinese(data, w) {
+    // 如果已经有中文释义，直接返回
+    if (data._cn || (data.meanings && data.meanings[0]?.definitions[0]?._cn)) return;
+    try {
+        const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(w)}&langpair=en|zh-CN`;
+        const res = await fetchWithTimeout(url, 5000);
+        const json = await res.json();
+        if (json.responseStatus === 200 && json.responseData?.translatedText) {
+            const cn = json.responseData.translatedText;
+            // 写入第一个释义
+            if (data.meanings && data.meanings[0]?.definitions[0]) {
+                data.meanings[0].definitions[0]._cn = cn;
+            }
+            data._cn = cn;
+        }
+    } catch (e) { /* 翻译失败不影响主流程 */ }
+}
+
+// ========== 6. 核心渲染引擎 ==========
+function render(data) {
+    if (!data) return;
+    const isFav = fav.includes(data.word);
+    const cn = data._cn || data.meanings?.[0]?.definitions?.[0]?._cn || "";
+    
+    let meaningsHtml = "";
+    if (data.meanings) {
+        data.meanings.forEach(m => {
+            meaningsHtml += `<div class="tag">${esc(m.partOfSpeech)}</div>`;
+            m.definitions.forEach((def, i) => {
+                const defCn = def._cn || (i === 0 ? cn : "");
+                meaningsHtml += `
+                    <div class="cn">${esc(defCn)}</div>
+                    <div class="meaning">${esc(def.definition)}</div>
+                    ${def.example ? `<div class="example" style="margin:8px 0 14px"><strong>例句：</strong>${esc(def.example)}</div>` : ""}
+                `;
+            });
+        });
+    }
+
+    app.innerHTML = `
+        <div class="card">
+            <div class="hero">
+                <div>
+                    <div class="word">${esc(data.word)}</div>
+                    <div class="phonetic">${esc(data.phonetic || "")}</div>
+                </div>
+                <button class="speak" onclick="speak('${esc(data.word)}')">🔊</button>
+            </div>
+            ${meaningsHtml}
+            <div class="actions">
+                <button class="small" onclick="toggleFav('${esc(data.word)}')">${isFav ? "💔 取消收藏" : "⭐ 收藏单词"}</button>
+            </div>
+        </div>
+    `;
+}
