@@ -64,3 +64,42 @@ const local = {
     love:{cn:"爱；喜欢",pos:"动词/名词",phonetic:"/lʌv/",def:"to like or care about someone or something very much",ex:"I love my family."},
     learn:{cn:"学习",pos:"动词",phonetic:"/lɜːrn/",def:"to gain knowledge or a skill",ex:"I want to learn English."}
 };
+
+// ========== 2. 工具函数 ==========
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function save(){localStorage.setItem("wm_h",JSON.stringify(history));localStorage.setItem("wm_f",JSON.stringify(fav))}
+function cacheGet(key){try{return JSON.parse(localStorage.getItem(key)||"null")}catch(e){return null}}
+function cacheSet(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}}
+function cacheDelete(key){try{localStorage.removeItem(key)}catch(e){}}
+
+function speak(w){
+    if(!("speechSynthesis" in window)){alert("当前浏览器不支持发音");return}
+    speechSynthesis.cancel();
+    let u=new SpeechSynthesisUtterance(w);
+    u.lang="en-US";
+    speechSynthesis.speak(u);
+}
+
+function localResult(w){
+    let x=local[w];
+    if(!x) return null;
+    return {
+        word:w,
+        phonetic:x.phonetic,
+        meanings:[{partOfSpeech:x.pos,definitions:[{definition:x.def,example:x.ex,_cn:x.cn}]}],
+        _cn:x.cn,
+        _offline:true
+    };
+}
+
+async function fetchWithTimeout(url, ms=7000){
+    const c=new AbortController(), timer=setTimeout(()=>c.abort(), ms);
+    try{return await fetch(url,{signal:c.signal,cache:"no-store"})}finally{clearTimeout(timer)}
+}
+
+// ========== 3. 核心搜索逻辑 ==========
+async function searchWord(){
+    const w=q.value.trim().toLowerCase().replace(/\s+/g," ");
+    if(!w) return;
+    if(!/^[a-zA-Z][a-zA-Z' -]{0,49}$/.test(w)){
+        app.innerHTML='<div class="card empty">请输入英文单词，例如 <b>apple</b>。</div>';
