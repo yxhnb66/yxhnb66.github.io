@@ -6,300 +6,296 @@
     <title>我的极简课表</title>
     <style>
         :root {
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --text-main: #2d3748;
-            --text-sub: #718096;
-            --accent: #4a5568;
+            --bg-color: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --card-border: #e5e7eb;
+            --text-main: #333;
+            --text-sub: #777;
+            --primary: #007AFF;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body, html {
-            width: 100vw; height: 100vh; 
+        body {
             font-family: system-ui, -apple-system, sans-serif;
-            overflow: hidden; /* 锁定整体，只让课表区域滚动 */
-            background: #f5f7fa;
+            background-color: var(--bg-color);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
-        /* 液态流动背景 */
-        .liquid-bg {
-            position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle at 50% 50%, #e2a0ff 0%, #d291bc 25%, #a8d8ea 50%, #fdfbf9 100%);
-            opacity: 0.8; z-index: -1;
-            animation: liquidFlow 20s infinite alternate ease-in-out;
-        }
-        .blob {
-            position: absolute; width: 60vw; height: 60vw; border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-            filter: blur(80px);
-            mix-blend-mode: multiply;
-        }
-        .blob-1 { top: 10%; left: 10%; background: #81ecec; animation: blobMove1 15s infinite alternate ease-in-out; }
-        .blob-2 { bottom: 10%; right: 10%; background: #ff9a9e; animation: blobMove2 18s infinite alternate ease-in-out; }
-        
-        @keyframes liquidFlow { 0% { transform: translate(0, 0); } 100% { transform: translate(-5%, -5%); } }
-        @keyframes blobMove1 { 0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: translate(0, 0) rotate(0deg); } 100% { border-radius: 60% 40% 30% 70% / 50% 50% 50% 50%; transform: translate(10vw, 10vw) rotate(180deg); } }
-        @keyframes blobMove2 { 0% { border-radius: 50% 50% 50% 50% / 50% 50% 50% 50%; transform: translate(0, 0) rotate(0deg); } 100% { border-radius: 30% 70% 60% 40% / 60% 40% 50% 50%; transform: translate(-10vw, -10vw) rotate(180deg); } }
 
-        /* 页面主体容器 */
-        .app-container {
-            display: flex; flex-direction: column;
-            width: 100%; height: 100%; 
-            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
-        }
+        /* 顶部导航 */
         header {
-            flex-shrink: 0; padding: 15px 20px;
-            display: flex; justify-content: space-between; align-items: center;
+            background: #fff;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            z-index: 10;
         }
-        header h1 { font-size: 20px; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        h1 { font-size: 18px; color: var(--text-main); font-weight: 600; }
         .reset-btn {
-            border: none; background: rgba(255,255,255,0.5); padding: 6px 12px;
-            border-radius: 8px; color: var(--text-sub); font-size: 12px; cursor: pointer;
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-sub);
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            cursor: pointer;
         }
-        /* 课表主体与丝滑滚动 */
-        .schedule-wrapper {
-            flex: 1; overflow-y: auto; /* 只让这里滚动 */
-            padding: 0 20px 40px 20px;
-            -webkit-overflow-scrolling: touch; /* iOS 丝滑滚动 */
-            overscroll-behavior: contain; /* 防止橡皮筋效应 */
-        }
-        /* 自定义滚动条 */
-        .schedule-wrapper::-webkit-scrollbar { width: 4px; }
-        .schedule-wrapper::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
 
-        .schedule-grid {
-            display: grid;
-            /* 1列节次 + 7列星期 */
-            grid-template-columns: 50px repeat(7, 1fr); 
-            grid-template-rows: 40px repeat(8, 80px); /* 1行表头 + 8节 */
+        /* 课表容器 (实现丝滑滚动) */
+        .schedule-container {
+            flex: 1;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
             gap: 10px;
         }
-        .grid-cell {
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-sub); font-size: 12px;
+
+        /* 星期标题行 */
+        .days-header {
+            display: grid;
+            grid-template-columns: 40px repeat(7, 1fr);
+            gap: 8px;
+            padding: 0 5px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-sub);
+            position: sticky;
+            top: 0;
+            background: var(--bg-color);
+            padding-top: 10px;
+            z-index: 5;
         }
-        .header-day { font-weight: 600; color: var(--text-main); }
-        
-        /* 课程卡片与添加按钮 */
-        .course-card {
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            border-radius: 12px; padding: 8px; width: 100%; height: 100%;
-            display: flex; flex-direction: column; justify-content: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
-            cursor: pointer; transition: transform 0.2s;
+
+        /* 每一行（节次 + 星期卡片） */
+        .row {
+            display: grid;
+            grid-template-columns: 40px repeat(7, 1fr);
+            gap: 8px;
+            align-items: stretch;
         }
-        .course-card:active { transform: scale(0.98); }
-        .c-name { font-size: 13px; font-weight: bold; color: var(--text-main); margin-bottom: 4px; line-height: 1.2; }
-        .c-detail { font-size: 11px; color: var(--text-sub); line-height: 1.4; }
+
+        .time-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: var(--text-sub);
+            font-weight: bold;
+        }
+
+        /* 课程卡片与加号按钮容器 */
+        .cell {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 8px;
+            min-height: 90px;
+            position: relative;
+            
+            /* 核心：点击动态缩放特效 */
+            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            overflow: hidden;
+        }
         
+        /* 按下时的放大感 */
+        .cell:active {
+            transform: scale(0.96);
+            background-color: #f9fafb;
+        }
+
         .add-btn {
-            background: rgba(255,255,255,0.4); border: 1px dashed var(--glass-border);
-            border-radius: 12px; width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--text-sub); font-size: 18px; cursor: pointer;
+            position: absolute;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            color: #ccc;
+            transition: color 0.2s;
         }
-        .add-btn:active { background: rgba(255,255,255,0.6); }
+        .cell:hover .add-btn { color: var(--primary); }
+
+        /* 课程内容样式 */
+        .course-info { display: none; flex-direction: column; height: 100%; gap: 2px; }
+        .has-course .add-btn { display: none; }
+        .has-course .course-info { display: flex; }
+
+        .c-name { font-size: 14px; font-weight: bold; color: var(--text-main); margin-bottom: 4px; line-height: 1.2;}
+        .c-detail { font-size: 11px; color: var(--text-sub); display: flex; align-items: center; gap: 4px; }
+        .c-detail span { background: rgba(0,0,0,0.03); padding: 2px 4px; border-radius: 4px; }
 
         /* 弹窗样式 */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); display: none; align-items: center; justify-content: center; z-index: 100;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: none; justify-content: center; align-items: center;
+            z-index: 100;
         }
-        .modal-content {
-            background: #fff; border-radius: 16px; padding: 20px; width: 85%; max-width: 320px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        .modal {
+            background: #fff;
+            width: 90%; max-width: 400px;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            transform: scale(0.9); opacity: 0;
+            transition: all 0.2s ease;
         }
-        .modal-content h2 { font-size: 18px; margin-bottom: 15px; color: var(--text-main); }
+        .modal.show { transform: scale(1); opacity: 1; }
+        .modal h2 { font-size: 18px; margin-bottom: 15px; }
         .form-group { margin-bottom: 12px; }
         .form-group label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 4px; }
         .form-group input, .form-group select {
-            width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px;
-            background: #fafafa;
+            width: 100%; padding: 10px; border: 1px solid var(--card-border);
+            border-radius: 8px; font-size: 14px; outline: none;
         }
-        .modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
-        .btn { padding: 8px 16px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; }
-        .btn-cancel { background: #edf2f7; color: var(--text-sub); }
-        .btn-save { background: #4299e1; color: white; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn { padding: 8px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; border: none; }
+        .btn-cancel { background: #f0f0f0; color: #666; }
+        .btn-save { background: var(--primary); color: #fff; }
     </style>
 </head>
 <body>
-    <div class="liquid-bg"><div class="blob blob-1"></div><div class="blob blob-2"></div></div>
-    <div class="app-container">
-        <header>
-            <h1>🎓 我的极简课表</h1>
-            <button class="reset-btn" onclick="resetSchedule()">重置数据</button>
-        </header>
-        <div class="schedule-wrapper">
-            <div class="schedule-grid" id="schedule-grid">
-                <!-- 由 JS 动态生成 -->
-            </div>
+
+<header>
+    <h1>🎓 我的极简课表</h1>
+    <button class="reset-btn" onclick="clearAll()">重置数据</button>
+</header>
+
+<div class="schedule-container" id="scheduleContainer">
+    <!-- 动态生成课表 -->
+</div>
+
+<!-- 添加课程弹窗 -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" id="addModal">
+        <h2>添加/修改课程</h2>
+        <div class="form-group">
+            <label>课程名称</label>
+            <input type="text" id="courseName" placeholder="例如：高等数学">
+        </div>
+        <div class="form-group">
+            <label>教室</label>
+            <input type="text" id="courseRoom" placeholder="例如：3-201">
+        </div>
+        <div class="form-group">
+            <label>老师</label>
+            <input type="text" id="courseTeacher" placeholder="例如：张老师">
+        </div>
+        <div class="form-group">
+            <label>学分</label>
+            <input type="number" id="courseCredit" placeholder="例如：5.0">
+        </div>
+        <div class="form-group">
+            <label>备注</label>
+            <input type="text" id="courseNote" placeholder="例如：带好计算器">
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-cancel" onclick="closeModal()">取消</button>
+            <button class="btn btn-save" onclick="saveCourse()">保存</button>
         </div>
     </div>
-    <!-- 添加/编辑 弹窗 -->
-    <div class="modal-overlay" id="modal">
-        <div class="modal-content">
-            <h2 id="modal-title">添加课程</h2>
-            <input type="hidden" id="edit-id" value="">
-            <div class="form-group">
-                <label>上课时间</label>
-                <div style="display:flex; gap: 5px;">
-                    <select id="input-day" style="flex:1;">
-                        <option value="1">周一</option><option value="2">周二</option>
-                        <option value="3">周三</option><option value="4">周四</option>
-                        <option value="5">周五</option><option value="6">周六</option><option value="7">周日</option>
-                    </select>
-                    <select id="input-slot" style="flex:1;">
-                        <option value="1">第1节</option><option value="2">第2节</option>
-                        <option value="3">第3节</option><option value="4">第4节</option>
-                        <option value="5">第5节</option><option value="6">第6节</option>
-                        <option value="7">第7节</option><option value="8">第8节</option>
-                    </select>
-                </div>
-            </div>
-            <div class="form-group"><input type="text" id="input-name" placeholder="课程名称"></div>
-            <div class="form-group"><input type="text" id="input-room" placeholder="教室 (如: 教3-201)"></div>
-            <div class="form-group"><input type="text" id="input-teacher" placeholder="教师姓名"></div>
-            <div class="form-group"><input type="text" id="input-credit" placeholder="学分"></div>
-            <div class="form-group"><input type="text" id="input-note" placeholder="备注信息"></div>
-            <div class="modal-actions">
-                <button class="btn btn-cancel" onclick="toggleModal(false)" id="btn-delete" style="display:none;">删除</button>
-                <button class="btn btn-cancel" onclick="toggleModal(false)">取消</button>
-                <button class="btn btn-save" onclick="saveCourse()">保存</button>
-            </div>
-        </div>
-    </div>
+</div>
+
     <script>
-        // 默认示例数据
-        let defaultData = {
-            '1-1': {name: '开关电路', room: '实验楼3楼', teacher: '王老师', credit: '4.0', note: '带好实验服'},
-            '1-2': {name: '让我先谈谈', room: '教2-101', teacher: '李老师', credit: '2.5', note: ''},
-            '3-3': {name: '高等数学', room: '教3-201', teacher: '张教授', credit: '5.0', note: '带上计算器'},
-            '4-5': {name: '大学英语', room: '语音室-01', teacher: 'Ms. Smith', credit: '3.0', note: '提前签到'},
-            '7-6': {name: '线性代数', room: '教1-405', teacher: '赵老师', credit: '3.5', note: ''},
-            '7-8': {name: '体育', room: '北区体育馆', teacher: '孙教练', credit: '2.0', note: '穿运动鞋'}
+    // 初始化课表数据
+    const days = ['一', '二', '三', '四', '五', '六', '日'];
+    let courses = JSON.parse(localStorage.getItem('myScheduleData')) || {};
+    let currentCellId = null;
+
+    const container = document.getElementById('scheduleContainer');
+
+    function renderSchedule() {
+        // 1. 渲染星期标题
+        let headerHtml = '<div class="days-header"><div></div>';
+        days.forEach(day => headerHtml += `<div>${day}</div>`);
+        headerHtml += '</div>';
+
+        // 2. 渲染8节课
+        for (let i = 1; i <= 8; i++) {
+            let rowHtml = `<div class="row"><div class="time-label">${i}</div>`;
+            for (let j = 0; j < 7; j++) {
+                const cellId = `${days[j]}-${i}`;
+                const course = courses[cellId];
+                
+                let cellContent = '';
+                let classList = 'cell';
+                
+                if (course) {
+                    classList += ' has-course';
+                    cellContent = `
+                        <div class="course-info">
+                            <div class="c-name">${course.name}</div>
+                            <div class="c-detail">🏠 ${course.room || '未指定'}</div>
+                            <div class="c-detail">👤 ${course.teacher || '未指定'}</div>
+                            <div class="c-detail">⭐ ${course.credit || '0.0'}</div>
+                            ${course.note ? `<div class="c-detail" style="color:var(--primary)">📝 ${course.note}</div>` : ''}
+                        </div>
+                    `;
+                } else {
+                    cellContent = `<div class="add-btn">+</div>`;
+                }
+
+                rowHtml += `<div class="${classList}" id="${cellId}" onclick="openModal('${cellId}')">${cellContent}</div>`;
+            }
+            rowHtml += '</div>';
+            headerHtml += rowHtml;
+        }
+        container.innerHTML = headerHtml;
+    }
+ // 弹窗控制
+    const modalOverlay = document.getElementById('modalOverlay');
+    const modal = document.getElementById('addModal');
+
+    function openModal(cellId) {
+        currentCellId = cellId;
+        const course = courses[cellId] || {};
+        
+        document.getElementById('courseName').value = course.name || '';
+        document.getElementById('courseRoom').value = course.room || '';
+        document.getElementById('courseTeacher').value = course.teacher || '';
+        document.getElementById('courseCredit').value = course.credit || '';
+        document.getElementById('courseNote').value = course.note || '';
+
+        modalOverlay.style.display = 'flex';
+        setTimeout(() => modal.classList.add('show'), 10);
+    }
+
+    function closeModal() {
+        modal.classList.remove('show');
+        setTimeout(() => modalOverlay.style.display = 'none', 200);
+    }
+
+    function saveCourse() {
+        const name = document.getElementById('courseName').value.trim();
+        if (!name) { alert('请输入课程名称'); return; }
+
+        courses[currentCellId] = {
+            name: name,
+            room: document.getElementById('courseRoom').value.trim(),
+            teacher: document.getElementById('courseTeacher').value.trim(),
+            credit: document.getElementById('courseCredit').value.trim(),
+            note: document.getElementById('courseNote').value.trim()
         };
 
-        let courses = JSON.parse(localStorage.getItem('my_courses')) || defaultData;
-        const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-
-        // 渲染课表
-        function renderSchedule() {
-            const grid = document.getElementById('schedule-grid');
-            grid.innerHTML = '';
-            
-            // 1. 渲染表头 (周一到周日)
-            grid.innerHTML += `<div class="grid-cell header-day"></div>`; // 节次列空白
-            days.forEach(d => grid.innerHTML += `<div class="grid-cell header-day">${d.replace('周','')}</div>`);
-
-            // 2. 渲染8节课
-            for(let slot = 1; slot <= 8; slot++) {
-                // 左侧节次编号
-                grid.innerHTML += `<div class="grid-cell" style="font-weight:600; color:var(--text-main); font-size:14px;">${slot}</div>`;
-                
-                // 7个星期的格子
-                for(let day = 1; day <= 7; day++) {
-                    const id = `${day}-${slot}`;
-                    if(courses[id]) {
-                        const c = courses[id];
-                        let detail = [];
-                        if(c.room) detail.push(`🏫 ${c.room}`);
-                        if(c.teacher) detail.push(`👤 ${c.teacher}`);
-                        if(c.credit) detail.push(`⭐ ${c.credit}`);
-                        
-                        grid.innerHTML += `
-                            <div class="course-card" onclick="openModal('${id}')">
-                                <div class="c-name">${c.name}</div>
-                                <div class="c-detail">${detail.join('<br>')}</div>
-                                ${c.note ? `<div class="c-detail" style="font-style:italic; color:#999; margin-top:2px;">📝 ${c.note}</div>` : ''}
-                            </div>`;
-                    } else {
-                        grid.innerHTML += `<div class="add-btn" onclick="openModal('${id}')">+</div>`;
-                    }
-                }
-            }
-        }
-
-        // 弹窗控制
-        function openModal(id) {
-            const modal = document.getElementById('modal');
-            const btnDelete = document.getElementById('btn-delete');
-            const title = document.getElementById('modal-title');
-            
-            if(id) {
-                const [day, slot] = id.split('-');
-                document.getElementById('input-day').value = day;
-                document.getElementById('input-slot').value = slot;
-                
-                if(courses[id]) {
-                    // 编辑模式
-                    title.innerText = '编辑课程';
-                    document.getElementById('edit-id').value = id;
-                    document.getElementById('input-name').value = courses[id].name || '';
-                    document.getElementById('input-room').value = courses[id].room || '';
-                    document.getElementById('input-teacher').value = courses[id].teacher || '';
-                    document.getElementById('input-credit').value = courses[id].credit || '';
-                    document.getElementById('input-note').value = courses[id].note || '';
-                    btnDelete.style.display = 'block';
-                } else {
-                    // 添加模式
-                    title.innerText = '添加课程';
-                    document.getElementById('edit-id').value = id;
-                    clearForm();
-                    btnDelete.style.display = 'none';
-                }
-            }
-            modal.style.display = 'flex';
-        }
-
-        function toggleModal(show) {
-            document.getElementById('modal').style.display = show ? 'flex' : 'none';
-        }
-
-        function clearForm() {
-            document.querySelectorAll('#modal input:not([type=hidden])').forEach(i => i.value = '');
-            document.getElementById('edit-id').value = '';
-        }
-
-        // 保存数据
-        function saveCourse() {
-            const name = document.getElementById('input-name').value.trim();
-            if(!name) { alert('请输入课程名称'); return; }
-            
-            const day = document.getElementById('input-day').value;
-            const slot = document.getElementById('input-slot').value;
-            const id = `${day}-${slot}`;
-            
-            courses[id] = {
-                name: name,
-                room: document.getElementById('input-room').value.trim(),
-                teacher: document.getElementById('input-teacher').value.trim(),
-                credit: document.getElementById('input-credit').value.trim(),
-                note: document.getElementById('input-note').value.trim()
-            };
-            
-            localStorage.setItem('my_courses', JSON.stringify(courses));
-            renderSchedule();
-            toggleModal(false);
-        }
-
-        // 删除数据
-        document.getElementById('btn-delete').onclick = function() {
-            const id = document.getElementById('edit-id').value;
-            if(id && confirm('确定要删除这门课吗？')) {
-                delete courses[id];
-                localStorage.setItem('my_courses', JSON.stringify(courses));
-                renderSchedule();
-                toggleModal(false);
-            }
-        }
-
-        function resetSchedule() {
-            if(confirm('确定要重置为默认课表吗？')) {
-                courses = defaultData;
-                localStorage.setItem('my_courses', JSON.stringify(courses));
-                renderSchedule();
-            }
-        }
-
-        // 初始化
+         localStorage.setItem('myScheduleData', JSON.stringify(courses));
         renderSchedule();
-    </script>
+        closeModal();
+    }
+
+    function clearAll() {
+        if(confirm('确定要清空所有课程吗？')) {
+            courses = {};
+            localStorage.removeItem('myScheduleData');
+            renderSchedule();
+        }
+    }
+
+    // 初始渲染
+    renderSchedule();
+</script>
 </body>
 </html>
