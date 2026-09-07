@@ -102,7 +102,6 @@ h1:hover { transform: scale(1.02); } /* 标题悬停微放大 */
         <button class="btn" onclick="exportData()">💾 导出备份</button>
     </div>
     <div id="grid" class="schedule-grid"></div>
-
     <!-- 添加/编辑课程弹窗 -->
     <div id="modal" class="modal-overlay">
         <div class="modal">
@@ -115,12 +114,14 @@ h1:hover { transform: scale(1.02); } /* 标题悬停微放大 */
                 <label>上课教室</label>
                 <input type="text" id="courseRoom" placeholder="例如：A101">
             </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal()">取消</button>
-                <button class="btn-save" onclick="saveCourse()">保存</button>
+            <div class="form-actions">
+                <button class="btn btn-cancel" type="button" onclick="closeModal()">取消</button>
+                <button class="btn btn-save" type="button" onclick="saveCourse()">保存</button>
             </div>
         </div>
     </div>
+
+
 <script>
 // 1. 基础配置：周一到周日，每天6节课
 const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
@@ -150,22 +151,32 @@ function renderGrid() {
     });
 }
 
-// 4. 弹窗控制逻辑
-window.openModal = function(key) {
-    currentCellKey = key;
-    const course = schedule[key];
-    document.getElementById('modal-title').textContent = course ? '编辑课程' : '添加课程';
-    document.getElementById('courseName').value = course ? course.name : '';
-    document.getElementById('courseRoom').value = course ? course.room : '';
-    document.getElementById('modal').style.display = 'flex';
-};
+    // 4. 弹窗控制逻辑（加入动态过渡）
+    window.openModal = function(key) {
+        currentCellKey = key;
+        const course = schedule[key];
+        document.getElementById('modal-title').textContent = course ? '编辑课程' : '添加课程';
+        document.getElementById('courseName').value = course ? course.name : '';
+        document.getElementById('courseRoom').value = course ? course.room : '';
+        
+        const modal = document.getElementById('modal');
+        modal.style.display = 'flex';
+        // 触发重排后添加 show 类，让 CSS 动画生效
+        requestAnimationFrame(() => modal.classList.add('show'));
+    };
 
-window.closeModal = function() {
-    document.getElementById('modal').style.display = 'none';
-    document.getElementById('courseName').value = '';
-    document.getElementById('courseRoom').value = '';
-    currentCellKey = null;
-};
+    window.closeModal = function() {
+        const modal = document.getElementById('modal');
+        modal.classList.remove('show');
+        // 等待动画结束后再隐藏
+        setTimeout(() => {
+            modal.style.display = 'none';
+            document.getElementById('courseName').value = '';
+            document.getElementById('courseRoom').value = '';
+            currentCellKey = null;
+        }, 300); // 与 CSS 的 transition 时间保持一致
+    };
+
 
 // 5. 保存课程到本地
 window.saveCourse = function() {
