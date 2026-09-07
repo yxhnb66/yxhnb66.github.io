@@ -5,252 +5,280 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>我的极简课表</title>
     <style>
-        /* ================= 基础重置与变量 ================= */
-        :root {
-            --glass-bg: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --text-main: #2d3748;
-            --text-sub: #718096;
-            --accent: #4a5568;
-            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        /* 基础重置 */
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body, html { 
-            font-family: system-ui, -apple-system, sans-serif; 
             width: 100%; height: 100%; 
-            overflow: hidden; /* 禁止原生滚动 */
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden; /* 锁定整体 */
+            background: #f5f7fa;
         }
 
-        /* ================= 2. 液态流动背景 (修复排版版) ================= */
-        .liquid-bg {
+        /* 优化后的液态背景 (不影响滑动) */
+        .bg-blob {
             position: fixed; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: radial-gradient(circle at 50% 50%, rgba(255, 182, 193, 0.6), transparent 60%),
-                        radial-gradient(circle at 80% 20%, rgba(173, 216, 230, 0.6), transparent 50%),
-                        radial-gradient(circle at 20% 80%, rgba(221, 160, 221, 0.6), transparent 50%);
-            filter: blur(60px); z-index: -1;
-            animation: liquidMove 20s infinite alternate ease-in-out;
-            pointer-events: none; /* 关键：让背景不阻挡点击 */
+            z-index: -1;
+            filter: blur(80px); opacity: 0.8;
+            animation: blobRotate 20s linear infinite;
+            background: radial-gradient(circle, rgba(173,216,230,0.5) 0%, rgba(255,192,203,0.5) 50%, rgba(255,255,255,0.3) 100%);
         }
-        @keyframes liquidMove {
-            0% { transform: translate(0, 0) rotate(0deg); }
-            100% { transform: translate(-5%, -5%) rotate(10deg); }
+        @keyframes blobRotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* 主容器 */
+        .container { 
+            width: 100%; height: 100%; display: flex; flex-direction: column; 
+        }
+        /* 顶部导航 */
+        .navbar { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 15px 20px; flex-shrink: 0; z-index: 10;
+        }
+        .title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .btn-reset { 
+            border: none; background: rgba(255,255,255,0.6); color: #666; 
+            padding: 6px 14px; border-radius: 20px; font-size: 13px; cursor: pointer;
         }
 
-        /* ================= 3. 磨砂玻璃容器 ================= */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-        }
-        /* ================= 4. 布局与丝滑滚动优化 ================= */
-        .app-container {
-            display: flex; flex-direction: column;
-            height: 100vh; padding: 20px; gap: 20px;
-            max-width: 1400px; margin: 0 auto;
-        }
-        
-        /* 顶部标题栏 */
-        header {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 15px 25px; flex-shrink: 0;
-        }
-        h1 { font-size: 1.2rem; color: var(--text-main); font-weight: 600; display: flex; align-items: center; gap: 8px; }
-        .reset-btn {
-            background: rgba(255,255,255,0.5); border: none; padding: 8px 16px;
-            border-radius: 12px; color: var(--text-sub); cursor: pointer; transition: 0.2s;
-        }
-        .reset-btn:hover { background: white; color: var(--accent); }
-
-        /* 课表主区域 (支持丝滑滚动) */
+        /* 课表主体区域 (核心滑动优化) */
         .schedule-wrapper {
-            flex: 1; overflow: hidden; position: relative; /* 关键：限制滚动范围 */
-            display: flex; flex-direction: column;
-        }
-        
-        /* 内部滚动容器：开启硬件加速与弹性滚动 */
-        .scroll-content {
-            flex: 1; overflow-y: auto; overflow-x: hidden;
-            -webkit-overflow-scrolling: touch; /* iOS 惯性滚动 */
-            scroll-behavior: smooth;
-            padding-right: 5px; /* 防止滚动条遮挡 */
-        }
-        /* 隐藏滚动条但保留功能 */
-        .scroll-content::-webkit-scrollbar { width: 4px; }
-        .scroll-content::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.1); border-radius: 4px; }
-
-        /* 表格网格系统 */
-        .grid-table {
-            display: grid;
-            grid-template-columns: 50px repeat(7, 1fr); /* 节次列 + 7天 */
-            gap: 8px; min-width: 800px; /* 保证平板/电脑不挤压 */
-            padding-bottom: 80px; /* 底部留白 */
-        }
-
-        /* 表头与节次 */
-        .header-cell, .time-cell {
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 600; color: var(--text-sub); font-size: 0.9rem;
-        }
-        .header-cell { padding-bottom: 10px; position: sticky; top: 0; z-index: 10; }
-        
-        /* 课程卡片 (磨砂感) */
-        .course-card {
-            background: rgba(255, 255, 255, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            border-radius: 16px; padding: 12px;
-            min-height: 80px; cursor: pointer;
-            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s;
-            display: flex; flex-direction: column; justify-content: center;
-        }
-        .course-card:hover { transform: translateY(-3px) scale(1.02); background: rgba(255, 255, 255, 0.7); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .course-name { font-weight: bold; color: var(--text-main); margin-bottom: 4px; font-size: 0.95rem; }
-        .course-info { font-size: 0.75rem; color: var(--text-sub); }
-
-        /* ================= 5. 手机端自适应 (竖向列表模式) ================= */
-        @media (max-width: 768px) {
-            .app-container { padding: 10px; gap: 10px; }
-            .grid-table { display: flex; flex-direction: column; gap: 12px; min-width: auto; }
-            .header-cell, .time-cell { display: none; } /* 手机隐藏传统表头 */
-            
-            /* 手机端的“今天”卡片模式 */
-            .day-column {
-                background: rgba(255,255,255,0.3); border-radius: 20px; padding: 15px;
-                margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.5);
-            }
-            .day-title { font-size: 1.1rem; font-weight: bold; margin-bottom: 15px; color: var(--text-main); border-left: 4px solid var(--accent); padding-left: 10px; }
-            
-            .mobile-course-item {
-                display: flex; align-items: center; background: white;
-                padding: 15px; border-radius: 16px; margin-bottom: 10px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            }
-            .mobile-time { font-weight: bold; color: var(--accent); width: 60px; font-size: 0.9rem; }
-            .mobile-detail { flex: 1; }
-            .mobile-name { font-weight: 600; color: var(--text-main); }
-            .mobile-loc { font-size: 0.8rem; color: var(--text-sub); margin-top: 2px; }
-
-            /* 悬浮添加按钮 */
-            .fab-add {
-                position: fixed; bottom: 30px; right: 30px;
-                width: 56px; height: 56px; border-radius: 50%;
-                background: var(--accent); color: white;
-                display: flex; align-items: center; justify-content: center;
-                font-size: 24px; box-shadow: 0 8px 20px rgba(74, 85, 104, 0.4);
-                cursor: pointer; z-index: 100; transition: 0.3s;
-            }
-            .fab-add:active { transform: scale(0.9); }
+            flex: 1; overflow: auto; /* 允许内部滑动 */
+            padding: 10px 10px 30px 10px;
+            /* 滑动优化关键代码 */
+            -webkit-overflow-scrolling: touch; 
+            overscroll-behavior: contain; 
+            touch-action: pan-y;
         }
     </style>
 </head>
 <body>
-    <!-- 动态背景层 -->
-    <div class="liquid-bg"></div>
+    <div class="bg-blob"></div>
+    <div class="container">
+        <div class="navbar">
+            <div class="title">📅 我的极简课表</div>
+            <button class="btn-reset" onclick="resetData()">重置数据</button>
+        </div>
+        <div class="schedule-wrapper">
+            <div style="
+                display: grid; 
+                grid-template-columns: 40px repeat(7, 1fr); 
+                grid-template-rows: 45px repeat(8, 100px); 
+                gap: 10px; 
+                padding-bottom: 20px;
+            ">
+                <!-- 表头 -->
+                <div></div>
+                <div style="font-size: 14px; color: #888; display: grid; place-items: center;">周一</div>
+                <div style="font-size: 14px; color: #888; display: grid; place-items: center;">周二</div>
+                <div style="font-size: 14px; color: #888; display: grid; place-items: center;">周三</div>
+                <div style="font-size: 14px; color: #888; display: grid; place-items: center;">周四</div>
+                <div style="font-size: 14px; color: #888; display: grid; place-items: center;">周五</div>
+                <div style="font-size: 14px; color: #888; display: grid; place-items: center;">周六</div>
+                <div style="font-size: 14px; color: #888; display: grid; place-items: center;">周日</div>
 
-    <div class="app-container">
-        <!-- 顶部栏 -->
-        <header class="glass-panel">
-            <h1>📅 我的极简课表</h1>
-            <button class="reset-btn" onclick="resetData()">重置数据</button>
-        </header>
-
-        <!-- 课表内容区 -->
-        <div class="schedule-wrapper glass-panel">
-            <div class="scroll-content" id="scheduleContainer">
-                <!-- JS 将在这里渲染内容 -->
+                <!-- 8个节次循环 -->
+                <!-- 第1行 -->
+                <div style="font-size: 13px; color: #888; display: grid; place-items: center;">1</div>
+                <div id="slot-1-1"></div><div id="slot-2-1"></div><div id="slot-3-1"></div><div id="slot-4-1"></div><div id="slot-5-1"></div><div id="slot-6-1"></div><div id="slot-7-1"></div>
+                <!-- 第2行 -->
+                <div style="font-size: 13px; color: #888; display: grid; place-items: center;">2</div>
+                <div id="slot-1-2"></div><div id="slot-2-2"></div><div id="slot-3-2"></div><div id="slot-4-2"></div><div id="slot-5-2"></div><div id="slot-6-2"></div><div id="slot-7-2"></div>
+                <!-- 第3行 -->
+                <div style="font-size: 13px; color: #888; display: grid; place-items: center;">3</div>
+                <div id="slot-1-3"></div><div id="slot-2-3"></div><div id="slot-3-3"></div><div id="slot-4-3"></div><div id="slot-5-3"></div><div id="slot-6-3"></div><div id="slot-7-3"></div>
+                <!-- 第4行 -->
+                <div style="font-size: 13px; color: #888; display: grid; place-items: center;">4</div>
+                <div id="slot-1-4"></div><div id="slot-2-4"></div><div id="slot-3-4"></div><div id="slot-4-4"></div><div id="slot-5-4"></div><div id="slot-6-4"></div><div id="slot-7-4"></div>
+                <!-- 第5行 -->
+                <div style="font-size: 13px; color: #888; display: grid; place-items: center;">5</div>
+                <div id="slot-1-5"></div><div id="slot-2-5"></div><div id="slot-3-5"></div><div id="slot-4-5"></div><div id="slot-5-5"></div><div id="slot-6-5"></div><div id="slot-7-5"></div>
+                <!-- 第6行 -->
+                <div style="font-size: 13px; color: #888; display: grid; place-items: center;">6</div>
+                <div id="slot-1-6"></div><div id="slot-2-6"></div><div id="slot-3-6"></div><div id="slot-4-6"></div><div id="slot-5-6"></div><div id="slot-6-6"></div><div id="slot-7-6"></div>
+                <!-- 第7行 (补齐) -->
+                <div style="font-size: 13px; color: #888; display: grid; place-items: center;">7</div>
+                <div id="slot-1-7"></div><div id="slot-2-7"></div><div id="slot-3-7"></div><div id="slot-4-7"></div><div id="slot-5-7"></div><div id="slot-6-7"></div><div id="slot-7-7"></div>
+                <!-- 第8行 (补齐) -->
+                <div style="font-size: 13px; color: #888; display: grid; place-items: center;">8</div>
+                <div id="slot-1-8"></div><div id="slot-2-8"></div><div id="slot-3-8"></div><div id="slot-4-8"></div><div id="slot-5-8"></div><div id="slot-6-8"></div><div id="slot-7-8"></div>
             </div>
         </div>
-    </div>
-
-    <!-- 手机端悬浮按钮 -->
-    <div class="fab-add" id="fabBtn" onclick="alert('添加功能开发中...')" style="display:none;">+</div>
-    <script>
-        // ================= 6. 数据与渲染逻辑 =================
-        const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-        const periods = 8; // 每天8节课
+    <style>
+        /* 课程卡片样式 */
+        .course-card {
+            background: var(--glass-bg, rgba(255,255,255,0.7));
+            border: 1px solid var(--glass-border, rgba(255,255,255,0.8));
+            border-radius: 14px; padding: 12px; height: 100%; width: 100%;
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            display: flex; flex-direction: column; justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); transition: all 0.2s;
+        }
+        .course-name { font-size: 15px; font-weight: 700; color: #333; margin-bottom: 4px; }
+        .course-room { font-size: 12px; color: #666; }
         
-        // 模拟课程数据 (你可以随时替换这里的数据)
-        let courseData = [
-            { day: 0, period: 0, name: "天天陶喆", loc: "未知 | 未知", color: "#FFD1DC" },
-            { day: 1, period: 0, name: "让我先说说我那个女孩", loc: "未知 | 未知", color: "#E0BBE4" },
-            { day: 2, period: 2, name: "高等数学", loc: "教三-201", color: "#D4F1F4" },
-            { day: 3, period: 4, name: "大学英语", loc: "教一-105", color: "#FFF5BA" }
-        ];
-
-        function renderSchedule() {
-            const container = document.getElementById('scheduleContainer');
-            const isMobile = window.innerWidth <= 768;
-            container.innerHTML = '';
-
-            if (isMobile) {
-                // --- 手机端渲染：竖向列表 ---
-                document.getElementById('fabBtn').style.display = 'flex';
-                days.forEach((dayName, dayIndex) => {
-                    const dayCol = document.createElement('div');
-                    dayCol.className = 'day-column';
-                    dayCol.innerHTML = `<div class="day-title">${dayName}</div>`;
-                    
-                    const dayCourses = courseData.filter(c => c.day === dayIndex).sort((a,b) => a.period - b.period);
-                    
-                    if(dayCourses.length === 0) {
-                        dayCol.innerHTML += `<div style="color:#aaa; font-size:0.8rem; padding:10px 0;">暂无课程</div>`;
-                    } else {
-                        dayCourses.forEach(c => {
-                            dayCol.innerHTML += `
-                                <div class="mobile-course-item">
-                                    <div class="mobile-time">${c.period + 1}</div>
-                                    <div class="mobile-detail">
-                                        <div class="mobile-name">${c.name}</div>
-                                        <div class="mobile-loc">${c.loc}</div>
-                                    </div>
-                                </div>`;
-                        });
-                    }
-                    container.appendChild(dayCol);
-                });
-            } else {
-                // --- 平板/电脑端渲染：Grid 网格 ---
-                document.getElementById('fabBtn').style.display = 'none';
-                const grid = document.createElement('div');
-                grid.className = 'grid-table';
-                
-                // 1. 渲染表头
-                grid.innerHTML = `<div class="header-cell">节次</div>` + days.map(d => `<div class="header-cell">${d}</div>`).join('');
-                
-                // 2. 渲染每一节课的格子
-                for (let p = 0; p < periods; p++) {
-                    // 左侧节次数字
-                    grid.innerHTML += `<div class="time-cell">${p + 1}</div>`;
-                    
-                    // 7天的格子
-                    for (let d = 0; d < 7; d++) {
-                        const course = courseData.find(c => c.day === d && c.period === p);
-                        if (course) {
-                            grid.innerHTML += `
-                                <div class="course-card" style="background:${course.color}40; border-color:${course.color}80">
-                                    <div class="course-name">${course.name}</div>
-                                    <div class="course-info">${course.loc}</div>
-                                </div>`;
-                        } else {
-                            grid.innerHTML += `<div></div>`; // 空位占位
-                        }
-                    }
-                }
-                container.appendChild(grid);
-            }
+        /* 悬浮添加按钮样式 */
+        .add-btn-container {
+            display: flex; align-items: center; justify-content: center;
+            height: 100%; width: 100%;
         }
-
-        function resetData() {
-            if(confirm('确定要重置所有课程数据吗？')) {
-                courseData = [];
-                renderSchedule();
-            }
+        .add-btn {
+            background: rgba(255,255,255,0.4); border: 2px dashed #ccc;
+            color: #999; border-radius: 14px; cursor: pointer; font-size: 24px;
+            height: 100%; width: 100%; display: flex; align-items: center; justify-content: center;
+            transition: background 0.2s;
         }
-
-        // 初始化渲染 & 监听窗口大小变化实现自适应
-        window.addEventListener('resize', renderSchedule);
-        renderSchedule();
-    </script>
+        .add-btn:hover { background: rgba(255,255,255,0.7); color: #555; }
+    </style>
 </body>
 </html>
+<script>
+    // 1. 完整的初始课程数据 (修复了7、8节数据丢失的问题)
+    const defaultSchedule = {
+        '1-1': { name: '天天陶喆', room: '未知|未知' },
+        '2-1': { name: '让我先说说我那个女孩', room: '未知|未知' },
+        '3-3': { name: '高等数学', room: '教三-201' },
+        '4-5': { name: '大学英语', room: '教一-105' },
+        // 补齐其他节次示例数据
+        '1-7': { name: '晚自习', room: '图书馆' },
+        '2-8': { name: '社团活动', room: '活动中心' }
+    };
+
+    let scheduleData = JSON.parse(localStorage.getItem('mySchedule')) || defaultSchedule;
+
+    // 2. 渲染课表函数
+    function renderSchedule() {
+        for (let day = 1; day <= 7; day++) {
+            for (let period = 1; period <= 8; period++) {
+                const slotId = `slot-${day}-${period}`;
+                const el = document.getElementById(slotId);
+                const key = `${day}-${period}`;
+                
+                // 清空并重置
+                el.innerHTML = '';
+                el.style.cursor = 'pointer';
+
+                if (scheduleData[key]) {
+                    // 有课程，渲染卡片
+                    el.innerHTML = `
+                        <div class="course-card" onclick="deleteCourse('${key}', event)">
+                            <div class="course-name">${scheduleData[key].name}</div>
+                            <div class="course-room">${scheduleData[key].room}</div>
+                        </div>`;
+                } else {
+                    // 无课程，渲染添加按钮
+                    el.innerHTML = `
+                        <div class="add-btn-container">
+                            <div class="add-btn" onclick="addCourse(${day}, ${period}, event)">+</div>
+                        </div>`;
+                }
+            }
+        }
+    }
+
+    // 3. 添加课程逻辑
+    window.addCourse = function(day, period, event) {
+        event.stopPropagation(); // 防止冒泡
+        const name = prompt(`请输入 [周${['一','二','三','四','五','六','日'][day-1]}] 第${period}节的课程名称:`);
+        if (name) {
+            const room = prompt("请输入教室位置 (可为空):") || "未知教室";
+            scheduleData[`${day}-${period}`] = { name, room };
+            saveAndRender();
+        }
+    };
+
+    // 4. 删除课程逻辑 (点击课程卡片)
+    window.deleteCourse = function(key, event) {
+        event.stopPropagation();
+        if(confirm("确定要删除这门课吗？")) {
+            delete scheduleData[key];
+            saveAndRender();
+        }
+    };
+
+    // 5. 保存并重新渲染
+    function saveAndRender() {
+        localStorage.setItem('mySchedule', JSON.stringify(scheduleData));
+        renderSchedule();
+    }
+
+    // 6. 重置数据
+    window.resetData = function() {
+        if(confirm("确定重置为初始默认课表吗？")) {
+            scheduleData = { ...defaultSchedule };
+            saveAndRender();
+        }
+    };
+
+    // 初始化渲染
+    renderSchedule();
+</script>
+<!-- 弹窗样式 (默认隐藏) -->
+<style>
+    .modal {
+        display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); z-index: 100;
+        align-items: center; justify-content: center;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+        background: white; padding: 25px; border-radius: 16px; width: 85%; max-width: 350px;
+    }
+    .modal-content h3 { margin-bottom: 15px; font-size: 18px; }
+    .modal-content input {
+        width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
+        margin-bottom: 15px; font-size: 14px;
+    }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .modal-actions button {
+        border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer;
+    }
+    .btn-cancel { background: #f0f0f0; color: #666; }
+    .btn-save { background: #4a90e2; color: white; }
+</style>
+
+<!-- 添加课程的弹窗 -->
+<div id="addModal" class="modal">
+    <div class="modal-content">
+        <h3>添加课程</h3>
+        <input type="text" id="courseNameInput" placeholder="课程名称" />
+        <input type="text" id="courseRoomInput" placeholder="教室 (如: 教3-201)" />
+        <div class="modal-actions">
+            <button class="btn-cancel" onclick="closeModal()">取消</button>
+            <button class="btn-save" onclick="saveCourse()">保存</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentDay = 0, currentPeriod = 0;
+    const modal = document.getElementById('addModal');
+    const nameInput = document.getElementById('courseNameInput');
+    const roomInput = document.getElementById('courseRoomInput');
+
+    window.addCourse = function(day, period, event) {
+        event.stopPropagation();
+        currentDay = day; currentPeriod = period;
+        nameInput.value = ''; roomInput.value = '';
+        modal.classList.add('active');
+        setTimeout(() => nameInput.focus(), 100);
+    };
+
+    window.closeModal = function() { modal.classList.remove('active'); };
+    
+    window.saveCourse = function() {
+        const name = nameInput.value.trim();
+        if(!name) return alert("请输入课程名称！");
+        const room = roomInput.value.trim() || "未知教室";
+        
+        scheduleData[`${currentDay}-${currentPeriod}`] = { name, room };
+        saveAndRender();
+        closeModal();
+    };
+
+    window.deleteCourse = function(key, event) {
+        event.stopPropagation();
+        if(confirm("确定要删除这门课吗？")) {
+            delete scheduleData[key];
+            saveAndRender();
+        }
+    };
+</script>
