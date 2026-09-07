@@ -5,30 +5,95 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>极简课表</title>
     <style>
-        :root { --bg: #f9fafb; --card: #ffffff; --text: #1f2937; --border: #e5e7eb; --primary: #3b82f6; }
-        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h1 { font-size: 24px; margin: 0; }
-        .btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
-        
-        /* 课表网格样式 */
-        .schedule-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); gap: 8px; }
-        .grid-header { font-size: 12px; color: #6b7280; text-align: center; padding: 8px 0; font-weight: 600; }
-        .time-col { font-size: 12px; color: #6b7280; display: flex; align-items: center; justify-content: center; }
-        .grid-cell { background: var(--card); border: 1px dashed var(--border); border-radius: 8px; height: 60px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #9ca3af; }
-        .grid-cell:hover { border-color: var(--primary); background: #eff6ff; }
-        .course-card { background: var(--primary); color: white; border: none; border-radius: 6px; padding: 4px 8px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; font-size: 12px; line-height: 1.4; }
+/* 1. 全局与液态背景 */
+:root { 
+    --glass-bg: rgba(255, 255, 255, 0.4); 
+    --glass-border: rgba(255, 255, 255, 0.6); 
+    --text: #1f2937; 
+    --primary: rgba(59, 130, 246, 0.8); 
+}
+body { 
+    font-family: system-ui, sans-serif; 
+    margin: 0; padding: 20px; 
+    /* 制造动态感：使用大面积的柔和渐变背景 */
+    background: linear-gradient(135deg, #e0eafc, #cfdef3, #fbc2eb);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
+    color: var(--text); 
+    min-height: 100vh;
+}
+@keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
 
-        /* 弹窗样式 */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 10; }
-        .modal { background: white; padding: 24px; border-radius: 12px; width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .modal h3 { margin: 0 0 16px 0; font-size: 18px; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px; }
-        .form-group input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; outline: none; }
-        .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
-        .btn-cancel { background: #f3f4f6; color: var(--text); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; flex: 1; }
-        .btn-save { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; flex: 1; }
+/* 2. 头部动态排版 */
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+h1 { font-size: 28px; margin: 0; font-weight: 800; letter-spacing: -1px; transition: 0.3s; }
+h1:hover { transform: scale(1.02); } /* 标题悬停微放大 */
+
+/* 3. 液态玻璃按钮 */
+.btn { 
+    background: var(--glass-bg); color: var(--text); border: 1px solid var(--glass-border); 
+    padding: 10px 20px; border-radius: 16px; cursor: pointer; font-size: 14px; font-weight: 600;
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 弹性过渡曲线 */
+}
+.btn:hover { background: rgba(255,255,255,0.7); transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+.btn:active { transform: translateY(0) scale(0.95); } /* 按下回弹效果 */
+
+/* 4. 液态网格 */
+.schedule-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); gap: 10px; }
+.grid-header { font-size: 13px; color: #4b5563; text-align: center; padding: 8px 0; font-weight: 700; }
+.time-col { font-size: 12px; color: #6b7280; display: flex; align-items: center; justify-content: center; font-weight: 600; }
+
+/* 5. 液态课程卡片 */
+.grid-cell { 
+    background: var(--glass-bg); border: 1px solid var(--glass-border); 
+    border-radius: 16px; height: 70px; cursor: pointer; 
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; 
+    font-size: 14px; color: #9ca3af; font-weight: bold;
+}
+.grid-cell:hover { background: rgba(255,255,255,0.6); border-color: #fff; transform: scale(1.03); z-index: 2; }
+
+.course-card { 
+    background: var(--primary); color: white; border: none; border-radius: 12px; 
+    padding: 6px; width: 100%; height: 100%; display: flex; flex-direction: column; 
+    justify-content: center; align-items: center; cursor: pointer; font-size: 13px; 
+    line-height: 1.4; font-weight: 600; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.course-card:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
+
+/* 6. 液态弹窗 */
+.modal-overlay { 
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
+    background: rgba(0,0,0,0.2); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+    display: none; align-items: center; justify-content: center; z-index: 10; 
+    opacity: 0; transition: opacity 0.3s ease;
+}
+.modal-overlay.show { display: flex; opacity: 1; }
+.modal { 
+    background: rgba(255, 255, 255, 0.6); border: 1px solid var(--glass-border);
+    padding: 28px; border-radius: 24px; width: 340px; 
+    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+.modal-overlay.show .modal { transform: scale(1); }
+.modal h3 { margin: 0 0 20px 0; font-size: 20px; font-weight: 800; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 13px; color: #4b5563; margin-bottom: 6px; font-weight: 600; }
+.form-group input { 
+    width: 100%; padding: 10px; border: 1px solid var(--glass-border); border-radius: 12px; 
+    box-sizing: border-box; outline: none; background: rgba(255,255,255,0.5); 
+    transition: 0.3s; font-size: 14px;
+}
+.form-group input:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+.btn-cancel { background: rgba(255,255,255,0.5); color: var(--text); border: 1px solid var(--glass-border); padding: 10px; border-radius: 12px; cursor: pointer; flex: 1; font-weight: 600; transition: 0.3s; }
+.btn-cancel:hover { background: rgba(255,255,255,0.8); }
+.btn-save { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 12px; cursor: pointer; flex: 1; font-weight: 600; transition: 0.3s; }
+.btn-save:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
     </style>
 </head>
 <body>
