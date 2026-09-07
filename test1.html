@@ -155,9 +155,9 @@ function renderGrid() {
             const key = `${dIdx}-${pIdx}`;
             const course = schedule[key];
             if (course) {
-                grid.innerHTML += `<div class="grid-cell" onclick="openModal('${key}')"><div class="course-card">${course.name}<br><small>${course.room}</small></div></div>`;
+                            grid.innerHTML += `<div class="grid-cell" onclick="openModal('${key}')"><div class="course-card">${course.name}<br><small>${course.room}</small><br><small>${course.teacher || ''}</small><br><small>学分:${course.credit || '-'}</small><br><small>${course.note || ''}</small></div></div>`;
             } else {
-                grid.innerHTML += `<div class="grid-cell" onclick="openModal('${key}')">+</div>`;
+                            grid.innerHTML += `<div class="grid-cell" onclick="openModal('${key}')"></div>`;
             }
         });
     });
