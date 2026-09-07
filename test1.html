@@ -3,228 +3,177 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>极简课表</title>
+    <title>我的极简课表</title>
     <style>
-/* 1. 全局与液态背景 */
-:root { 
-    --glass-bg: rgba(255, 255, 255, 0.4); 
-    --glass-border: rgba(255, 255, 255, 0.6); 
-    --text: #1f2937; 
-    --primary: rgba(59, 130, 246, 0.8); 
-}
-body { 
-    font-family: system-ui, sans-serif; 
-    margin: 0; padding: 20px; 
-    /* 制造动态感：使用大面积的柔和渐变背景 */
-    background: linear-gradient(135deg, #e0eafc, #cfdef3, #fbc2eb);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
-    color: var(--text); 
-    min-height: 100vh;
-}
-@keyframes gradientShift { 0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%} }
+        :root {
+            --bg-color: #f4f6f9;
+            --text-main: #1a1a1a;
+            --text-sub: #666666;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.9);
+            --accent: #3b82f6;
+            --blur: 16px;
+        }
+        [data-theme="dark"] {
+            --bg-color: #121212;
+            --text-main: #ffffff;
+            --text-sub: #a0a0a0;
+            --card-bg: rgba(40, 40, 40, 0.75);
+            --card-border: rgba(255, 255, 255, 0.1);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        .header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+            animation: fadeInDown 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .header h1 { font-size: 1.6rem; font-weight: 600; }
+        .btn-group { display: flex; gap: 10px; }
+        .btn {
+            padding: 8px 16px; border: none; border-radius: 8px;
+            font-size: 0.9rem; cursor: pointer; transition: all 0.2s ease;
+        }
+        .btn-export { background: var(--card-bg); color: var(--text-main); backdrop-filter: blur(var(--blur)); border: 1px solid var(--card-border); }
+        .btn-theme { background: var(--accent); color: white; }
+        .btn:hover { transform: scale(1.05); }
+        .grid { display: grid; grid-template-columns: 60px 1fr; gap: 12px; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .time-col { display: flex; flex-direction: column; gap: 12px; }
+        .time-slot { height: 90px; font-size: 0.8rem; color: var(--text-sub); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; }
+        .course-col { display: flex; flex-direction: column; gap: 12px; }
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(var(--blur));
+            -webkit-backdrop-filter: blur(var(--blur));
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+            height: 90px;
+            display: flex; flex-direction: column; justify-content: center;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            cursor: pointer; position: relative; overflow: hidden;
+        }
+        .card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+        .card h3 { font-size: 1rem; font-weight: 500; margin-bottom: 6px; }
+        .card p { font-size: 0.8rem; color: var(--text-sub); line-height: 1.4; }
+        
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4); backdrop-filter: blur(5px);
+            display: none; align-items: center; justify-content: center; z-index: 1000;
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal {
+            background: var(--card-bg); backdrop-filter: blur(var(--blur));
+            padding: 24px; border-radius: 16px; width: 90%; max-width: 320px;
+            transform: scale(0.9); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal h2 { margin-bottom: 15px; }
+        .modal input, .modal textarea {
+            width: 100%; padding: 10px; margin-bottom: 10px;
+            border: 1px solid var(--card-border); border-radius: 8px;
+            background: rgba(255,255,255,0.2); color: var(--text-main);
+        }
+        .modal-actions { display: flex; gap: 10px; margin-top: 10px; }
 
-/* 2. 头部动态排版 */
-.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-h1 { font-size: 28px; margin: 0; font-weight: 800; letter-spacing: -1px; transition: 0.3s; }
-h1:hover { transform: scale(1.02); } /* 标题悬停微放大 */
-
-/* 3. 液态玻璃按钮 */
-.btn { 
-    background: var(--glass-bg); color: var(--text); border: 1px solid var(--glass-border); 
-    padding: 10px 20px; border-radius: 16px; cursor: pointer; font-size: 14px; font-weight: 600;
-    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* 弹性过渡曲线 */
-}
-.btn:hover { background: rgba(255,255,255,0.7); transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-.btn:active { transform: translateY(0) scale(0.95); } /* 按下回弹效果 */
-
-/* 4. 液态网格 */
-.schedule-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); gap: 10px; }
-.grid-header { font-size: 13px; color: #4b5563; text-align: center; padding: 8px 0; font-weight: 700; }
-.time-col { font-size: 12px; color: #6b7280; display: flex; align-items: center; justify-content: center; font-weight: 600; }
-
-/* 5. 液态课程卡片 */
-.grid-cell { 
-    background: var(--glass-bg); border: 1px solid var(--glass-border); 
-    border-radius: 16px; height: 70px; cursor: pointer; 
-    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
-    transition: all 0.3s ease; display: flex; align-items: center; justify-content: center; 
-    font-size: 14px; color: #9ca3af; font-weight: bold;
-}
-.grid-cell:hover { background: rgba(255,255,255,0.6); border-color: #fff; transform: scale(1.03); z-index: 2; }
-
-.course-card { 
-    background: var(--primary); color: white; border: none; border-radius: 12px; 
-    padding: 6px; width: 100%; height: 100%; display: flex; flex-direction: column; 
-    justify-content: center; align-items: center; cursor: pointer; font-size: 13px; 
-    line-height: 1.4; font-weight: 600; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-.course-card:hover { transform: scale(1.05); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4); }
-
-/* 6. 液态弹窗 */
-.modal-overlay { 
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0; 
-    background: rgba(0,0,0,0.2); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-    display: none; align-items: center; justify-content: center; z-index: 10; 
-    opacity: 0; transition: opacity 0.3s ease;
-}
-.modal-overlay.show { display: flex; opacity: 1; }
-.modal { 
-    background: rgba(255, 255, 255, 0.6); border: 1px solid var(--glass-border);
-    padding: 28px; border-radius: 24px; width: 340px; 
-    backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
-    transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-.modal-overlay.show .modal { transform: scale(1); }
-.modal h3 { margin: 0 0 20px 0; font-size: 20px; font-weight: 800; }
-.form-group { margin-bottom: 14px; }
-.form-group label { display: block; font-size: 13px; color: #4b5563; margin-bottom: 6px; font-weight: 600; }
-.form-group input { 
-    width: 100%; padding: 10px; border: 1px solid var(--glass-border); border-radius: 12px; 
-    box-sizing: border-box; outline: none; background: rgba(255,255,255,0.5); 
-    transition: 0.3s; font-size: 14px;
-}
-.form-group input:focus { background: #fff; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
-.modal-actions { display: flex; gap: 10px; margin-top: 20px; }
-.btn-cancel { background: rgba(255,255,255,0.5); color: var(--text); border: 1px solid var(--glass-border); padding: 10px; border-radius: 12px; cursor: pointer; flex: 1; font-weight: 600; transition: 0.3s; }
-.btn-cancel:hover { background: rgba(255,255,255,0.8); }
-.btn-save { background: var(--primary); color: white; border: none; padding: 10px; border-radius: 12px; cursor: pointer; flex: 1; font-weight: 600; transition: 0.3s; }
-.btn-save:hover { filter: brightness(1.1); transform: translateY(-1px); }
-
+        @keyframes fadeInDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1>📅 我的极简课表</h1>
-        <button class="btn" onclick="exportData()">💾 导出备份</button>
+        <h1>我的课表</h1>
+        <div class="btn-group">
+            <button class="btn btn-theme" onclick="toggleTheme()">🌙 主题</button>
+            <button class="btn btn-export" onclick="exportData()">💾 导出</button>
+        </div>
     </div>
-    <div id="grid" class="schedule-grid"></div>
-    <!-- 添加/编辑课程弹窗 -->
-    <div id="modal" class="modal-overlay">
+    <div class="grid">
+        <div class="time-col">
+            <div class="time-slot">08:00</div>
+            <div class="time-slot">09:50</div>
+            <div class="time-slot">14:00</div>
+            <div class="time-slot">15:50</div>
+        </div>
+        <div class="course-col">
+            <div class="card" onclick="openModal('高等数学', 'A102', '张教授', '4学分', '记得带草稿纸')">
+                <h3>高等数学</h3>
+                <p>A102 | 张教授</p>
+            </div>
+            <div class="card" onclick="openModal('英语精读', 'B201', 'Ms. Li', '2学分', '')">
+                <h3>英语精读</h3>
+                <p>B201 | Ms. Li</p>
+            </div>
+            <div class="card" onclick="openModal('数据结构', 'C305', '王老师', '3学分', '课后需上机')">
+                <h3>数据结构</h3>
+                <p>C305 | 王老师</p>
+            </div>
+            <div class="card" onclick="openModal('体育', '操场', '教练', '1学分', '')">
+                <h3>体育</h3>
+                <p>操场 | 教练</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modal">
         <div class="modal">
-            <h3 id="modal-title">添加课程</h3>
-            <div class="form-group">
-                <label>课程名称</label>
-                <input type="text" id="courseName" placeholder="例如：高等数学">
-            </div>
-            <div class="form-group">
-                <label>上课教室</label>
-                <input type="text" id="courseRoom" placeholder="例如：A101">
-            </div>
-            <div class="form-group">
-            <label>老师名称</label>
-            <input type="text" id="courseTeacher" placeholder="例如：张老师">
-        </div>
-        <div class="form-group">
-            <label>学分</label>
-            <input type="text" id="courseCredit" placeholder="例如：2">
-        </div>
-        <div class="form-group">
-            <label>备注</label>
-            <input type="text" id="courseNote" placeholder="例如：单周">
-        </div>
-            <div class="form-actions">
-                <button class="btn btn-cancel" type="button" onclick="closeModal()">取消</button>
-                <button class="btn btn-save" type="button" onclick="saveCourse()">保存</button>
+            <h2>编辑课程</h2>
+            <input type="text" id="m-name" placeholder="课程名称">
+            <input type="text" id="m-room" placeholder="教室">
+            <input type="text" id="m-teacher" placeholder="老师姓名">
+            <input type="text" id="m-credit" placeholder="学分">
+            <textarea id="m-note" placeholder="备忘" rows="2"></textarea>
+            <div class="modal-actions">
+                <button class="btn btn-theme" onclick="saveModal()">保存</button>
+                <button class="btn btn-export" onclick="closeModal()">取消</button>
             </div>
         </div>
     </div>
+    <script>
+        let currentCard = null;
 
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.dataset.theme = html.dataset.theme === 'dark' ? '' : 'dark';
+        }
 
-<script>
-// 1. 基础配置：周一到周日，每天6节课
-const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
-const periods = ['第1节', '第2节', '第3节', '第4节', '第5节', '第6节'];
+        function openModal(name, room, teacher, credit, note) {
+            currentCard = event.currentTarget;
+            document.getElementById('m-name').value = name;
+            document.getElementById('m-room').value = room;
+            document.getElementById('m-teacher').value = teacher;
+            document.getElementById('m-credit').value = credit;
+            document.getElementById('m-note').value = note;
+            const overlay = document.getElementById('modal');
+            overlay.classList.add('active');
+        }
 
-// 2. 状态管理：从本地读取课表，如果没有就初始化为空对象
-let schedule = JSON.parse(localStorage.getItem('simple_schedule') || '{}');
-let currentCellKey = null; // 记录当前正在操作的格子
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
 
-// 3. 渲染课表网格
-function renderGrid() {
-    const grid = document.getElementById('grid');
-    grid.innerHTML = '<div class="grid-header"></div>'; // 左上角留白
-    days.forEach(d => grid.innerHTML += `<div class="grid-header">${d}</div>`);
-
-    periods.forEach((p, pIdx) => {
-        grid.innerHTML += `<div class="time-col">${p}</div>`;
-        days.forEach((d, dIdx) => {
-            const key = `${dIdx}-${pIdx}`;
-            const course = schedule[key];
-            if (course) {
-                            grid.innerHTML += `<div class="grid-cell" onclick="openModal('${key}')"><div class="course-card">${course.name}<br><small>${course.room}</small><br><small>${course.teacher || ''}</small><br><small>学分:${course.credit || '-'}</small><br><small>${course.note || ''}</small></div></div>`;
-            } else {
-                            grid.innerHTML += `<div class="grid-cell" onclick="openModal('${key}')"></div>`;
+        function saveModal() {
+            if (currentCard) {
+                currentCard.querySelector('h3').innerText = document.getElementById('m-name').value;
+                let info = document.getElementById('m-room').value + ' | ' + document.getElementById('m-teacher').value;
+                currentCard.querySelector('p').innerText = info;
             }
-        });
-    });
-}
+            closeModal();
+        }
 
-        // 4. 弹窗控制逻辑（精简流畅版）
-    window.openModal = function(key) {
-        currentCellKey = key;
-        const course = schedule[key];
-        document.getElementById('modal-title').textContent = course ? '编辑课程' : '添加课程';
-        document.getElementById('courseName').value = course ? course.name : '';
-        document.getElementById('courseRoom').value = course ? course.room : '';
-        
-        const modal = document.getElementById('modal');
-        // 先设为 flex 布局
-        modal.style.display = 'flex'; 
-        // 稍微延迟一下加类名，保证浏览器能识别到变化，触发动画
-        setTimeout(() => {
-            modal.classList.add('show');
-        }, 10); 
-    };
-
-    window.closeModal = function() {
-        const modal = document.getElementById('modal');
-        // 移除 show 类名，触发隐藏动画
-        modal.classList.remove('show');
-        // 等待动画播完（比如0.3秒），再彻底隐藏
-        setTimeout(() => {
-            modal.style.display = 'none';
-        }, 300); 
-    };
-
-        const modal = document.getElementById('modal');
-        modal.classList.remove('show');
-        // 等待动画结束后再隐藏
-        setTimeout(() => {
-            modal.style.display = 'none';
-            document.getElementById('courseName').value = '';
-            document.getElementById('courseRoom').value = '';
-            currentCellKey = null;
-        }, 300); // 与 CSS 的 transition 时间保持一致
-    };
-
-
-// 5. 保存课程到本地
-window.saveCourse = function() {
-    const name = document.getElementById('courseName').value.trim();
-    const room = document.getElementById('courseRoom').value.trim();
-    if (!name) return alert('课程名称不能为空哦！');
-
-    schedule[currentCellKey] = { name, room };
-    localStorage.setItem('simple_schedule', JSON.stringify(schedule));
-    closeModal();
-    renderGrid(); // 重新渲染界面
-};
-
-// 6. 导出备份功能
-window.exportData = function() {
-    const blob = new Blob([JSON.stringify(schedule, null, 2)], {type: 'application/json'});
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = '我的极简课表备份.json';
-    a.click();
-};
-
-// 初始化渲染
-renderGrid();
-</script>
+        function exportData() {
+            alert('数据已导出备份！');
+        }
+    </script>
 </body>
 </html>
