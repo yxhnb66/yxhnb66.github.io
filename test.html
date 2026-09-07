@@ -238,3 +238,59 @@ function render(data) {
         </div>
     `;
 }
+
+// ========== 7. 历史、收藏与交互 ==========
+window.toggleFav = function(w) {
+    if (fav.includes(w)) fav = fav.filter(x => x !== w);
+    else fav.unshift(w);
+    save();
+    if (current && current.word === w) render(current);
+};
+
+function renderList(arr, type) {
+    if (arr.length === 0) {
+        app.innerHTML = `<div class="card empty">📭 暂无${type === "history" ? "搜索历史" : "收藏"}记录</div>`;
+        return;
+    }
+    let html = `<div class="card"><div class="list">`;
+    arr.forEach(w => {
+        html += `<div class="item">
+            <span onclick="q.value='${esc(w)}'; searchWord();">${esc(w)}</span>
+            <button class="small" onclick="event.stopPropagation(); ${type === "fav" ? `toggleFav('${esc(w)}'); renderList(fav, 'fav')` : `q.value='${esc(w)}'; searchWord();`}">
+                ${type === "fav" ? "移除" : "🔍"}
+            </button>
+        </div>`;
+    });
+    html += `</div></div>`;
+    app.innerHTML = html;
+}
+
+// ========== 8. 测试模块 (Quiz) ==========
+function startQuiz() {
+    const keys = Object.keys(local);
+    if (keys.length < 4) {
+        app.innerHTML = `<div class="card empty">词库单词太少，无法生成测试题</div>`;
+        return;
+    }
+    const correctIdx = Math.floor(Math.random() * keys.length);
+    const correctWord = keys[correctIdx];
+    const correctCn = local[correctWord].cn;
+    
+    let options = [correctCn];
+    while (options.length < 4) {
+        const rand = keys[Math.floor(Math.random() * keys.length)];
+        const randCn = local[rand].cn;
+        if (!options.includes(randCn)) options.push(randCn);
+    }
+    options.sort(() => Math.random() - 0.5);
+    
+    let html = `<div class="card">
+        <div class="word" style="font-size:32px; text-align:center;">${correctWord}</div>
+        <div class="phonetic" style="text-align:center; margin-bottom:18px;">${local[correctWord].phonetic}</div>
+        <div class="options">`;
+    options.forEach(opt => {
+        html += `<button class="option" onclick="checkAnswer(this, '${esc(opt)}', '${esc(correctCn)}')">${esc(opt)}</button>`;
+    });
+    html += `</div><div id="quiz-status" class="status" style="margin-top:15px;"></div></div>`;
+    app.innerHTML = html;
+}
