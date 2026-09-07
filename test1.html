@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>极简课表</title>
+    <style>
+        :root { --bg: #f9fafb; --card: #ffffff; --text: #1f2937; --border: #e5e7eb; --primary: #3b82f6; }
+        body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h1 { font-size: 24px; margin: 0; }
+        .btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; font-size: 14px; }
+        
+        /* 课表网格样式 */
+        .schedule-grid { display: grid; grid-template-columns: 60px repeat(7, 1fr); gap: 8px; }
+        .grid-header { font-size: 12px; color: #6b7280; text-align: center; padding: 8px 0; font-weight: 600; }
+        .time-col { font-size: 12px; color: #6b7280; display: flex; align-items: center; justify-content: center; }
+        .grid-cell { background: var(--card); border: 1px dashed var(--border); border-radius: 8px; height: 60px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #9ca3af; }
+        .grid-cell:hover { border-color: var(--primary); background: #eff6ff; }
+        .course-card { background: var(--primary); color: white; border: none; border-radius: 6px; padding: 4px 8px; width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; font-size: 12px; line-height: 1.4; }
+
+        /* 弹窗样式 */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); display: none; align-items: center; justify-content: center; z-index: 10; }
+        .modal { background: white; padding: 24px; border-radius: 12px; width: 320px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .modal h3 { margin: 0 0 16px 0; font-size: 18px; }
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; font-size: 12px; color: #6b7280; margin-bottom: 4px; }
+        .form-group input { width: 100%; padding: 8px; border: 1px solid var(--border); border-radius: 6px; box-sizing: border-box; outline: none; }
+        .modal-actions { display: flex; gap: 8px; margin-top: 16px; }
+        .btn-cancel { background: #f3f4f6; color: var(--text); border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; flex: 1; }
+        .btn-save { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 8px; cursor: pointer; flex: 1; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📅 我的极简课表</h1>
+        <button class="btn" onclick="exportData()">💾 导出备份</button>
+    </div>
+    <div id="grid" class="schedule-grid"></div>
+
+    <!-- 添加/编辑课程弹窗 -->
+    <div id="modal" class="modal-overlay">
+        <div class="modal">
+            <h3 id="modal-title">添加课程</h3>
+            <div class="form-group">
+                <label>课程名称</label>
+                <input type="text" id="courseName" placeholder="例如：高等数学">
+            </div>
+            <div class="form-group">
+                <label>上课教室</label>
+                <input type="text" id="courseRoom" placeholder="例如：A101">
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn-save" onclick="saveCourse()">保存</button>
+            </div>
+        </div>
+    </div>
+<script>
+// 1. 基础配置：周一到周日，每天6节课
+const days = ['周一', '周二', '周三', '周四', '周五', '周六', '周日'];
+const periods = ['第1节', '第2节', '第3节', '第4节', '第5节', '第6节'];
+
+// 2. 状态管理：从本地读取课表，如果没有就初始化为空对象
+let schedule = JSON.parse(localStorage.getItem('simple_schedule') || '{}');
+let currentCellKey = null; // 记录当前正在操作的格子
+
+// 3. 渲染课表网格
+function renderGrid() {
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '<div class="grid-header"></div>'; // 左上角留白
+    days.forEach(d => grid.innerHTML += `<div class="grid-header">${d}</div>`);
+
+    periods.forEach((p, pIdx) => {
+        grid.innerHTML += `<div class="time-col">${p}</div>`;
+        days.forEach((d, dIdx) => {
+            const key = `${dIdx}-${pIdx}`;
+            const course = schedule[key];
+            if (course) {
+                grid.innerHTML += `<div class="grid-cell" onclick="openModal('${key}')"><div class="course-card">${course.name}<br><small>${course.room}</small></div></div>`;
+            } else {
+                grid.innerHTML += `<div class="grid-cell" onclick="openModal('${key}')">+</div>`;
+            }
+        });
+    });
+}
+
+// 4. 弹窗控制逻辑
+window.openModal = function(key) {
+    currentCellKey = key;
+    const course = schedule[key];
+    document.getElementById('modal-title').textContent = course ? '编辑课程' : '添加课程';
+    document.getElementById('courseName').value = course ? course.name : '';
+    document.getElementById('courseRoom').value = course ? course.room : '';
+    document.getElementById('modal').style.display = 'flex';
+};
+
+window.closeModal = function() {
+    document.getElementById('modal').style.display = 'none';
+    document.getElementById('courseName').value = '';
+    document.getElementById('courseRoom').value = '';
+    currentCellKey = null;
+};
+
+// 5. 保存课程到本地
+window.saveCourse = function() {
+    const name = document.getElementById('courseName').value.trim();
+    const room = document.getElementById('courseRoom').value.trim();
+    if (!name) return alert('课程名称不能为空哦！');
+
+    schedule[currentCellKey] = { name, room };
+    localStorage.setItem('simple_schedule', JSON.stringify(schedule));
+    closeModal();
+    renderGrid(); // 重新渲染界面
+};
+
+// 6. 导出备份功能
+window.exportData = function() {
+    const blob = new Blob([JSON.stringify(schedule, null, 2)], {type: 'application/json'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '我的极简课表备份.json';
+    a.click();
+};
+
+// 初始化渲染
+renderGrid();
+</script>
+</body>
+</html>
