@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WordMate 平板优化版</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#718096;--blue:#2563eb;--soft:#eaf1ff;--line:#e3e8f0}
+.dark{--bg:#111827;--card:#1f2937;--text:#f3f4f6;--muted:#aeb8c7;--soft:#263b61;--line:#374151}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif}
+.wrap{max-width:960px;margin:0 auto;padding:24px 16px 60px}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;gap:12px;flex-wrap:wrap}
+h1{margin:0;font-size:32px}
+.sub{color:var(--muted)}
+.theme{border:1px solid var(--line);background:var(--card);padding:10px 16px;border-radius:12px;font-size:16px}
+.search{display:flex;gap:10px;background:var(--card);padding:14px;border-radius:17px;box-shadow:0 8px 30px #0001}
+.search input{flex:1;border:0;font-size:18px;background:transparent;outline:none}
+.search button{border:0;border-radius:10px;padding:14px 22px;font-size:17px;background:var(--blue);color:#fff}
+.tabs{display:flex;gap:8px;overflow:auto;margin:17px 0}
+.tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);padding:12px 20px;border-radius:12px;font-size:16px}
+.tab.active{background:var(--soft);border-color:var(--blue)}
+.card{background:var(--card);border:1px solid var(--line);padding:18px;border-radius:18px;padding:22px;margin-top:14px}
+.tag{display:inline-block;color:var(--blue);background:var(--soft);padding:6px 12px;border-radius:7px;font-size:14px;margin:4px}
+.actions{display:flex;gap:8px;margin-top:18px}
+.small{border:1px solid var(--line);background:var(--card);padding:9px 15px;border-radius:10px;font-size:15px}
+.empty{text-align:center;color:var(--muted);padding:22px}
+.list{display:grid;gap:9px}
+.item{display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);padding:12px;border-radius:10px;background:var(--card)}
+.option{padding:13px;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+.status{font-size:14px;color:var(--muted);margin-top:10px;text-align:center}
+.word h2{margin:0;font-size:34px}
+.word .phonetic{font-size:22px;color:var(--blue);margin:6px 0}
+.def{margin:10px 0;line-height:1.7;font-size:17px}
+.ex{color:var(--muted);margin:8px 0;padding-left:10px;border-left:2px solid var(--soft)}
+@media(max-width:600px){
+	.wrap{padding:16px 12px 50px}
+	h1{font-size:26px}
+	.word h2{font-size:28px}
+	.word .phonetic{font-size:20px}
+	.search button{padding:14px 16px}
+	.actions{flex-wrap:wrap}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+<div><h1>📖 WordMate</h1><div class="sub">平板触屏优化版 · 单词查询</div></div>
+<button class="theme" id="themeBtn">切换深色</button>
+</div>
+<div class="search">
+<input id="q" placeholder="输入英文单词，例如 apple" autocomplete="off">
+<button type="button" id="goBtn">🔍 搜索</button>
+</div>
+<div id="status" class="status">可联网搜索｜内置常用单词备用词库</div>
+<div class="tabs">
+<button class="tab active" data-t="search">🔍 搜索</button>
+<button class="tab" data-t="history">🕒 历史</button>
+<button class="tab" data-t="fav">⭐ 收藏</button>
+</div>
+<div id="app"></div>
+</div>
+<script>
+const $=x=>document.querySelector(x),app=$("#app"),q=$("#q"),status=$("#status"),themeBtn=$("#themeBtn"),goBtn=$("#goBtn");
+let current=null,history=JSON.parse(localStorage.getItem("wm_h")||"[]"),fav=JSON.parse(localStorage.getItem("wm_f")||"[]");
+
+const local={
+apple:{cn:"苹果",pos:"名词",phonetic:"/ˈæpl/",def:"a round fruit with red, green, or yellow skin",ex:"I eat an apple every day.|我每天吃一个苹果。"},
+book:{cn:"书；书籍",pos:"名词",phonetic:"/bʊk/",def:"a set of written or printed pages bound together",ex:"I bought a new book.|我买了一本新书。"},
+beautiful:{cn:"美丽的；漂亮的",pos:"形容词",phonetic:"/ˈbjuːtɪfl/",def:"pleasing to look at or hear",ex:"She has a beautiful smile.|她拥有美丽的笑容。"},
+computer:{cn:"电脑；计算机",pos:"名词",phonetic:"/kəmˈpjuːtər/",def:"an electronic machine that processes information",ex:"I study with my computer.|我用电脑学习。"},
+important:{cn:"重要的",pos:"形容词",phonetic:"/ɪmˈpɔːrtnt/",def:"having great value or importance",ex:"This is an important lesson.|这是一堂很重要的课。"},
+happy:{cn:"快乐的；幸福的",pos:"形容词",phonetic:"/ˈhæpi/",def:"feeling pleasure or satisfaction",ex:"She looks very happy.|她看起来十分开心。"},
+water:{cn:"水",pos:"名词",phonetic:"/ˈwɔːtər/",def:"a clear liquid that people, animals and plants need",ex:"Please give me some water.|请给我一点水。"},
+friend:{cn:"朋友",pos:"名词",phonetic:"/frend/",def:"a person you know and like",ex:"He is my best friend.|他是我最好的朋友。"},
+school:{cn:"学校",pos:"名词",phonetic:"/ˈskuːl/",def:"a place where children or students learn",ex:"I go to school each weekday.|我工作日去上学。"},
+future:{cn:"未来",pos:"名词",phonetic:"/ˈfjuːtʃər/",def:"the time that will happen after now",ex:"We should think about our future.|我们应当思考自己的未来。"},
+medicine:{cn:"药物；医学",pos:"名词",phonetic:"/ˈmedsn/",def:"science of treating illness; drug for healing",ex:"He studies medicine at university.|他在大学学习医学。"},
+patient:{cn:"病人；耐心的",pos:"名词/形容词",phonetic:"/ˈpeɪʃnt/",def:"person receiving medical care; able to wait calmly",ex:"The doctor helped the patient.|医生帮助这位病人。"},
+health:{cn:"健康",pos:"名词",phonetic:"/helθ/",def:"state of being free from sickness",ex:"Good sleep is good for health.|充足睡眠有益于健康。"}
+};
+
+function save(){
+localStorage.setItem("wm_h",JSON.stringify(history));
+localStorage.setItem("wm_f",JSON.stringify(fav));
+}
+
+function isFav(w){return fav.some(x=>x.word===w)}
+function toggleFav(word,obj){
+let i=fav.findIndex(x=>x.word===word);
+if(i>=0) fav.splice(i,1);
+else fav.push({word,...obj});
+save();
+renderTab();
+}
+
+function pushHistory(word,obj){
+history=history.filter(x=>x.word!==word);
+history.unshift({word,...obj});
+if(history.length>60) history.length=60;
+save();
+}
+
+async function lookup(word){
+word=word.trim().toLowerCase();
+if(!word) return null;
+if(local[word]) return {word,...local[word]};
+status.textContent="⏳ 查询中，请稍候…";
+try{
+let res=await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`);
+if(!res.ok){status.textContent="⚠️ 联网无结果";return null;}
+let arr=await res.json();
+if(!arr||!arr.length){status.textContent="⚠️ 未查到释义";return null;}
+let it=arr[0];
+let phonetic=it.phonetic||((it.phonetics||[]).find(p=>p.text)||{}).text||"";
+let pos=it.meanings?.[0]?.partOfSpeech||"";
+let def=it.meanings?.[0]?.definitions?.[0]?.definition||"";
+let ex=it.meanings?.[0]?.definitions?.[0]?.example||"";
+status.textContent="✅ 联网查询完成";
+return {word,phonetic,pos,def,ex,cn:""};
+}catch(e){status.textContent="❌ 网络异常";return null;}
+}
+
+function renderCard(o){
+if(!o){app.innerHTML=`<div class="empty">没有查到内容</div>`;return;}
+current=o;
+let starText=isFav(o.word)?"⭐ 取消收藏":"☆ 加入收藏";
+app.innerHTML=`
+<div class="card word">
+<h2>${o.word}</h2>
+<div class="phonetic">${o.phonetic||''}</div>
+<div><span class="tag">${o.pos||''}</span>${o.cn?`<span class="tag">${o.cn}</span>`:""}</div>
+<div class="def">${o.def||""}</div>
+${o.ex?`<div class="ex">例句：${o.ex}</div>`:""}
+<div class="actions">
+<button class="small favBtn">${starText}</button>
+<button class="small copyBtn">📋复制单词</button>
+</div>
+</div>`;
+$(".favBtn").onclick=()=>toggleFav(o.word,o);
+$(".copyBtn").onclick=()=>{navigator.clipboard.writeText(o.word);status.textContent="已复制单词";};
+pushHistory(o.word,o);
+renderTab();
+}
+
+function renderTab(t="search"){
+document.querySelectorAll(".tab").forEach(tb=>tb.classList.toggle("active",tb.dataset.t===t));
+if(t==="history"){
+if(!history.length){app.innerHTML=`<div class="empty">暂无查询历史</div>`;return;}
+app.innerHTML=`
+<div class="list">
+${history.map((it,idx)=>`<div class="item"><span>${it.word}</span><button class="small re" data-i="${idx}">打开</button></div>`).join("")}
+</div>
+<div class="actions"><button class="small" id="clearHis">🗑️清空全部历史</button></div>`;
+document.querySelectorAll(".re").forEach(b=>b.onclick=()=>{let d=history[+b.dataset.i];renderCard(d);});
+$("#clearHis").onclick=()=>{history=[];save();renderTab("history");};
+}else if(t==="fav"){
+if(!fav.length){app.innerHTML=`<div class="empty">暂无收藏单词</div>`;return;}
+app.innerHTML=`
+<div class="list">
+${fav.map((it,idx)=>`<div class="item"><span>${it.word}</span><button class="small re" data-i="${idx}">打开</button></div>`).join("")}
+</div>
+<div class="actions"><button class="small" id="clearFav">🗑️清空全部收藏</button></div>`;
+document.querySelectorAll(".re").forEach(b=>b.onclick=()=>{let d=fav[+b.dataset.i];renderCard(d);});
+$("#clearFav").onclick=()=>{fav=[];save();renderTab("fav");};
+}else{app.innerHTML="";status.textContent="可联网搜索｜内置常用单词备用词库";}
+}
+
+async function doSearch(){
+let w=q.value.trim();
+if(!w) return;
+let res=await lookup(w);
+renderCard(res);
+}
+
+goBtn.onclick=doSearch;
+q.onkeydown=e=>{if(e.key==="Enter") doSearch();};
+document.querySelectorAll(".tab").forEach(tb=>tb.onclick=()=>renderTab(tb.dataset.t));
+
+themeBtn.onclick=()=>{
+document.body.classList.toggle("dark");
+themeBtn.textContent=document.body.classList.contains("dark")?"切换浅色":"切换深色";
+};
+</script>
+</body>
+</html>
