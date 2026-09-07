@@ -131,3 +131,53 @@ async function searchWord(){
         status.textContent="⚡ 正在并行查询大型词库……";
         app.innerHTML='<div class="card empty">⚡ 正在查询，请稍候……</div>';
     }
+// 回车触发搜索
+q.onkeydown = e => { if (e.key === "Enter") searchWord(); };
+
+// ========== 4. 数据标准化 ==========
+function normalizeEnglishDictionaryAPI(d, w) {
+    if (!d || !d.meanings) return null;
+    return {
+        word: d.word || w,
+        phonetic: d.phonetic || (d.phonetics && d.phonetics[0]?.text) || "",
+        meanings: d.meanings.map(m => ({
+            partOfSpeech: m.partOfSpeech,
+            definitions: m.definitions.slice(0, 5).map(def => ({
+                definition: def.definition,
+                example: def.example || "",
+                synonyms: def.synonyms || [],
+                antonyms: def.antonyms || []
+            }))
+        }))
+    };
+}
+
+function normalizeOpenDictionary(d, w){
+    if(!d) return null;
+    const meanings=[];
+    for(const e of (d.etymologies||[])){
+        for(const p of (e.partsOfSpeech||[])){
+            const defs=[];
+            for(const s of (p.senses||[]).slice(0,5)){
+                if(s.sense){
+                    defs.push({
+                        definition:s.sense,
+                        example:(s.examples&&s.examples[0])||"",
+                        synonyms:[],
+                        antonyms:[]
+                    });
+                }
+            }
+            if(defs.length) meanings.push({partOfSpeech:p.partOfSpeech,definitions:defs});
+        }
+    }
+    if(!meanings.length) return null;
+    const synonyms=[], antonyms=[];
+    for(const m of meanings){
+        for(const d of m.definitions){
+            if(Array.isArray(d.synonyms)) synonyms.push(...d.synonyms);
+            if(Array.isArray(d.antonyms)) antonyms.push(...d.antonyms);
+        }
+    }
+    return { word: w, phonetic: d.pronunciation || "", meanings, synonyms, antonyms };
+}
