@@ -18,355 +18,285 @@
             --border-color: #e5e7eb;
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: var(--bg-color); height: 100vh; display: flex; flex-direction: column; overflow: hidden; color: var(--text-main); }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: var(--text-main); background-color: var(--bg-color); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* ========== 顶部标题栏 ========== */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 20px;
-            background-color: var(--card-bg);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            z-index: 10;
+        /* ========== 顶部导航 ========== */
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 16px; background-color: var(--card-bg); border-bottom: 1px solid var(--border-color);
+            z-index: 10; flex-shrink: 0;
         }
-        .header h1 { font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 6px; }
-        .reset-btn {
-            background: #ff4757; color: white; border: none; padding: 6px 14px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: transform 0.2s;
-        }
-        .reset-btn:active { transform: scale(0.95); }
+        .navbar h1 { font-size: 16px; font-weight: 600; }
+        .reset-btn { background: none; border: none; color: var(--text-sub); font-size: 13px; cursor: pointer; }
 
-        /* ========== 课表网格区 ========== */
-        .schedule-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 15px 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            -webkit-overflow-scrolling: touch;
-        }
-        .week-header {
+        /* ========== 课表主体（含时间轴） ========== */
+        .timetable-container { flex: 1; overflow: auto; padding-bottom: 20px; -webkit-overflow-scrolling: touch; }
+        .timetable {
             display: grid;
-            grid-template-columns: 40px repeat(7, 1fr);
-            gap: 8px;
-            padding: 0 5px;
-            margin-bottom: 5px;
+            grid-template-columns: 40px repeat(7, 1fr); /* 第一列为时间轴 */
+            grid-auto-rows: minmax(60px, auto);
+            gap: 4px;
+            padding: 4px;
         }
-        .week-header div {
-            text-align: center;
-            font-size: 14px;
-            color: var(--text-sub);
-            font-weight: 500;
+        /* 头部（周一到周日） */
+        .timetable > div {
+            background-color: transparent; border: none;
+            font-size: 12px; color: var(--text-sub); display: flex; justify-content: center; align-items: center;
         }
-        
-        .time-row {
-            display: grid;
-            grid-template-columns: 40px repeat(7, 1fr);
-            gap: 8px;
-            align-items: stretch;
-        }
-        .time-label {
-            background-color: var(--time-bg);
-            color: var(--text-sub);
-            font-size: 12px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 12px;
-            height: 90px;
-        }
-        .course-cell {
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-            min-height: 90px;
-            padding: 8px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            font-size: 12px;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.1s;
-            border: 1px solid transparent;
-        }
-        .course-cell:active { transform: scale(0.98); }
-        .course-cell.active { border-color: var(--primary); }
-        
-        .course-info { margin-top: auto; }
-        .course-name { font-weight: 600; font-size: 13px; margin-bottom: 3px; }
-        .course-detail { color: var(--text-sub); font-size: 11px; line-height: 1.4; }
-        
-        .add-icon {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--text-sub);
-            font-size: 18px;
-            font-weight: 300;
-            opacity: 0.5;
-        }
-        .add-icon.blue-plus { color: var(--primary); opacity: 0.8; font-weight: bold;}
+        .timetable > div:first-child { background: transparent; } /* 左上角空白格 */
+        .timetable > div:nth-child(-n+8):not(:first-child) { font-weight: 600; color: var(--text-main); font-size: 14px; height: 30px; }
 
-        /* ========== 弹窗样式 ========== */
+        /* 时间轴 */
+        .time-axis { font-size: 12px; font-weight: 600; color: var(--text-sub); }
+
+        /* 普通课表格子 */
+        .class-slot { 
+            position: relative; cursor: pointer; transition: background-color 0.2s ease; 
+            min-height: 60px; background-color: var(--card-bg); border-radius: 8px; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .class-slot:active { background-color: #f0f0f0; }
+        
+        /* 加号按钮与动态缩放 */
+        .add-btn {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1);
+            width: 24px; height: 24px; border-radius: 50%; background-color: var(--primary);
+            color: white; font-size: 16px; display: flex; justify-content: center; align-items: center;
+            transition: transform 0.15s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            opacity: 0.85;
+        }
+        /* 核心：点击加号时的动态放大感 */
+        .class-slot:active .add-btn { transform: translate(-50%, -50%) scale(1.3); }
+
+        /* 课程卡片 */
+        .course-card {
+            position: absolute; top: 2px; left: 2px; right: 2px; bottom: 2px;
+            background-color: transparent; border-radius: 6px; padding: 4px 6px;
+            overflow: hidden; cursor: pointer;
+            display: flex; flex-direction: column; gap: 2px;
+        }
+        .course-card:active { opacity: 0.8; }
+        .course-name { font-size: 12px; font-weight: bold; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--primary); }
+        .course-info { font-size: 10px; color: var(--text-sub); line-height: 1.4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
+
+        /* ========== 弹窗 (Modal) - 已修复居中问题 ========== */
         .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
-            display: none; align-items: flex-end; justify-content: center; z-index: 100;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background-color: rgba(0, 0, 0, 0.4); z-index: 1000;
+            display: flex; justify-content: center; align-items: center; /* 完美居中 */
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
-        .modal-overlay.show { display: flex; animation: modal-in 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        @keyframes modal-in { from { opacity: 0; } to { opacity: 1; } }
-        
-        .modal-content {
-            background: var(--card-bg); width: 100%; max-width: 500px;
-            border-radius: 24px 24px 0 0; padding: 25px 20px 35px 20px;
-            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal {
+            background-color: var(--card-bg); border-radius: 16px; padding: 24px; width: 85%; max-width: 400px;
+            transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
         }
-        .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 20px; text-align: center; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 6px; padding-left: 2px;}
-        .form-group input {
-            width: 100%; padding: 12px 14px; border: 1px solid var(--border-color); border-radius: 12px;
-            font-size: 14px; outline: none; transition: border-color 0.2s; background: #fff;
+        .modal-overlay.active .modal { transform: scale(1); }
+        .modal h2 { font-size: 18px; margin-bottom: 16px; }
+        .modal .form-group { margin-bottom: 12px; }
+        .modal label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 4px; }
+        .modal input, .modal textarea {
+            width: 100%; padding: 10px 12px; font-size: 14px; border: 1px solid var(--border-color);
+            border-radius: 8px; background-color: #fafafa; outline: none;
         }
-        .form-group input:focus { border-color: var(--primary); }
-        
-        .modal-actions { display: flex; gap: 12px; margin-top: 25px; }
-        .btn { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: transform 0.1s, background 0.2s; }
-        .btn:active { transform: scale(0.97); }
-        .btn-cancel { background: #f1f3f5; color: var(--text-main); }
-        .btn-save { background: var(--primary); color: white; }
-        .btn-save:active { background: var(--primary-active); }
+        .modal textarea { resize: none; height: 60px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px; }
+        .modal-actions button { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; cursor: pointer; font-weight: 600;}
+        .btn-cancel { background-color: var(--time-bg); color: var(--text-main); }
+        .btn-save { background-color: var(--primary); color: white; }
 
-        /* ========== 极致的弹性碰撞入场特效 ========== */
-        #intro-overlay {
+        /* ==================== 极致弹性入场动画 CSS ==================== */
+        #yxhnb-intro-overlay {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background-color: var(--bg-color); z-index: 9999;
-            display: flex; align-items: center; justify-content: center;
-            pointer-events: auto;
+            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            opacity: 1; transition: opacity 0.4s ease; pointer-events: none;
         }
-        #intro-overlay.hidden {
-            pointer-events: none;
-            animation: fadeOut 0.5s cubic-bezier(0.4, 0, 1, 1) forwards;
+        #yxhnb-intro-overlay.hidden { opacity: 0; pointer-events: none; }
+        #yxhnb-text {
+            font-size: 42px; font-weight: 900; color: var(--primary); letter-spacing: 4px;
+            opacity: 0;
+            /* 核心碰撞贝塞尔曲线 */
+            animation: yxhnb-pop-bounce 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
         }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-
-        .splash-text-container { display: flex; align-items: center; gap: 4px; }
-        .splash-text {
-            font-size: 42px; font-weight: 900; color: var(--primary);
-            transform-origin: center bottom; opacity: 0; transform: translateY(80px) scale(0.2) rotate(-30deg);
+        @keyframes yxhnb-pop-bounce {
+            0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+            60% { transform: scale(1.15) rotate(3deg); opacity: 1; }
+            80% { transform: scale(0.95) rotate(-1deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
-        /* 物理弹跳核心：让字母像果冻一样砸下来，回弹，再稳定 */
-        .splash-text.animate {
-            animation: elastic-crash 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-        }
-        @keyframes elastic-crash {
-            0% { opacity: 0; transform: translateY(-150px) scale(1.4) rotate(15deg); }
-            40% { opacity: 1; transform: translateY(15px) scale(0.9) rotate(-5deg); }
-            65% { transform: translateY(-10px) scale(1.05) rotate(2deg); }
-            85% { transform: translateY(5px) scale(0.98) rotate(-1deg); }
-            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
-        }
-        /* 让每个字母的碰撞有细微的时间差，产生连锁碰撞感 */
-        .splash-text:nth-child(1) { animation-delay: 0s; }
-        .splash-text:nth-child(2) { animation-delay: 0.08s; }
-        .splash-text:nth-child(3) { animation-delay: 0.16s; }
-        .splash-text:nth-child(4) { animation-delay: 0.24s; }
-        .splash-text:nth-child(5) { animation-delay: 0.32s; }
-
-        #intro-btn {
-            margin-top: 50px; padding: 14px 36px; font-size: 16px; font-weight: bold; color: white;
-            background: var(--primary); border: none; border-radius: 30px; cursor: pointer;
-            box-shadow: 0 10px 25px rgba(0, 122, 255, 0.4); opacity: 0; transform: translateY(20px);
-            animation: btn-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.8s forwards;
-        }
-        @keyframes btn-pop { to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
-    
-    <!-- 极致弹性入场特效容器 -->
-    <div id="intro-overlay">
-        <div style="display: flex; flex-direction: column; align-items: center;">
-            <div class="splash-text-container">
-                <span class="splash-text">y</span>
-                <span class="splash-text">x</span>
-                <span class="splash-text">h</span>
-                <span class="splash-text">n</span>
-                <span class="splash-text">b</span>
-            </div>
-            <button id="intro-btn" onclick="closeIntro()">开启课程表</button>
+
+    <!-- 极致弹性入场特效层 -->
+    <div id="yxhnb-intro-overlay">
+        <div id="yxhnb-text">yxhnb</div>
+    </div>
+
+    <header class="navbar">
+        <h1>🎓 我的极简课表</h1>
+        <button class="reset-btn" onclick="resetAllData()">重置数据</button>
+    </header>
+
+    <div class="timetable-container">
+        <div class="timetable" id="timetable-grid">
+            <!-- 动态生成网格 -->
         </div>
     </div>
 
-    <!-- 主体内容 -->
-    <header class="header">
-        <h1>🎓 我的极简课表</h1>
-        <button class="reset-btn" onclick="resetSchedule()">重置数据</button>
-    </header>
-    
-    <main class="schedule-container" id="schedule-container">
-        <div class="week-header">
-            <div></div><div>一</div><div>二</div><div>三</div><div>四</div><div>五</div><div>六</div><div>日</div>
-        </div>
-        <!-- 课表将通过 JS 动态生成 -->
-    </main>
-
     <!-- 添加/修改课程 弹窗 -->
-    <div class="modal-overlay" id="course-modal">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <div class="modal-title" id="modal-title">添加课程</div>
-            <div class="form-group"><label>课程名称</label><input type="text" id="input-name" placeholder="例如：高等数学"></div>
-            <div class="form-group"><label>教室</label><input type="text" id="input-room" placeholder="例如：3-201"></div>
-            <div class="form-group"><label>老师</label><input type="text" id="input-teacher" placeholder="例如：张老师"></div>
-            <div class="form-group"><label>学分</label><input type="number" id="input-credit" placeholder="例如：5.0"></div>
-            <div class="form-group"><label>备注</label><input type="text" id="input-note" placeholder="例如：带好计算器"></div>
+    <div class="modal-overlay" id="courseModal" onclick="closeModal()">
+        <div class="modal" onclick="event.stopPropagation()">
+            <h2 id="modalTitle">添加/修改课程</h2>
+            <div class="form-group">
+                <label>课程名称</label>
+                <input type="text" id="inputName" placeholder="例如：高等数学">
+            </div>
+            <div class="form-group">
+                <label>教室</label>
+                <input type="text" id="inputRoom" placeholder="例如：3-201">
+            </div>
+            <div class="form-group">
+                <label>老师</label>
+                <input type="text" id="inputTeacher" placeholder="例如：张老师">
+            </div>
+            <div class="form-group">
+                <label>学分</label>
+                <input type="number" id="inputCredits" placeholder="例如：5.0" step="0.5">
+            </div>
+            <div class="form-group">
+                <label>备注</label>
+                <textarea id="inputNote" placeholder="例如：带好计算器"></textarea>
+            </div>
             <div class="modal-actions">
-                <button class="btn btn-cancel" onclick="closeModal()">取消</button>
-                <button class="btn btn-save" onclick="saveCourse()">保存</button>
+                <button class="btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn-save" onclick="saveCourse()">保存</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ================= 全局状态与初始化 =================
-        const totalSections = 12;
-        const days = ['一', '二', '三', '四', '五', '六', '日'];
-        let scheduleData = {};
-        let currentEditId = null;
+        // ========== 逻辑数据 ==========
+        const DAYS = ['一', '二', '三', '四', '五', '六', '日'];
+        const PERIODS = 12; // 总节课数
+        let timetableData = JSON.parse(localStorage.getItem('my_timetable_v3')) || {};
+        
+        let currentSlotKey = null;
 
-        window.onload = function() {
-            loadData();
-            initScheduleGrid();
-        };
+        // ========== DOM 元素获取 ==========
+        const gridEl = document.getElementById('timetable-grid');
+        const modalEl = document.getElementById('courseModal');
+        const modalTitleEl = document.getElementById('modalTitle');
+        const inputName = document.getElementById('inputName');
+        const inputRoom = document.getElementById('inputRoom');
+        const inputTeacher = document.getElementById('inputTeacher');
+        const inputCredits = document.getElementById('inputCredits');
+        const inputNote = document.getElementById('inputNote');
 
-        function loadData() {
-            const data = localStorage.getItem('yxhnb_schedule_v3');
-            scheduleData = data ? JSON.parse(data) : {};
+        // ========== 初始化 ==========
+        function init() {
+            renderGrid();
+            // 入场动画结束逻辑
+            const overlay = document.getElementById('yxhnb-intro-overlay');
+            setTimeout(() => {
+                overlay.classList.add('hidden');
+                setTimeout(() => { overlay.style.display = 'none'; }, 400);
+            }, 1200); 
         }
 
-        function saveData() {
-            localStorage.setItem('yxhnb_schedule_v3', JSON.stringify(scheduleData));
-            renderCourses();
-        }
+        // ========== 渲染课表网格 ==========
+        function renderGrid() {
+            let html = '';
+            // 第一行表头 (左上角空白 + 星期)
+            html += `<div></div>`;
+            DAYS.forEach(day => html += `<div>${day}</div>`);
 
-        // ================= 课表网格渲染逻辑 =================
-        function initScheduleGrid() {
-            const container = document.getElementById('schedule-container');
-            container.innerHTML = `
-                <div class="week-header">
-                    <div></div>${days.map(d => `<div>${d}</div>`).join('')}
-                </div>`;
-            
-            for (let i = 1; i <= totalSections; i++) {
-                const row = document.createElement('div');
-                row.className = 'time-row';
-                row.innerHTML = `
-                    <div class="time-label">${i}</div>
-                    ${days.map((_, dayIndex) => {
-                        const cellId = `cell-${dayIndex}-${i}`;
-                        return `<div class="course-cell" id="${cellId}" onclick="openModal('${cellId}')">
-                                    <span class="add-icon" id="icon-${cellId}">+</span>
-                                    <div class="course-info" id="info-${cellId}"></div>
-                                </div>`;
-                    }).join('')}
-                `;
-                container.appendChild(row);
-            }
-            renderCourses();
-        }
-
-        function renderCourses() {
-            for (let d = 0; d < 7; d++) {
-                for (let s = 1; s <= totalSections; s++) {
-                    const cellId = `cell-${d}-${s}`;
-                    const data = scheduleData[cellId];
-                    const infoDiv = document.getElementById(`info-${cellId}`);
-                    const iconSpan = document.getElementById(`icon-${cellId}`);
-
-                    if (data && data.name) {
-                        iconSpan.style.display = 'none';
-                        infoDiv.innerHTML = `
-                            <div class="course-name">${data.name}</div>
-                            <div class="course-detail">
-                                ${data.room ? `<div>🏫 ${data.room}</div>` : ''}
-                                ${data.teacher ? `<div>👨‍🏫 ${data.teacher}</div>` : ''}
-                                ${data.credit ? `<div>🌟 ${data.credit}</div>` : ''}
-                                ${data.note ? `<div>📝 ${data.note}</div>` : ''}
-                            </div>`;
+            // 数据循环
+            for (let p = 1; p <= PERIODS; p++) {
+                // 时间轴
+                html += `<div class="time-axis">${p}</div>`;
+                // 7天格子
+                for (let d = 0; d < 7; d++) {
+                    const key = `${d + 1}-${p}`; // 格式: 星期-节次
+                    const course = timetableData[key];
+                    
+                    html += `<div class="class-slot" data-key="${key}">`;
+                    if (course && course.name) {
+                        html += `
+                            <div class="course-card" onclick="openEdit('${key}')">
+                                <div class="course-name">${course.name}</div>
+                                <div class="course-info">📍${course.room || ''}</div>
+                                <div class="course-info">👨‍🏫${course.teacher || ''}</div>
+                            </div>
+                        `;
                     } else {
-                        iconSpan.style.display = 'block';
-                        iconSpan.innerHTML = '+';
-                        infoDiv.innerHTML = '';
+                        html += `<div class="add-btn" onclick="openAdd('${key}')">+</div>`;
                     }
+                    html += `</div>`;
                 }
             }
+            gridEl.innerHTML = html;
         }
 
-        function resetSchedule() {
-            if(confirm('确定要清空所有课程数据吗？此操作不可恢复。')) {
-                scheduleData = {};
-                saveData();
-            }
+        // ========== 交互逻辑 ==========
+        window.openAdd = function(key) {
+            currentSlotKey = key;
+            modalTitleEl.textContent = "添加课程";
+            clearForm();
+            showModal();
+        };
+
+        window.openEdit = function(key) {
+            currentSlotKey = key;
+            modalTitleEl.textContent = "修改课程";
+            const course = timetableData[key];
+            inputName.value = course.name || '';
+            inputRoom.value = course.room || '';
+            inputTeacher.value = course.teacher || '';
+            inputCredits.value = course.credits || '';
+            inputNote.value = course.note || '';
+            showModal();
+        };
+
+        function clearForm() {
+            inputName.value = ''; inputRoom.value = ''; inputTeacher.value = ''; 
+            inputCredits.value = ''; inputNote.value = '';
         }
 
-        // ================= 弹窗交互逻辑 =================
-        function openModal(cellId) {
-            const modal = document.getElementById('course-modal');
-            const title = document.getElementById('modal-title');
-            currentEditId = cellId;
-            const data = scheduleData[cellId] || {};
+        function showModal() { modalEl.classList.add('active'); }
+        window.closeModal = function() { modalEl.classList.remove('active'); };
 
-            title.innerText = data.name ? '修改课程' : '添加课程';
-            document.getElementById('input-name').value = data.name || '';
-            document.getElementById('input-room').value = data.room || '';
-            document.getElementById('input-teacher').value = data.teacher || '';
-            document.getElementById('input-credit').value = data.credit || '';
-            document.getElementById('input-note').value = data.note || '';
+        window.saveCourse = function() {
+            const name = inputName.value.trim();
+            if (!name) { alert('请输入课程名称！'); return; }
 
-            modal.classList.add('show');
-        }
+            timetableData[currentSlotKey] = {
+                name: name,
+                room: inputRoom.value.trim(),
+                teacher: inputTeacher.value.trim(),
+                credits: inputCredits.value.trim(),
+                note: inputNote.value.trim()
+            };
 
-        function closeModal() {
-            document.getElementById('course-modal').classList.remove('show');
-        }
-
-        function saveCourse() {
-            const name = document.getElementById('input-name').value.trim();
-            if (!name) return alert('课程名称不能为空！');
-
-            if (name) {
-                scheduleData[currentEditId] = {
-                    name: name,
-                    room: document.getElementById('input-room').value.trim(),
-                    teacher: document.getElementById('input-teacher').value.trim(),
-                    credit: document.getElementById('input-credit').value.trim(),
-                    note: document.getElementById('input-note').value.trim()
-                };
-            } else {
-                delete scheduleData[currentEditId];
-            }
-            saveData();
+            saveToLocal();
+            renderGrid();
             closeModal();
-        }
+        };
 
-        // 点击遮罩层关闭弹窗
-        document.getElementById('course-modal').addEventListener('click', closeModal);
+        window.resetAllData = function() {
+            if(confirm("确定要清空所有课表数据吗？")) {
+                timetableData = {};
+                saveToLocal();
+                renderGrid();
+            }
+        };
 
-        // ================= 弹性入场特效控制逻辑 =================
-        function closeIntro() {
-            const overlay = document.getElementById('intro-overlay');
-            overlay.classList.add('hidden');
-        }
-        
-        // 页面加载时触发动画
-        setTimeout(() => {
-            const texts = document.querySelectorAll('.splash-text');
-            texts.forEach(t => t.classList.add('animate'));
-        }, 100);
+        function saveToLocal() { localStorage.setItem('my_timetable_v3', JSON.stringify(timetableData)); }
 
+        // 启动应用
+        init();
     </script>
 </body>
 </html>
