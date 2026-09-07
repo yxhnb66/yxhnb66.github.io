@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WordMate 稳定修复版</title>
+<style>
+:root{--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#718096;--blue:#2563eb;--soft:#eaf1ff;--line:#e3e8f0}
+.dark{--bg:#111827;--card:#1f2937;--text:#f3f4f6;--muted:#aeb8c7;--soft:#263b61;--line:#374151}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Microsoft YaHei",sans-serif}
+.wrap{max-width:900px;margin:auto;padding:25px 16px 60px}.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px}
+h1{margin:0;font-size:31px}.sub{color:var(--muted);margin-top:5px}.theme{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:12px;padding:10px 13px;cursor:pointer}
+.search{display:flex;gap:9px;background:var(--card);padding:9px;border-radius:17px;box-shadow:0 8px 30px #0001}.search input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--text);font-size:18px;padding:13px}.search button{border:0;border-radius:12px;background:var(--blue);color:white;font-weight:700;padding:0 22px;font-size:16px}
+.tabs{display:flex;gap:8px;overflow:auto;margin:17px 0}.tab{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--text);padding:9px 14px;border-radius:10px;cursor:pointer}.tab.active{color:var(--blue);background:var(--soft)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;margin-top:14px}.hero{display:flex;justify-content:space-between}.word{font-size:38px;font-weight:800}.phonetic{color:var(--muted);margin-top:5px}.speak{border:0;background:var(--soft);border-radius:50%;width:48px;height:48px;font-size:21px;cursor:pointer}
+.tag{display:inline-block;color:var(--blue);background:var(--soft);padding:5px 10px;border-radius:7px;font-size:13px;margin:18px 0 8px}.meaning{font-size:18px;line-height:1.7}.cn{font-size:21px;font-weight:650;margin:4px 0 12px}.example{background:var(--bg);padding:12px 14px;border-left:4px solid var(--blue);border-radius:7px;color:var(--muted);line-height:1.6}
+.actions{display:flex;gap:8px;margin-top:18px}.small{border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;padding:10px 14px;cursor:pointer}
+.empty{text-align:center;color:var(--muted);padding:22px}.list{display:grid;gap:9px}.item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--bg);border-radius:10px}.item span{cursor:pointer;font-weight:600}
+.options{display:grid;grid-template-columns:1fr 1fr;gap:10px}.option{padding:13px;border:1px solid var(--line);background:var(--card);color:var(--text);border-radius:10px;cursor:pointer}.correct{border-color:#16a34a!important}.wrong{border-color:#dc2626!important}
+.status{font-size:13px;color:var(--muted);margin-top:10px;text-align:center}
+@media(max-width:600px){.word{font-size:30px}.options{grid-template-columns:1fr}.search button{padding:0 16px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top"><div><h1>📖 WordMate</h1><div class="sub">稳定修复版 · 单词搜索</div></div><button class="theme" id="theme">🌙</button></div>
+<div class="search"><input id="q" placeholder="输入英文单词，例如 apple" autocomplete="off"><button type="button" onclick="searchWord()">搜索</button></div>
+<div id="status" class="status">可联网搜索；内置常用单词备用词库</div>
+<div class="tabs"><button class="tab active" data-t="search">🔎 搜索</button><button class="tab" data-t="history">🕘 历史</button><button class="tab" data-t="fav">⭐ 收藏</button><button class="tab" data-t="quiz">🧠 测试</button></div>
+<div id="app"></div>
+</div>
+<script>
+const $=x=>document.getElementById(x),app=$("app"),q=$("q"),status=$("status");
+let current=null,history=JSON.parse(localStorage.getItem("wm_h")||"[]"),fav=JSON.parse(localStorage.getItem("wm_f")||"[]");
+
+const local={
+apple:{cn:"苹果",pos:"名词",phonetic:"/ˈæpəl/",def:"a round fruit with red, green, or yellow skin",ex:"I eat an apple every day."},
+book:{cn:"书；书籍",pos:"名词",phonetic:"/bʊk/",def:"a set of written or printed pages bound together",ex:"I bought a new book."},
+beautiful:{cn:"美丽的；漂亮的",pos:"形容词",phonetic:"/ˈbjuːtɪfəl/",def:"pleasing to look at or hear",ex:"She has a beautiful smile."},
+computer:{cn:"电脑；计算机",pos:"名词",phonetic:"/kəmˈpjuːtər/",def:"an electronic machine that processes information",ex:"I use my computer every day."},
+important:{cn:"重要的",pos:"形容词",phonetic:"/ɪmˈpɔːrtənt/",def:"having great value or importance",ex:"This is an important question."},
+happy:{cn:"快乐的；幸福的",pos:"形容词",phonetic:"/ˈhæpi/",def:"feeling pleasure or satisfaction",ex:"She looks very happy."},
+water:{cn:"水",pos:"名词",phonetic:"/ˈwɔːtər/",def:"a clear liquid that people, animals and plants need",ex:"Please drink some water."},
+friend:{cn:"朋友",pos:"名词",phonetic:"/frend/",def:"a person you know and like",ex:"He is my best friend."},
+school:{cn:"学校",pos:"名词",phonetic:"/skuːl/",def:"a place where children or students learn",ex:"I go to school every day."},
+future:{cn:"未来",pos:"名词",phonetic:"/ˈfjuːtʃər/",def:"the time that will happen after now",ex:"We should think about the future."},
+run:{cn:"跑；奔跑；运行",pos:"动词",phonetic:"/rʌn/",def:"to move quickly on foot",ex:"I run every morning."},
+read:{cn:"阅读；读",pos:"动词",phonetic:"/riːd/",def:"to look at and understand written words",ex:"I read a book every night."},
+write:{cn:"写；书写",pos:"动词",phonetic:"/raɪt/",def:"to form letters or words on a page",ex:"Please write your name."},
+eat:{cn:"吃",pos:"动词",phonetic:"/iːt/",def:"to put food into your mouth and swallow it",ex:"We eat dinner at seven."},
+drink:{cn:"喝；饮用",pos:"动词",phonetic:"/drɪŋk/",def:"to take liquid into your mouth and swallow it",ex:"I drink water every day."},
+go:{cn:"去；走",pos:"动词",phonetic:"/ɡoʊ/",def:"to move from one place to another",ex:"I go to school every day."},
+good:{cn:"好的；优秀的",pos:"形容词",phonetic:"/ɡʊd/",def:"of a high quality or standard",ex:"She is a good student."},
+new:{cn:"新的",pos:"形容词",phonetic:"/nuː/",def:"recently made, bought, or discovered",ex:"I have a new computer."},
+hello:{cn:"你好",pos:"感叹词",phonetic:"/həˈloʊ/",def:"a greeting used when meeting someone",ex:"Hello! Nice to meet you."},
+world:{cn:"世界",pos:"名词",phonetic:"/wɜːrld/",def:"the earth and all its people and countries",ex:"The world is changing."},
+family:{cn:"家庭；家人",pos:"名词",phonetic:"/ˈfæməli/",def:"a group of people related to each other",ex:"My family lives here."},
+student:{cn:"学生",pos:"名词",phonetic:"/ˈstuːdənt/",def:"a person who studies at a school or university",ex:"She is a good student."},
+teacher:{cn:"老师",pos:"名词",phonetic:"/ˈtiːtʃər/",def:"a person who teaches others",ex:"My teacher is very kind."},
+love:{cn:"爱；喜欢",pos:"动词/名词",phonetic:"/lʌv/",def:"to like or care about someone or something very much",ex:"I love my family."},
+learn:{cn:"学习",pos:"动词",phonetic:"/lɜːrn/",def:"to gain knowledge or a skill",ex:"I want to learn English."}
+};
+
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function save(){localStorage.setItem("wm_h",JSON.stringify(history));localStorage.setItem("wm_f",JSON.stringify(fav))}
+function cacheGet(key){try{return JSON.parse(localStorage.getItem(key)||"null")}catch(e){return null}}
+function cacheSet(key,val){try{localStorage.setItem(key,JSON.stringify(val))}catch(e){}
+}
+function cacheDelete(key){try{localStorage.removeItem(key)}catch(e){}}
+
+function speak(w){if(!("speechSynthesis"in window)){alert("当前浏览器不支持发音");return}speechSynthesis.cancel();let u=new SpeechSynthesisUtterance(w);u.lang="en-US";speechSynthesis.speak(u)}
+function localResult(w){let x=local[w];if(!x)return null;return {word:w,phonetic:x.phonetic,meanings:[{partOfSpeech:x.pos,definitions:[{definition:x.def,example:x.ex,_cn:x.cn}]}],_cn:x.cn,_offline:true}}
+
+async function fetchWithTimeout(url,ms=7000){
+ const c=new AbortController(),timer=setTimeout(()=>c.abort(),ms);
+ try{return await fetch(url,{signal:c.signal,cache:"no-store"})}finally{clearTimeout(timer)}
+}
+async function searchWord(){
+  const w=q.value.trim().toLowerCase().replace(/\s+/g," ");
+  if(!w)return;
+  if(!/^[a-zA-Z][a-zA-Z' -]{0,49}$/.test(w)){
+    app.innerHTML='<div class="card empty">请输入英文单词，例如 <b>apple</b>。</div>';
+    return;
+  }
+
+  // Cache: repeat searches are instant.
+  const cached=cacheGet("wm_word_"+w);
+  if(cached){
+    current=cached;
+    history=[w,...history.filter(x=>x!==w)].slice(0,30); save();
+    status.textContent="⚡ 缓存命中 · 即时显示";
+    render(cached);
+    addChinese(cached,w).then(()=>{
+      cacheSet("wm_word_"+w,cached);
+      if(current===cached){render(cached);status.textContent="✓ 中文释义已更新";}
+    });
+    return;
+  }
+
+  // Very common offline words can still be instant, but do not block online lookup.
+  const localData=localResult(w);
+  if(localData){
+    current=localData;
+    history=[w,...history.filter(x=>x!==w)].slice(0,30); save();
+    status.textContent="⚡ 本地词库 · 即时显示";
+    render(localData);
+    // Continue online lookup in background to get richer data.
+  }else{
+    status.textContent="⚡ 正在并行查询大型词库……";
+    app.innerHTML='<div class="card empty">⚡ 正在查询，请稍候……</div>';
+  }
+
+  // Three independent sources. We use the first valid result.
+  const tasks=[];
+
+  tasks.push(
+    fetchWithTimeout(
+      "https://englishdictionaryapi.com/api/v1/words/"+encodeURIComponent(w),8000
+    ).then(async r=>{
+      if(!r.ok)throw Error();
+      return normalizeEnglishDictionaryAPI(await r.json(),w);
+    }).catch(()=>null)
+  );
+
+  tasks.push(
+    fetchWithTimeout(
+      "https://api.dictionaryapi.dev/api/v2/entries/en/"+encodeURIComponent(w),8000
+    ).then(async r=>{
+      if(!r.ok)throw Error();
+      const a=await r.json();
+      return Array.isArray(a)&&a.length?a[0]:null;
+    }).catch(()=>null)
+  );
+
+  // Open Dictionary: 260k+ Wiktionary-derived words, split into small JSON shards.
+  // This gives a third route for uncommon/advanced vocabulary.
+  if(w.length>=2 && /^[a-z]/.test(w)){
+    const shard="https://raw.githubusercontent.com/mhollingshead/open-dictionary/main/api/"
+      +w[0]+"/"+w.slice(0,2)+".json";
+    tasks.push(
+      fetchWithTimeout(shard,8000).then(async r=>{
+        if(!r.ok)throw Error();
+        const all=await r.json(), d=all?.[w];
+        return normalizeOpenDictionary(d,w);
+      }).catch(()=>null)
+    );
+  }
+
+  let data=null;
+  try{
+    data=await Promise.any(tasks.map(p=>p.then(x=>{
+      if(!x)throw Error();
+      return x;
+    })));
+  }catch(e){}
+
+  if(data){
+    current=data;
+    history=[w,...history.filter(x=>x!==w)].slice(0,30); save();
+    cacheSet("wm_word_"+w,data);
+    status.textContent="✓ 已找到 · 中文释义后台加载";
+    render(data);
+
+    addChinese(data,w).then(()=>{
+      cacheSet("wm_word_"+w,data);
+      if(current===data){render(data);status.textContent="✓ 中文释义已更新";}
+    });
+    return;
+  }
+
+  // If local data was already shown, keep it instead of flashing an error.
+  if(localData){
+    status.textContent="✓ 本地结果已显示";
+    return;
+  }
+
+  status.textContent="❌ 查询失败";
+  app.innerHTML=`<div class="card empty">❌ 暂时无法查询「${esc(w)}」。<br><br>三个词库都没有及时返回结果，请稍后重试。</div>`;
+}
+
+function normalizeOpenDictionary(d,w){
+  if(!d)return null;
+  const meanings=[];
+  for(const e of (d.etymologies||[])){
+    for(const p of (e.partsOfSpeech||[])){
+      const defs=[];
+      for(const s of (p.senses||[]).slice(0,5)){
+        if(s.sense){
+          defs.push({
+            definition:s.sense,
+            example:(s.examples&&s.examples[0])||"",
+            synonyms:[],
+            antonyms:[]
+          });
+        }
+      }
+      if(defs.length)meanings.push({partOfSpeech:p.partOfSpeech,definitions:defs});
+    }
+  }
+  if(!meanings.length)return null;
+  const synonyms=[];
+  const antonyms=[];
+  for(const m of meanings){
+    for(const d of m.definitions){
+      if(Array.isArray(d.synonyms))synonyms.push(...d.synonyms);
+      if(Array.isArray(d.antonyms))antonyms.push(...d.antonyms);
+    }
+  }
+  return {
+    word:d.word||w,
+    phonetic:d.pronunciation?.ipa||d.pronunciation?.text||"",
+    phonetics:d.pronunciation?.audio?[{audio:d.pronunciation.audio}]:[],
+    meanings,
+    synonyms:[...new Set(synonyms)].slice(0,20),
+    antonyms:[...new Set(antonyms)].slice(0,20),
+    _source:"Open Dictionary"
+  };
+}
+
+function simplifyChinese(text){
+  if(!text)return "";
+  let s=text
+    .replace(/\s+/g," ")
+    .replace(/；/g,"；")
+    .replace(/[。！？]+$/,"")
+    .trim();
+  // Remove overly explanatory translator prefixes/phrases.
+  s=s.replace(/^(指|表示|用于|用来|通常指|指的是)\s*/,"");
+  s=s.replace(/，(?:表示|指|意思是).*/,"");
+  // Prefer the first concise alternatives when translation is long.
+  if(s.length>34){
+    const parts=s.split(/[；;、]/).map(x=>x.trim()).filter(Boolean);
+    if(parts.length>=2)s=parts.slice(0,3).join("；");
+    if(s.length>42)s=s.slice(0,42)+"…";
+  }
+  return s;
+}
+
+async function translateText(text){
+  if(!text)return "";
+  const key="wm_tr_"+text;
+  const cached=cacheGet(key);
+  if(cached)return cached;
+  try{
+    const r=await fetchWithTimeout(
+      "https://api.mymemory.translated.net/get?q="+encodeURIComponent(text)+"&langpair=en|zh-CN",5000
+    );
+    if(!r.ok)return "";
+    const d=await r.json(), out=simplifyChinese(d?.responseData?.translatedText||"");
+    if(out)cacheSet(key,out);
+    return out;
+  }catch(e){return ""}
+}
+async function addChinese(x,w){
+  x._cn=local[w]?.cn||x._cn||"";
+  const jobs=[];
+  for(const m of (x.meanings||[]).slice(0,6)){
+    for(const d of (m.definitions||[]).slice(0,2)){
+      if(!d._cn)jobs.push(translateText(d.definition).then(v=>{d._cn=v}));
+    }
+  }
+  if(!x._cn && x.meanings?.[0]?.definitions?.[0]){
+    jobs.push(translateText(x.meanings[0].definitions[0].definition).then(v=>{x._cn=v}));
+  }
+  await Promise.all(jobs);
+}
+
+function render(x){
+ current=x;let w=x.word.toLowerCase(),html=`<section class="card"><div class="hero"><div><div class="word">${esc(x.word)}</div><div class="phonetic">${esc(x.phonetic||"暂无音标")}</div></div><button class="speak" onclick="speak('${esc(x.word)}')">🔊</button></div>`;
+ if(x._cn)html+=`<span class="tag">🇨🇳 中文释义</span><div class="cn">${esc(x._cn)}</div>`;
+ for(let m of (x.meanings||[]).slice(0,5)){html+=`<span class="tag">${esc(m.partOfSpeech||"词性")}</span>`;for(let d of (m.definitions||[]).slice(0,3)){html+=`<div class="meaning">${esc(d.definition)}</div>`;if(d.example)html+=`<div class="example">💬 ${esc(d.example)}</div>`}}
+ let f=fav.includes(w);html+=`<div class="actions"><button class="small" onclick="toggleFav()">⭐ ${f?"取消收藏":"收藏单词"}</button><button class="small" onclick="speak('${esc(x.word)}')">🔊 朗读</button></div></section>`;app.innerHTML=html;
+}
+function toggleFav(){let w=current.word.toLowerCase();fav=fav.includes(w)?fav.filter(x=>x!==w):[w,...fav];save();render(current)}
+function list(type){let arr=type==="fav"?fav:history,title=type==="fav"?"⭐ 我的收藏":"🕘 搜索历史";app.innerHTML=`<section class="card"><h2>${title}</h2>${arr.length?`<div class="list">${arr.map(w=>`<div class="item"><span onclick="q.value='${esc(w)}';searchWord()">${esc(w)}</span><button class="small" onclick="speak('${esc(w)}')">🔊</button></div>`).join("")}</div>`:'<div class="empty">暂无记录</div>'}</section>`}
+const quizData=[["apple","苹果"],["book","书"],["beautiful","美丽的"],["computer","电脑"],["important","重要的"],["happy","快乐的"],["water","水"],["friend","朋友"],["school","学校"],["future","未来"]];
+function quiz(){let a=quizData[Math.floor(Math.random()*quizData.length)],c=[a,...quizData.filter(x=>x[0]!=a[0]).sort(()=>Math.random()-.5).slice(0,3)].sort(()=>Math.random()-.5);app.innerHTML=`<section class="card" style="text-align:center"><h2>🧠 单词测试</h2><div class="word" style="margin:18px">${a[0]}</div><div class="options">${c.map(x=>`<button class="option" onclick="answer(this,'${a[0]}','${x[0]}')">${x[1]}</button>`).join("")}</div></section>`}
+function answer(el,w,c){document.querySelectorAll(".option").forEach(x=>x.disabled=true);if(w===c){el.classList.add("correct");el.textContent+=" ✓"}else{el.classList.add("wrong");document.querySelectorAll(".option").forEach(x=>{let a=quizData.find(y=>y[0]===w);if(a&&x.textContent===a[1])x.classList.add("correct")})}}
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");let k=t.dataset.t;if(k==="search")app.innerHTML='<div class="card empty">输入英文单词开始搜索 ✨</div>';if(k==="history")list("history");if(k==="fav")list("fav");if(k==="quiz")quiz()});
+q.onkeydown=e=>{if(e.key==="Enter")searchWord()};
+$("theme").onclick=()=>{document.body.classList.toggle("dark");let d=document.body.classList.contains("dark");$("theme").textContent=d?"☀️":"🌙";localStorage.setItem("wm_dark",d)};
+if(localStorage.getItem("wm_dark")==="true")$("theme").click();
+app.innerHTML='<div class="card empty">输入英文单词开始搜索 ✨<br>例如：apple、beautiful、computer</div>';
+</script>
+</body>
+</html>
