@@ -3,369 +3,295 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>我的极简课表</title>
+    <title>我的极简课表 - 3.0 终极灵动版</title>
     <style>
+        /* ========== 基础变量 ========== */
         :root {
-            --bg-color: #f0f2f5;
+            --bg-color: #f5f6fa;
+            --text-main: #222;
+            --text-sub: #888;
             --card-bg: rgba(255, 255, 255, 0.95);
-            --card-border: #e5e7eb;
-            --text-main: #333;
-            --text-sub: #777;
+            --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
             --primary: #007AFF;
+            --primary-active: #005bb5;
+            --border-color: #e5e7eb;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body {
-            font-family: system-ui, -apple-system, sans-serif;
-            background-color: var(--bg-color);
-            height: 100vh;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; outline: none; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg-color); color: var(--text-main); overflow: hidden; height: 100vh; width: 100vw; }
+
+        /* ========== 1. 灵动可爱·物理碰撞入场层 ========== */
+        #app-entrance {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 9999; background: var(--bg-color);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        #app-entrance.hidden { opacity: 0; pointer-events: none; transform: scale(1.1); }
+
+        /* yxhnb 字母碰撞容器 */
+        .entrance-title {
+            display: flex; gap: 5px; margin-bottom: 60px;
+            font-size: 3.5rem; font-weight: 900; color: var(--primary);
+        }
+        .entrance-title span {
+            display: inline-block; opacity: 0;
+            animation: jelly-drop 0.8s cubic-bezier(0.28, 0.84, 0.42, 1) forwards;
+        }
+        .entrance-title span:nth-child(1) { animation-delay: 0.1s; }
+        .entrance-title span:nth-child(2) { animation-delay: 0.2s; }
+        .entrance-title span:nth-child(3) { animation-delay: 0.3s; }
+        .entrance-title span:nth-child(4) { animation-delay: 0.4s; }
+        .entrance-title span:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes jelly-drop {
+            0% { opacity: 0; transform: translateY(-150px) scale(0.8) rotate(-15deg); }
+            50% { opacity: 1; transform: translateY(20px) scale(1.15, 0.85) rotate(5deg); } /* 砸到地面的挤压感 */
+            70% { transform: translateY(-10px) scale(0.9, 1.1) rotate(-2deg); } /* 惯性回弹拉伸 */
+            85% { transform: translateY(5px) scale(1.05, 0.95) rotate(1deg); }
+            100% { opacity: 1; transform: translateY(0) scale(1) rotate(0deg); }
         }
 
-        /* 顶部导航 */
-        header {
-            background: #fff;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            z-index: 10;
+        /* 动态开启按钮 */
+        .start-btn-wrapper {
+            position: relative; opacity: 0; transform: translateY(30px);
+            animation: fade-up 0.6s ease forwards; animation-delay: 1.2s;
         }
-        h1 { font-size: 18px; color: var(--text-main); font-weight: 600; }
-        .reset-btn {
-            background: transparent;
-            border: 1px solid var(--card-border);
-            color: var(--text-sub);
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            cursor: pointer;
-        }
+        @keyframes fade-up { to { opacity: 1; transform: translateY(0); } }
 
-        /* 课表容器 (实现丝滑滚动) */
-        .schedule-container {
-            flex: 1;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        /* 星期标题行 */
-        .days-header {
-            display: grid;
-            grid-template-columns: 40px repeat(7, 1fr);
-            gap: 8px;
-            padding: 0 5px;
-            text-align: center;
-            font-size: 14px;
-            color: var(--text-sub);
-            position: sticky;
-            top: 0;
-            background: var(--bg-color);
-            padding-top: 10px;
-            z-index: 5;
-        }
-
-        /* 每一行（节次 + 星期卡片） */
-        .row {
-            display: grid;
-            grid-template-columns: 40px repeat(7, 1fr);
-            gap: 8px;
-            align-items: stretch;
-        }
-
-        .time-label {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 13px;
-            color: var(--text-sub);
-            font-weight: bold;
-        }
-
-        /* 课程卡片与加号按钮容器 */
-        .cell {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 8px;
-            min-height: 90px;
-            position: relative;
-            
-            /* 核心：点击动态缩放特效 */
-            transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
+        .start-btn {
+            position: relative; z-index: 1; background: var(--primary); color: #fff;
+            padding: 16px 48px; font-size: 1.2rem; font-weight: bold; border: none; border-radius: 50px;
+            cursor: pointer; box-shadow: 0 10px 30px rgba(0, 122, 255, 0.4);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             overflow: hidden;
         }
-        
-        /* 按下时的放大感 */
-        .cell:active {
-            transform: scale(0.96);
-            background-color: #f9fafb;
+        .start-btn:active { transform: scale(0.92); }
+
+        /* 按钮文字流光特效 */
+        .start-btn::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: btn-shine 2.5s infinite; animation-delay: 1.8s;
+        }
+        @keyframes btn-shine {
+            0% { left: -100%; } 20% { left: 100%; } 100% { left: 100%; }
         }
 
-        .add-btn {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 20px;
-            color: #ccc;
-            transition: color 0.2s;
+        /* 按钮呼吸光晕 */
+        .start-btn-wrapper::before {
+            content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 100%; height: 100%; background: var(--primary); border-radius: 50px; opacity: 0;
+            animation: pulse-glow 2s infinite ease-in-out; animation-delay: 1.8s; z-index: 0;
         }
-        .cell:hover .add-btn { color: var(--primary); }
+        @keyframes pulse-glow {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.5; }
+            50% { transform: translate(-50%, -50%) scale(1.25); opacity: 0; }
+        }
 
-        /* 课程内容样式 */
-        .course-info { display: none; flex-direction: column; height: 100%; gap: 2px; }
-        .has-course .add-btn { display: none; }
-        .has-course .course-info { display: flex; }
+        /* ========== 2. 课表主容器 (3.0 基础架构) ========== */
+        .timetable-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; padding: 20px 15px; opacity: 0; transition: opacity 0.5s ease 0.2s; }
+        .timetable-container.show { opacity: 1; }
+        .timetable-header { font-size: 1.5rem; font-weight: 800; margin-bottom: 20px; text-align: center; transform: translateY(-50px); opacity: 0; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease; }
+        .timetable-container.show .timetable-header { transform: translateY(0); opacity: 1; }
 
-        .c-name { font-size: 14px; font-weight: bold; color: var(--text-main); margin-bottom: 4px; line-height: 1.2;}
-        .c-detail { font-size: 11px; color: var(--text-sub); display: flex; align-items: center; gap: 4px; }
-        .c-detail span { background: rgba(0,0,0,0.03); padding: 2px 4px; border-radius: 4px; }
+        .grid { display: flex; flex-direction: column; flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .weekdays { display: grid; grid-template-columns: 40px repeat(7, 1fr); gap: 8px; margin-bottom: 15px; }
+        .weekdays div { text-align: center; font-weight: 600; font-size: 0.9rem; color: var(--text-sub); transform: translateY(-30px); opacity: 0; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease; }
+        .timetable-container.show .weekdays div { transform: translateY(0); opacity: 1; }
+        .timetable-container.show .weekdays div:nth-child(1) { transition-delay: 0.1s; }
+        .timetable-container.show .weekdays div:nth-child(2) { transition-delay: 0.15s; }
+        .timetable-container.show .weekdays div:nth-child(3) { transition-delay: 0.2s; }
+        .timetable-container.show .weekdays div:nth-child(4) { transition-delay: 0.25s; }
+        .timetable-container.show .weekdays div:nth-child(5) { transition-delay: 0.3s; }
+        .timetable-container.show .weekdays div:nth-child(6) { transition-delay: 0.35s; }
+        .timetable-container.show .weekdays div:nth-child(7) { transition-delay: 0.4s; }
+        .timetable-container.show .weekdays div:nth-child(8) { transition-delay: 0.45s; }
 
-        /* 弹窗样式 */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.4);
-            display: none; justify-content: center; align-items: center;
-            z-index: 100;
+        .time-slot { display: grid; grid-template-columns: 40px repeat(7, 1fr); gap: 8px; align-items: center; margin-bottom: 8px; }
+        .time-label { font-size: 0.75rem; color: var(--text-sub); text-align: center; transform: translateX(-20px); opacity: 0; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.5s ease; }
+        .timetable-container.show .time-label { transform: translateX(0); opacity: 1; }
+
+        .cell { background: var(--card-bg); border-radius: 12px; box-shadow: var(--shadow); height: 60px; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; transform: scale(0.5); opacity: 0; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.6s ease; }
+        .timetable-container.show .cell { transform: scale(1); opacity: 1; }
+        .cell:active { transform: scale(0.92); }
+
+        .add-btn { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); border: none; color: #fff; font-size: 18px; line-height: 24px; cursor: pointer; transition: background 0.2s, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; }
+        .add-btn:active { background: var(--primary-active); transform: scale(0.8); }
+
+        .course-info-box { width: 100%; height: 100%; padding: 4px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; font-size: 0.7rem; word-break: break-all; color: #fff; }
+        .course-info-box .name { font-weight: bold; font-size: 0.8rem; margin-bottom: 2px; }
+        .course-info-box .detail { opacity: 0.9; font-size: 0.65rem; }
+
+        /* ========== 3. 居中弹窗样式 (增强版表单) ========== */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.3s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: var(--card-bg); border-radius: 20px; padding: 25px; width: 90%; max-width: 400px; max-height: 85vh; overflow-y: auto; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15); transform: scale(0.7); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .modal-overlay.active .modal-content { transform: scale(1); }
+        .modal-content h3 { margin-bottom: 20px; font-size: 1.2rem; text-align: center; }
+        .form-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .form-group { flex: 1; display: flex; flex-direction: column; }
+        .form-group label { font-size: 0.75rem; color: var(--text-sub); margin-bottom: 4px; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 10px; font-size: 0.9rem; background: #fafafa; }
+        .form-group textarea { resize: none; height: 60px; font-family: inherit; }
+        .modal-actions { display: flex; justify-content: space-between; gap: 10px; margin-top: 20px; }
+        .modal-actions button { flex: 1; padding: 12px; border: none; border-radius: 10px; font-size: 1rem; font-weight: bold; cursor: pointer; transition: opacity 0.2s, transform 0.1s; }
+        .modal-actions button:active { transform: scale(0.95); }
+        .btn-confirm { background: var(--primary); color: #fff; }
+        .btn-cancel { background: #e5e7eb; color: var(--text-main); }
+
+        /* ========== 4. 平板端自适应适配 ========== */
+        @media (min-width: 768px) {
+            .timetable-container { padding: 40px 60px; align-items: center; justify-content: center; }
+            .grid { max-width: 1000px; width: 100%; }
+            .weekdays { grid-template-columns: 60px repeat(7, 1fr); gap: 15px; }
+            .weekdays div { font-size: 1.1rem; }
+            .time-slot { grid-template-columns: 60px repeat(7, 1fr); gap: 15px; margin-bottom: 15px; }
+            .cell { height: 90px; border-radius: 16px; }
+            .add-btn { width: 32px; height: 32px; font-size: 22px; line-height: 32px; }
+            .time-label { font-size: 0.9rem; }
+            .entrance-title { font-size: 5rem; }
         }
-        .modal {
-            background: #fff;
-            width: 90%; max-width: 400px;
-            border-radius: 16px;
-            padding: 20px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
-            transform: scale(0.9); opacity: 0;
-            transition: all 0.2s ease;
-        }
-        .modal.show { transform: scale(1); opacity: 1; }
-        .modal h2 { font-size: 18px; margin-bottom: 15px; }
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; font-size: 12px; color: var(--text-sub); margin-bottom: 4px; }
-        .form-group input, .form-group select {
-            width: 100%; padding: 10px; border: 1px solid var(--card-border);
-            border-radius: 8px; font-size: 14px; outline: none;
-        }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
-        .btn { padding: 8px 16px; border-radius: 8px; font-size: 14px; cursor: pointer; border: none; }
-        .btn-cancel { background: #f0f0f0; color: #666; }
-        .btn-save { background: var(--primary); color: #fff; }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>🎓 我的极简课表</h1>
-    <button class="reset-btn" onclick="clearAll()">重置数据</button>
-</header>
-
-<div class="schedule-container" id="scheduleContainer">
-    <!-- 动态生成课表 -->
-</div>
-
-<!-- 添加课程弹窗 -->
-<div class="modal-overlay" id="modalOverlay">
-    <div class="modal" id="addModal">
-        <h2>添加/修改课程</h2>
-        <div class="form-group">
-            <label>课程名称</label>
-            <input type="text" id="courseName" placeholder="例如：高等数学">
+    <!-- 灵动碰撞入场与开启按钮区域 -->
+    <div id="app-entrance">
+        <div class="entrance-title">
+            <span>y</span><span>x</span><span>h</span><span>n</span><span>b</span>
         </div>
-        <div class="form-group">
-            <label>教室</label>
-            <input type="text" id="courseRoom" placeholder="例如：3-201">
-        </div>
-        <div class="form-group">
-            <label>老师</label>
-            <input type="text" id="courseTeacher" placeholder="例如：张老师">
-        </div>
-        <div class="form-group">
-            <label>学分</label>
-            <input type="number" id="courseCredit" placeholder="例如：5.0">
-        </div>
-        <div class="form-group">
-            <label>备注</label>
-            <input type="text" id="courseNote" placeholder="例如：带好计算器">
-        </div>
-        <div class="modal-actions">
-            <button class="btn btn-cancel" onclick="closeModal()">取消</button>
-            <button class="btn btn-save" onclick="saveCourse()">保存</button>
+        <div class="start-btn-wrapper">
+            <button class="start-btn" onclick="startApp()">开启我的课表</button>
         </div>
     </div>
-</div>
 
+    <!-- 3.0 课表主区域 -->
+    <div class="timetable-container" id="timetable">
+        <div class="timetable-header">🎓 我的课表</div>
+        <div class="grid">
+            <div class="weekdays">
+                <div>时间</div><div>一</div><div>二</div><div>三</div>
+                <div>四</div><div>五</div><div>六</div><div>日</div>
+            </div>
+            <div id="slots-container"></div>
+        </div>
+    </div>
+
+    <!-- 增强版添加课程弹窗 (包含所有分区模块) -->
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <h3>添加/修改课程</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>课程名称</label>
+                    <input type="text" id="input-name" placeholder="例如：高等数学">
+                </div>
+                <div class="form-group">
+                    <label>学分</label>
+                    <input type="number" id="input-credit" placeholder="例如：4.0" step="0.5">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>上课时间</label>
+                    <input type="text" id="input-time" placeholder="例如：08:00-09:35">
+                </div>
+                <div class="form-group">
+                    <label>授课老师</label>
+                    <input type="text" id="input-teacher" placeholder="例如：张老师">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>教学楼/位置</label>
+                    <input type="text" id="input-location" placeholder="例如：A栋-301">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>备忘信息</label>
+                    <textarea id="input-note" placeholder="例如：记得带计算器..."></textarea>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal()">取消</button>
+                <button class="btn-confirm" onclick="saveCourse()">保存</button>
+            </div>
+        </div>
+    </div>
     <script>
-    // 初始化课表数据
-    const days = ['一', '二', '三', '四', '五', '六', '日'];
-    let courses = JSON.parse(localStorage.getItem('myScheduleData')) || {};
-    let currentCellId = null;
+        // 1. 激活应用逻辑
+        function startApp() {
+            document.getElementById('app-entrance').classList.add('hidden');
+            document.getElementById('timetable').classList.add('show');
+            setTimeout(() => { document.getElementById('app-entrance').style.display = 'none'; }, 600);
+        }
 
-    const container = document.getElementById('scheduleContainer');
-
-    function renderSchedule() {
-        // 1. 渲染星期标题
-        let headerHtml = '<div class="days-header"><div></div>';
-        days.forEach(day => headerHtml += `<div>${day}</div>`);
-        headerHtml += '</div>';
-
-        // 2. 渲染8节课
-        for (let i = 1; i <= 8; i++) {
-            let rowHtml = `<div class="row"><div class="time-label">${i}</div>`;
-            for (let j = 0; j < 7; j++) {
-                const cellId = `${days[j]}-${i}`;
-                const course = courses[cellId];
-                
-                let cellContent = '';
-                let classList = 'cell';
-                
-                if (course) {
-                    classList += ' has-course';
-                    cellContent = `
-                        <div class="course-info">
-                            <div class="c-name">${course.name}</div>
-                            <div class="c-detail">🏠 ${course.room || '未指定'}</div>
-                            <div class="c-detail">👤 ${course.teacher || '未指定'}</div>
-                            <div class="c-detail">⭐ ${course.credit || '0.0'}</div>
-                            ${course.note ? `<div class="c-detail" style="color:var(--primary)">📝 ${course.note}</div>` : ''}
-                        </div>
-                    `;
-                } else {
-                    cellContent = `<div class="add-btn">+</div>`;
-                }
-
-                rowHtml += `<div class="${classList}" id="${cellId}" onclick="openModal('${cellId}')">${cellContent}</div>`;
+        // 2. 动态生成 12 节课的网格
+        const slotsContainer = document.getElementById('slots-container');
+        for (let i = 1; i <= 12; i++) {
+            let slotHtml = `<div class="time-slot" style="transition-delay: ${i * 0.04}s">`;
+            slotHtml += `<div class="time-label">${i}</div>`;
+            for (let j = 1; j <= 7; j++) {
+                slotHtml += `<div class="cell" data-day="${j}" data-period="${i}" onclick="openModal(this)" style="transition-delay: ${i * 0.04 + j * 0.02}s">
+                                <button class="add-btn">+</button>
+                             </div>`;
             }
-            rowHtml += '</div>';
-            headerHtml += rowHtml;
+            slotHtml += `</div>`;
+            slotsContainer.insertAdjacentHTML('beforeend', slotHtml);
         }
-        container.innerHTML = headerHtml;
-    }
- // 弹窗控制
-    const modalOverlay = document.getElementById('modalOverlay');
-    const modal = document.getElementById('addModal');
 
-    function openModal(cellId) {
-        currentCellId = cellId;
-        const course = courses[cellId] || {};
-        
-        document.getElementById('courseName').value = course.name || '';
-        document.getElementById('courseRoom').value = course.room || '';
-        document.getElementById('courseTeacher').value = course.teacher || '';
-        document.getElementById('courseCredit').value = course.credit || '';
-        document.getElementById('courseNote').value = course.note || '';
+        // 3. 弹窗交互逻辑
+        let currentCell = null;
+        const modal = document.getElementById('modal');
 
-        modalOverlay.style.display = 'flex';
-        setTimeout(() => modal.classList.add('show'), 10);
-    }
-
-    function closeModal() {
-        modal.classList.remove('show');
-        setTimeout(() => modalOverlay.style.display = 'none', 200);
-    }
-
-    function saveCourse() {
-        const name = document.getElementById('courseName').value.trim();
-        if (!name) { alert('请输入课程名称'); return; }
-
-        courses[currentCellId] = {
-            name: name,
-            room: document.getElementById('courseRoom').value.trim(),
-            teacher: document.getElementById('courseTeacher').value.trim(),
-            credit: document.getElementById('courseCredit').value.trim(),
-            note: document.getElementById('courseNote').value.trim()
-        };
-
-         localStorage.setItem('myScheduleData', JSON.stringify(courses));
-        renderSchedule();
-        closeModal();
-    }
-
-    function clearAll() {
-        if(confirm('确定要清空所有课程吗？')) {
-            courses = {};
-            localStorage.removeItem('myScheduleData');
-            renderSchedule();
+        function openModal(cellElement) {
+            currentCell = cellElement;
+            modal.classList.add('active');
+            setTimeout(() => document.getElementById('input-name').focus(), 200);
         }
-    }
 
-    // 初始渲染
-    renderSchedule();
-</script>
+        function closeModal() {
+            modal.classList.remove('active');
+            currentCell = null;
+            document.getElementById('input-name').value = '';
+            document.getElementById('input-credit').value = '';
+            document.getElementById('input-time').value = '';
+            document.getElementById('input-teacher').value = '';
+            document.getElementById('input-location').value = '';
+            document.getElementById('input-note').value = '';
+        }
+
+        function saveCourse() {
+            const name = document.getElementById('input-name').value.trim();
+            if (!name) { alert('请至少填写课程名称！'); return; }
+
+            const credit = document.getElementById('input-credit').value;
+            const time = document.getElementById('input-time').value;
+            const teacher = document.getElementById('input-teacher').value;
+            const location = document.getElementById('input-location').value;
+            const note = document.getElementById('input-note').value;
+
+            // 构建显示内容
+            let detailHtml = '';
+            if (time) detailHtml += time + '<br>';
+            if (location) detailHtml += location + '<br>';
+            if (teacher) detailHtml += teacher;
+
+            // 更新格子内容
+            currentCell.innerHTML = `<div class="course-info-box">
+                                        <div class="name">${name}</div>
+                                        <div class="detail">${detailHtml}</div>
+                                     </div>`;
+
+            // 随机分配一个柔和的背景色
+            const colors = ['#FF9AA2', '#FFB7B2', '#FFDAC1', '#E2F0CB', '#B5EAD7', '#C7CEEA'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+            currentCell.style.background = randomColor;
+            currentCell.style.color = '#333';
+
+            closeModal();
+        }
+    </script>
 </body>
-    <!-- ==================== yxhnb 专属入场动画（纯新增，绝不修改原有代码） ==================== -->
-<div id="yxhnb-intro-overlay" style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: var(--bg-color); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s ease-in-out; pointer-events: none;">
-    <canvas id="yxhnb-particle-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></canvas>
-    <h1 id="yxhnb-text" style="font-size: 3.5rem; font-weight: 600; letter-spacing: 4px; color: #007AFF; opacity: 0; transform: scale(0.8); transition: opacity 0.5s ease, transform 0.5s ease; font-family: system-ui, -apple-system, sans-serif;">yxhnb</h1>
-</div>
-
-<script>
-    (function() {
-        const overlay = document.getElementById('yxhnb-intro-overlay');
-        const text = document.getElementById('yxhnb-text');
-        const canvas = document.getElementById('yxhnb-particle-canvas');
-        const ctx = canvas.getContext('2d');
-
-        // 动画流程控制
-        setTimeout(() => {
-            text.style.opacity = '1';
-            text.style.transform = 'scale(1)';
-        }, 300);
-
-        setTimeout(() => {
-            overlay.style.opacity = '0';
-            setTimeout(() => {
-                overlay.style.display = 'none';
-            }, 800);
-        }, 1800);
-
-        // 极简粒子背景
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        let particles = [];
-        const particleCount = 40;
-
-        for (let i = 0; i < particleCount; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                radius: Math.random() * 2 + 1,
-                speedX: (Math.random() - 0.5) * 1.5,
-                speedY: (Math.random() - 0.5) * 1.5,
-                opacity: Math.random() * 0.5 + 0.2
-            });
-        }
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(0, 122, 255, ${p.opacity})`;
-                ctx.fill();
-                p.x += p.speedX;
-                p.y += p.speedY;
-                if (p.x < 0 || p.x > canvas.width) p.speedX *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.speedY *= -1;
-            });
-            if (overlay.style.opacity !== '0') {
-                requestAnimationFrame(animateParticles);
-            }
-        }
-        animateParticles();
-
-        // 窗口大小自适应
-        window.addEventListener('resize', () => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        });
-    })();
-</script>
-<!-- ==================== 专属入场动画结束 ==================== -->
-
 </html>
