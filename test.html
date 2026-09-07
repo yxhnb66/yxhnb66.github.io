@@ -28,3 +28,39 @@ h1{margin:0;font-size:31px}.sub{color:var(--muted);margin-top:5px}.theme{border:
 <div class="tabs"><button class="tab active" data-t="search">🔎 搜索</button><button class="tab" data-t="history">🕘 历史</button><button class="tab" data-t="fav">⭐ 收藏</button><button class="tab" data-t="quiz">🧠 测试</button></div>
 <div id="app"></div>
 </div>
+<script>
+// ========== 1. 基础配置与状态管理 ==========
+const $ = x => document.getElementById(x);
+const app = $("app"), q = $("q"), status = $("status");
+let current = null;
+let history = JSON.parse(localStorage.getItem("wm_h") || "[]");
+let fav = JSON.parse(localStorage.getItem("wm_f") || "[]");
+
+// 本地备用词库 (保持你的原样)
+const local = {
+    apple:{cn:"苹果",pos:"名词",phonetic:"/ˈæpəl/",def:"a round fruit with red, green, or yellow skin",ex:"I eat an apple every day."},
+    book:{cn:"书；书籍",pos:"名词",phonetic:"/bʊk/",def:"a set of written or printed pages bound together",ex:"I bought a new book."},
+    beautiful:{cn:"美丽的；漂亮的",pos:"形容词",phonetic:"/ˈbjuːtɪfəl/",def:"pleasing to look at or hear",ex:"She has a beautiful smile."},
+    computer:{cn:"电脑；计算机",pos:"名词",phonetic:"/kəmˈpjuːtər/",def:"an electronic machine that processes information",ex:"I use my computer every day."},
+    important:{cn:"重要的",pos:"形容词",phonetic:"/ɪmˈpɔːrtənt/",def:"having great value or importance",ex:"This is an important question."},
+    happy:{cn:"快乐的；幸福的",pos:"形容词",phonetic:"/ˈhæpi/",def:"feeling pleasure or satisfaction",ex:"She looks very happy."},
+    water:{cn:"水",pos:"名词",phonetic:"/ˈwɔːtər/",def:"a clear liquid that people, animals and plants need",ex:"Please drink some water."},
+    friend:{cn:"朋友",pos:"名词",phonetic:"/frend/",def:"a person you know and like",ex:"He is my best friend."},
+    school:{cn:"学校",pos:"名词",phonetic:"/skuːl/",def:"a place where children or students learn",ex:"I go to school every day."},
+    future:{cn:"未来",pos:"名词",phonetic:"/ˈfjuːtʃər/",def:"the time that will happen after now",ex:"We should think about the future."},
+    run:{cn:"跑；奔跑；运行",pos:"动词",phonetic:"/rʌn/",def:"to move quickly on foot",ex:"I run every morning."},
+    read:{cn:"阅读；读",pos:"动词",phonetic:"/riːd/",def:"to look at and understand written words",ex:"I read a book every night."},
+    write:{cn:"写；书写",pos:"动词",phonetic:"/raɪt/",def:"to form letters or words on a page",ex:"Please write your name."},
+    eat:{cn:"吃",pos:"动词",phonetic:"/iːt/",def:"to put food into your mouth and swallow it",ex:"We eat dinner at seven."},
+    drink:{cn:"喝；饮用",pos:"动词",phonetic:"/drɪŋk/",def:"to take liquid into your mouth and swallow it",ex:"I drink water every day."},
+    go:{cn:"去；走",pos:"动词",phonetic:"/ɡoʊ/",def:"to move from one place to another",ex:"I go to school every day."},
+    good:{cn:"好的；优秀的",pos:"形容词",phonetic:"/ɡʊd/",def:"of a high quality or standard",ex:"She is a good student."},
+    new:{cn:"新的",pos:"形容词",phonetic:"/nuː/",def:"recently made, bought, or discovered",ex:"I have a new computer."},
+    hello:{cn:"你好",pos:"感叹词",phonetic:"/həˈloʊ/",def:"a greeting used when meeting someone",ex:"Hello! Nice to meet you."},
+    world:{cn:"世界",pos:"名词",phonetic:"/wɜːrld/",def:"the earth and all its people and countries",ex:"The world is changing."},
+    family:{cn:"家庭；家人",pos:"名词",phonetic:"/ˈfæməli/",def:"a group of people related to each other",ex:"My family lives here."},
+    student:{cn:"学生",pos:"名词",phonetic:"/ˈstuːdənt/",def:"a person who studies at a school or university",ex:"She is a good student."},
+    teacher:{cn:"老师",pos:"名词",phonetic:"/ˈtiːtʃər/",def:"a person who teaches others",ex:"My teacher is very kind."},
+    love:{cn:"爱；喜欢",pos:"动词/名词",phonetic:"/lʌv/",def:"to like or care about someone or something very much",ex:"I love my family."},
+    learn:{cn:"学习",pos:"动词",phonetic:"/lɜːrn/",def:"to gain knowledge or a skill",ex:"I want to learn English."}
+};
