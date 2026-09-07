@@ -151,7 +151,7 @@ function renderGrid() {
     });
 }
 
-    // 4. 弹窗控制逻辑（加入动态过渡）
+        // 4. 弹窗控制逻辑（精简流畅版）
     window.openModal = function(key) {
         currentCellKey = key;
         const course = schedule[key];
@@ -160,12 +160,24 @@ function renderGrid() {
         document.getElementById('courseRoom').value = course ? course.room : '';
         
         const modal = document.getElementById('modal');
-        modal.style.display = 'flex';
-        // 触发重排后添加 show 类，让 CSS 动画生效
-        requestAnimationFrame(() => modal.classList.add('show'));
+        // 先设为 flex 布局
+        modal.style.display = 'flex'; 
+        // 稍微延迟一下加类名，保证浏览器能识别到变化，触发动画
+        setTimeout(() => {
+            modal.classList.add('show');
+        }, 10); 
     };
 
     window.closeModal = function() {
+        const modal = document.getElementById('modal');
+        // 移除 show 类名，触发隐藏动画
+        modal.classList.remove('show');
+        // 等待动画播完（比如0.3秒），再彻底隐藏
+        setTimeout(() => {
+            modal.style.display = 'none';
+        }, 300); 
+    };
+
         const modal = document.getElementById('modal');
         modal.classList.remove('show');
         // 等待动画结束后再隐藏
