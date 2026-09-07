@@ -30,7 +30,7 @@ h1{margin:0;font-size:31px}.sub{color:var(--muted);margin-top:5px}.theme{border:
 </div>
 <script>
 // ========== 1. 基础配置与状态管理 ==========
-const $ = x => document.getElementById(x);
+$ = x=>document.querySelector(x)
 const app = $("app"), q = $("q"), status = $("status");
 let current = null;
 let history = JSON.parse(localStorage.getItem("wm_h") || "[]");
