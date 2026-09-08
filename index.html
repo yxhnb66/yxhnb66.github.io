@@ -1,160 +1,579 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Word Mate - 极简背单词</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f4f6f8;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: #333;
-        }
-        .container {
-            background-color: #fff;
-            padding: 40px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-            width: 90%;
-            max-width: 450px;
-            text-align: center;
-        }
-        .title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 30px;
-        }
-        .title span { color: #4a90e2; }
-        
-        input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid #e1e1e1;
-            border-radius: 8px;
-            font-size: 16px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: all 0.3s;
-        }
-        input:focus { border-color: #4a90e2; }
-        
-        button {
-            width: 100%;
-            padding: 15px;
-            background-color: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover { background-color: #357abd; }
-        
-        #result {
-            margin-top: 25px;
-            text-align: left;
-            font-size: 15px;
-            line-height: 1.6;
-            color: #555;
-            word-break: break-word;
-            min-height: 50px;
-        }
-        .error { color: #e74c3c; text-align: center; }
-        .loading { text-align: center; color: #888; }
-        
-        .word-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px;}
-        .word-phonetic { font-style: italic; color: #888; margin-bottom: 15px; font-size: 14px;}
-        .def-item { margin-bottom: 10px; }
-        .def-pos { font-weight: bold; color: #4a90e2; font-size: 13px; margin-right: 5px;}
-    </style>
+meta charset="UTF-8">
+meta name="viewport" content="width=device-width, initial-scale=1.0">
+title>⚡ 极速词典 - 77万词库</title>
+script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/sql-wasm.js"></script>
+style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+	font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+	background: #f5f5f7;
+	min-height: 100vh;
+	padding: 20px;
+}
+.container {
+	max-width: 800px;
+	margin: 0 auto;
+	background: white;
+	border-radius: 16px;
+	padding: 30px;
+	box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+h1 {
+	text-align: center;
+	color: #1a1a1a;
+	margin-bottom: 5px;
+	font-size: 28px;
+}
+.subtitle {
+	text-align: center;
+	color: #666;
+	margin-bottom: 25px;
+	font-size: 14px;
+}
+#loadArea {
+	text-align: center;
+	padding: 40px 20px;
+	background: #fafafa;
+	border-radius: 12px;
+	margin-bottom: 20px;
+}
+#loadArea button {
+	padding: 15px 40px;
+	font-size: 18px;
+	background: #007aff;
+	color: white;
+	border: none;
+	border-radius: 50px;
+	cursor: pointer;
+	font-weight: bold;
+	transition: all 0.2s;
+}
+#loadArea button:hover {
+	background: #0056b3;
+}
+#loadStatus {
+	margin-top: 15px;
+	color: #666;
+	font-size: 14px;
+}
+.search-section {
+	position: relative;
+	margin-bottom: 20px;
+	display: none;
+		}
+		#searchBox {
+			width: 100%;
+			padding: 16px 20px;
+			font-size: 18px;
+			border: 2px solid #e0e0e0;
+			border-radius: 12px;
+			outline: none;
+			background: #fafafa;
+			transition: all 0.2s;
+		}
+		#searchBox:focus {
+			border-color: #007aff;
+			background: white;
+		}
+		.suggestions {
+			position: absolute;
+			top: 100%;
+			left: 0;
+			right: 0;
+			background: white;
+			border: 1px solid #e0e0e0;
+			border-radius: 8px;
+			margin-top: 5px;
+			max-height: 300px;
+			overflow-y: auto;
+			display: none;
+			z-index: 1000;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+		}
+		.suggestion-item {
+			padding: 12px 20px;
+			cursor: pointer;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		.suggestion-item:hover {
+			background: #f0f7ff;
+		}
+		.suggestion-word {
+			font-weight: 600;
+			color: #1a1a1a;
+		}
+		.suggestion-meaning {
+			color: #666;
+			font-size: 14px;
+			margin-left: 15px;
+			flex: 1;
+			text-align: right;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+	  }
+	  		.result-card {
+			background: #fafafa;
+			border-radius: 12px;
+			padding: 25px;
+			margin-top: 15px;
+		}
+		.word-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-bottom: 20px;
+		}
+		.word-title {
+			font-size: 30px;
+			font-weight: 700;
+			color: #1a1a1a;
+		}
+		.phonetic {
+			color: #666;
+			font-size: 16px;
+			margin-top: 5px;
+		}
+		.meaning-block {
+			margin-bottom: 18px;
+		}
+		.pos {
+			font-style: italic;
+			color: #007aff;
+			font-weight: 600;
+			margin-bottom: 8px;
+		}
+		.definition {
+			padding-left: 16px;
+			color: #333;
+			line-height: 1.7;
+			margin-bottom: 6px;
+		}
+		.example {
+			padding-left: 32px;
+			color: #666;
+			font-style: italic;
+			font-size: 14px;
+			margin-bottom: 5px;
+		}
+		.synonyms {
+			padding-left: 16px;
+			color: #555;
+			font-size: 14px;
+			margin-top: 8px;
+		}
+		.btn-fav {
+			padding: 10px 20px;
+			background: #ff9500;
+			color: white;
+			border: none;
+			border-radius: 8px;
+			cursor: pointer;
+			font-size: 15px;
+			font-weight: 600;
+		}
+		.btn-fav.active {
+			background: #ff6b6b;
+		}
+		.empty-state {
+			text-align: center;
+			padding: 40px;
+			color: #999;
+		}
+		.empty-state-icon {
+			font-size: 50px;
+			margin-bottom: 15px;
+		}
+		.favorites-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+			gap: 12px;
+			margin-top: 15px;
+		}
+		.favorite-card {
+			background: #fafafa;
+			border-radius: 10px;
+			padding: 15px;
+			cursor: pointer;
+			position: relative;
+			transition: all 0.2s;
+		}
+		.favorite-card:hover {
+			background: #f0f0f0;
+		}
+		.favorite-word {
+			font-weight: 600;
+			font-size: 18px;
+			color: #1a1a1a;
+			margin-bottom: 5px;
+		}
+		.favorite-meaning {
+			color: #666;
+			font-size: 13px;
+			line-height: 1.4;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			display: -webkit-box;
+			-webkit-line-clamp: 2;
+			-webkit-box-orient: vertical;
+		}
+		.remove-btn {
+			position: absolute;
+			top: 8px;
+			right: 8px;
+			background: #ff3b30;
+			color: white;
+			border: none;
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			cursor: pointer;
+			font-size: 12px;
+		}
+	</style>
 </head>
 <body>
+	<div class="container">
+		<h1>⚡ 极速词典</h1>
+		<p class="subtitle">77万词库 · 本地查询 · 秒开结果</p>
 
-    <div class="container">
-        <div class="title"><span>Word</span> Mate</div>
-        <input type="text" id="inputText" placeholder="请输入英文单词，例如 apple" autocomplete="off">
-        <button onclick="doTranslate()">查询释义</button>
-        <div id="result"></div>
-    </div>
+		<!-- 加载数据库区域 -->
+		<div id="loadArea">
+			<button onclick="loadDatabase()">📂 加载词典数据库</button>
+			<div id="loadStatus"></div>
+		</div>
 
-    <script>
-        async function doTranslate() {
-            const input = document.getElementById('inputText').value.trim().toLowerCase();
-            const resultDiv = document.getElementById('result');
-            
-            if (!input) return;
+		<!-- 搜索区域 -->
+		<div class="search-section" id="searchSection">
+			<input type="text" id="searchBox" placeholder="输入单词查询..." oninput="handleInput()" onkeypress="if(event.key==='Enter'){searchWord();}">
+<button onclick="searchWord()" style="padding:10px 20px;background:#007aff;color:white;border:none;border-radius:8px;font-size:16px;margin-top:10px;">🔍 查询</button>
+			<div class="suggestions" id="suggestions"></div>
+		</div>
 
-            resultDiv.innerHTML = '<div class="loading">正在查询...</div>';
+		<!-- 收藏按钮 -->
+		<div style="text-align:center; margin-bottom:15px; display:none;" id="favArea">
+			<button class="btn-fav" id="favBtn" onclick="toggleFavorite()">⭐ 收藏</button>
+		</div>
 
-            try {
-                // 使用百度翻译的英英词典接口，国内访问极其稳定
-                const url = `https://dict.youdao.com/jsonapi?q=${input}&le=eng&doctype=json`;
-                
-                const response = await fetch(url);
-                if (!response.ok) {
-                    throw new Error('网络响应异常');
-                }
-                
-                const data = await response.json();
-                
-                // 解析英英词典数据
-                const ec = data.ec;
-                if (!ec) {
-                    resultDiv.innerHTML = '<div class="error">❌ 未找到该单词的释义</div>';
-                    return;
-                }
+		<!-- 查询结果 -->
+		<div id="result"></div>
 
-                let html = `<div class="word-title">${input}</div>`;
-                
-                // 获取音标
-                const phonetics = data.collins && data.collins.word[0]?.phones?.phone;
-                let phoneticStr = '';
-                if (phonetics && phonetics.length > 0) {
-                    // 尝试获取英音或美音
-                    const uk = phonetics.find(p => p.type === 'uk');
-                    const us = phonetics.find(p => p.type === 'us');
-                    phoneticStr += us ? `US: ${us.value} ` : '';
-                    phoneticStr += uk ? `UK: ${uk.value}` : '';
-                }
-                
-                if (phoneticStr) {
-                    html += `<div class="word-phonetic">${phoneticStr}</div>`;
-                }
+		<!-- 收藏列表 -->
+		<div id="favoritesList"></div>
+	</div>
 
-                // 获取释义列表
-                const trs = ec.word[0].trs;
-                if (trs && trs.length > 0) {
-                    trs.forEach(tr => {
-                        const pos = tr.tr[0].l?.i?.[0] || ''; // 词性
-                        const def = tr.tr[0].l?.i?.[1] || tr.tr[0].l?.i?.[0] || ''; // 释义
-                        if (def) {
-                            html += `<div class="def-item">
-                                        ${pos ? `<span class="def-pos">[${pos}]</span>` : ''}${def}
-                                    </div>`;
-                        }
-                    });
-                }
+	<script>
+		// ============ 全局变量 ============
+		let db = null;
+		let currentWord = '';
+		let favorites = [];
 
-                resultDiv.innerHTML = html;
+		// ============ 加载数据库 ============
+		async function loadDatabase() {
+			const statusEl = document.getElementById('loadStatus');
+			statusEl.textContent = '⏳ 正在加载数据库，请稍候...';
 
-            } catch (error) {
-                console.error("Error:", error);
-                resultDiv.innerHTML = '<div class="error">❌ 查询失败，请检查网络后重试</div>';
-            }
-        }
+			try {
+				const SQL = await initSqlJs({
+					locateFile: file => `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.8.0/${file}`
+				});
 
-        // 允许按回车键触发查询
-        document.getElementById('inputText').addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                doTranslate();
-            }
-        });
-    </script>
+				// 从本地文件加载
+				const response = await fetch('strdict.db');
+				const buffer = await response.arrayBuffer();
+				db = new SQL.Database(new Uint8Array(buffer));
+
+				statusEl.textContent = '✅ 数据库加载成功！';
+				document.getElementById('searchSection').style.display = 'block';
+				
+				// 隐藏加载按钮
+				setTimeout(() => {
+					document.getElementById('loadArea').style.display = 'none';
+				}, 1000);
+
+			} catch (error) {
+				statusEl.textContent = '❌ 加载失败：' + error.message;
+			}
+		}
+		// ============ 查询单词 ============
+function lookupWord(word) {
+	if (!db) return null;
+
+	word = word.toLowerCase().trim();
+	
+	try {
+		// 精确查询
+		let stmt = db.prepare("SELECT * FROM stardict LIMIT 1");
+		stmt.bind([word]);
+		
+		if (stmt.step()) {
+			const row = stmt.getAsObject();
+			stmt.free();
+			return row;
+		}
+		stmt.free();
+		
+		// 如果精确查不到，尝试模糊查询
+		stmt = db.prepare("SELECT * FROM stardict WHERE word LIKE ? LIMIT 1");
+		stmt.bind([word + '%']);
+		
+		if (stmt.step()) {
+			const row = stmt.getAsObject();
+			stmt.free();
+			return row;
+		}
+		stmt.free();
+		
+		return null;
+	} catch (e) {
+		console.error('查询出错:', e);
+		return null;
+	}
+}
+
+// ============ 处理输入 ============
+function handleInput() {
+	const query = document.getElementById('searchBox').value.trim();
+	const suggestionsDiv = document.getElementById('suggestions');
+	
+	if (query.length === 0) {
+		suggestionsDiv.style.display = 'none';
+		return;
+	}
+
+	// 自动补全
+	const suggestions = getSuggestions(query);
+	
+	if (suggestions.length > 0) {
+		suggestionsDiv.innerHTML = suggestions.map(s => `
+			<div class="suggestion-item" onclick="selectWord('${s.word}')">
+				<span class="suggestion-word">${s.word}</span>
+				<span class="suggestion-meaning">${(s.translation || '').substring(0, 30)}</span>
+			</div>
+		`).join('');
+		suggestionsDiv.style.display = 'block';
+	} else {
+		suggestionsDiv.style.display = 'none';
+	}
+}
+
+// ============ 获取自动补全 ============
+function getSuggestions(prefix) {
+	if (!db) return [];
+	
+	prefix = prefix.toLowerCase().trim();
+	const results = [];
+	
+	try {
+		const stmt = db.prepare("SELECT word, translation FROM stardict WHERE word LIKE ? LIMIT 10");
+		stmt.bind([prefix + '%']);
+		
+		while (stmt.step()) {
+			results.push(stmt.getAsObject());
+		}
+		stmt.free();
+	} catch (e) {
+		console.error('搜索出错:', e);
+	}
+	
+	return results;
+}
+
+// ============ 选择建议词 ============
+function selectWord(word) {
+	document.getElementById('searchBox').value = word;
+	document.getElementById('suggestions').style.display = 'none';
+	searchWord();
+}
+		// ============ 搜索单词 ============
+	function searchWord() {
+			const query = document.getElementById('searchBox').value.trim();
+			const resultDiv = document.getElementById('result');
+			
+			if (!query) {
+				showToast('请输入单词', 'error');
+				return;
+			}
+
+			const wordData = lookupWord(query);
+			
+			if (wordData) {
+				currentWord = query.toLowerCase();
+				displayWord(wordData);
+				document.getElementById('favArea').style.display = 'block';
+				updateFavButton();
+			} else {
+				resultDiv.innerHTML = `
+					<div class="empty-state">
+						<div class="empty-state-icon">🔍</div>
+						<h3>未找到该单词</h3>
+						<p>请检查拼写后重试</p>
+					</div>
+				`;
+			}
+		}	
+
+		// ============ 显示单词 ============
+		function displayWord(data) {
+			const resultDiv = document.getElementById('result');
+			
+			let html = '<div class="result-card">';
+			
+			// 单词标题
+			html += '<div class="word-header">';
+			html += '<div>';
+			html += `<div class="word-title">${data.word || ''}</div>`;
+			if (data.phonetic) {
+				html += `<div class="phonetic">${data.phonetic}</div>`;
+			}
+			html += '</div></div>';
+			
+			// 中文翻译
+			if (data.translation) {
+				html += '<div class="meaning-block">';
+				html += '<div class="pos">中文释义</div>';
+				html += `<div class="definition">${data.translation}</div>`;
+				html += '</div>';
+			}
+			
+			// 英文释义
+			if (data.definition) {
+				html += '<div class="meaning-block">';
+				html += '<div class="pos">English Definition</div>';
+				html += `<div class="definition">${data.definition}</div>`;
+				html += '</div>';
+			}
+			
+			// 词性
+			if (data.pos) {
+				html += '<div class="meaning-block">';
+				html += '<div class="pos">词性</div>';
+				html += `<div class="definition">${data.pos}</div>`;
+				html += '</div>';
+			}
+			
+			// 例句（如果有）
+			if (data.exchange) {
+				html += '<div class="meaning-block">';
+				html += '<div class="pos">形式变化</div>';
+				html += `<div class="definition">${data.exchange}</div>`;
+				html += '</div>';
+			}
+			
+			html += '</div>';
+			resultDiv.innerHTML = html;
+		}
+
+		// ============ 收藏功能 ============
+		function toggleFavorite() {
+			if (!currentWord) return;
+			
+			const index = favorites.findIndex(f => f.word === currentWord);
+			
+			if (index > -1) {
+				favorites.splice(index, 1);
+				showToast('已取消收藏');
+			} else {
+				favorites.unshift({
+					word: currentWord,
+					translation: getTranslation(currentWord),
+					timestamp: Date.now()
+				});
+				showToast('已收藏 ⭐');
+				saveFavorites();
+				renderFavorites();
+			}
+			
+			updateFavButton();
+		}
+
+		function getTranslation(word) {
+			const data = lookupWord(word);
+			return data ? (data.translation || '暂无释义') : '暂无释义';
+		}
+
+		function updateFavButton() {
+			const btn = document.getElementById('favBtn');
+			const isFav = favorites.some(f => f.word === currentWord);
+			btn.textContent = isFav ? '💖 已收藏' : '⭐ 收藏';
+			btn.classList.toggle('active', isFav);
+		}
+
+		function saveFavorites() {
+			localStorage.setItem('favorites', JSON.stringify(favorites));
+		}
+
+		function loadFavorites() {
+			const stored = localStorage.getItem('favorites');
+			if (stored) {
+				favorites = JSON.parse(stored);
+			}
+			renderFavorites();
+		}
+
+		function renderFavorites() {
+			const listDiv = document.getElementById('favoritesList');
+			
+			if (favorites.length === 0) {
+				listDiv.innerHTML = '';
+				return;
+			}
+			
+			listDiv.innerHTML = '<h3 style="margin-top:30px;">⭐ 我的收藏</h3>' + 
+				'<div class="favorites-grid">' +
+				favorites.map(fav => `
+					<div class="favorite-card" onclick="viewFavorite('${fav.word}')">
+						<button class="remove-btn" onclick="event.stopPropagation(); removeFavorite('${fav.word}')">×</button>
+						<div class="favorite-word">${fav.word}')">
+						<button class="remove-btn" onclick="event.stopPropagation(); removeFavorite('${fav.word}')">×</button>
+						<div class="favorite-word">${fav.word}</div>
+						<div class="favorite-meaning">${fav.translation}</div>
+					</div>
+				`).join('') +
+				'</div>';
+		}
+
+		function viewFavorite(word) {
+			document.getElementById('searchBox').value = word;
+			searchWord();
+		}
+
+		function removeFavorite(word) {
+			favorites = favorites.filter(f => f.word !== word);
+			saveFavorites();
+			renderFavorites();
+			updateFavButton();
+			showToast('已移除');
+		}
+
+		// ============ Toast提示 ============
+		function showToast(message, type = 'success') {
+			let toast = document.getElementById('toast');
+			if (!toast) {
+				toast = document.createElement('div');
+				toast.id = 'toast';
+				toast.style.cssText = 'position:fixed;top:20px;right:20px;background:#34c759;color:white;padding:12px 20px;border-radius:8px;z-index:9999;transition:all 0.3s;font-weight:500;';
+				document.body.appendChild(toast);
+			}
+			
+			toast.textContent = message;
+			toast.style.background = type === 'error' ? '#ff3b30' : '#34c759';
+			toast.style.transform = 'translateX(0)';
+			toast.style.opacity = '1';
+			
+			setTimeout(() => {
+				toast.style.transform = 'translateX(400px)';
+				toast.style.opacity = '0';
+			}, 2000);
+		}
+
+		// ============ 初始化 ============
+		loadFavorites();
+	</script>
 </body>
 </html>
