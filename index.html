@@ -5,176 +5,81 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Mate - 极简背单词</title>
     <style>
-        /* 基础样式重置 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: #f4f5f7;
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-        /* 卡片主容器 */
-        .container {
-            background-color: #ffffff;
-            width: 100%;
-            max-width: 450px;
-            padding: 40px;
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-        h1 {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 30px;
-            color: #1a1a1a;
-        }
-        input {
-            width: 100%;
-            padding: 16px;
-            border: 1px solid #e1e4e8;
-            border-radius: 8px;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.3s;
-            margin-bottom: 15px;
-        }
-        input:focus {
-            border-color: #3a76d4;
-        }
-        button {
-            width: 100%;
-            padding: 16px;
-            background-color: #3a76d4;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #2a5a9a;
-        }
-        button:disabled {
-            background-color: #a0a0a0;
-            cursor: not-allowed;
-        }
-        #result {
-            margin-top: 30px;
-            min-height: 80px;
-            border-top: 1px solid #f0f0f0;
-            padding-top: 20px;
-            word-break: break-word;
-        }
-        .translation-cn {
-            font-size: 20px;
-            color: #333;
-            margin-bottom: 15px;
-            line-height: 1.5;
-        }
-        .translation-en {
-            font-size: 14px;
-            color: #666;
-            line-height: 1.6;
-        }
-        .error {
-            color: #d9534f;
-            font-size: 16px;
-            text-align: center;
-        }
-        .loading {
-            text-align: center;
-            color: #888;
-            padding: 20px;
-        }
+        body { font-family: sans-serif; background-color: #f4f6f8; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); text-align: center; width: 90%; max-width: 400px; }
+        h1 { margin-bottom: 30px; font-size: 20px; color: #333; }
+        input { width: 100%; padding: 12px; margin-bottom: 20px; border: 1px solid #ddd; border-radius: 6px; font-size: 16px; outline: none; }
+        button { width: 100%; padding: 12px; background-color: #2d64b1; color: white; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; }
+        button:disabled { background-color: #999; cursor: not-allowed; }
+        #result { margin-top: 30px; text-align: left; min-height: 50px; word-break: break-all; font-size: 15px; line-height: 1.6; color: #333; }
+        .error { color: #e74c3c; font-size: 13px; margin-top: 20px; }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Word Mate 翻译助手</h1>
+        <input type="text" id="inputText" placeholder="请输入要翻译的单词或句子" />
+        <button id="translateBtn">查询翻译</button>
+        <div id="result"></div>
+    </div>
 
-<div class="container">
-    <h1>Word Mate 翻译助手</h1>
-    <input type="text" id="inputText" placeholder="请输入单词或句子" value="apple">
-    <button id="translateBtn">查询翻译</button>
-    <div id="result"></div>
-</div>
-
-<script>
-    // 我已经帮你填好密钥了！
-    const APP_KEY = '4e0f9a927fa1fddc';  // 如果你的ID不是这个，请手动替换
-    const APP_SECRET = 'wZRV8fAD1oHimBLkSGiz9GA3bJDG0MEt'; // 如果你的密钥不是这个，请手动替换
-
-    // 有道翻译 API 接口
-    const API_URL = 'https://openapi.youdao.com/api';
-
-    document.getElementById('translateBtn').addEventListener('click', function() {
-        const input = document.getElementById('inputText').value.trim();
-        const resultDiv = document.getElementById('result');
-
-        if (!input) return;
-
-        // 显示加载状态
-        resultDiv.innerHTML = '<div class="loading">正在查询中...</div>';
-        this.disabled = true;
-
-        // 构造请求参数
-        const salt = (new Date()).getTime();
-        const from = 'en';
-        const to = 'zh-CHS';
-        // 核心加密：SHA256(appKey + input + salt + 应用密钥)
-        const signString = APP_KEY + input + salt + APP_SECRET;
+    <script>
+        // 【重要】请在这里填入你的真实密钥，不要留空格
+        const APP_KEY = '4e0f9a927fa1fddc'; 
+        const APP_SECRET = 'wZRV8fAD1oHimBLkSGiz...'; // 请填入你的完整密钥
         
-        // 浏览器内置加密算法
-        crypto.subtle.digest('SHA-256', new TextEncoder().encode(signString))
-            .then(hashBuffer => {
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                const sign = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-                
-                // 使用 fetch 发送请求
-                return fetch(API_URL + '?q=' + encodeURIComponent(input) + 
-                    '&from=' + from + 
-                    '&to=' + to + 
-                    '&appKey=' + APP_KEY + 
-                    '&salt=' + salt + 
-                    '&sign=' + sign);
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.errorCode === '0') {
-                    // 解析结果
-                    let html = '';
-                    // 1. 基本翻译
-                    if (data.translation && data.translation.length > 0) {
-                        html += '<div class="translation-cn">' + data.translation.join('<br>') + '</div>';
-                    }
-                    // 2. 英文释义 (如果有)
-                    if (data.web && data.web.length > 0) {
-                        html += '<div class="translation-en">';
-                        for(let i=0; i<Math.min(data.web.length, 3); i++){
-                            html += '<strong>' + data.web[i].key + ':</strong> ' + data.web[i].value.join(', ') + '<br>';
-                        }
-                        html += '</div>';
-                    }
-                    resultDiv.innerHTML = html;
-                } else {
-                    // 有道返回错误码
-                    resultDiv.innerHTML = '<div class="error">❌ 查询失败，错误码：' + data.errorCode + '</div>';
-                }
-            })
-            .catch(error => {
-                // 网络错误
-                console.error('Error:', error);
-                resultDiv.innerHTML = '<div class="error">❌ 网络请求失败，请检查网络或配置。</div>';
-            })
-            .finally(() => {
-                // 恢复按钮状态
-                document.getElementById('translateBtn').disabled = false;
-            });
-    });
-</script>
+        document.getElementById('translateBtn').addEventListener('click', function() {
+            const inputText = document.getElementById('inputText').value;
+            const resultDiv = document.getElementById('result');
+            
+            if (!inputText.trim()) return;
 
+            resultDiv.innerHTML = '<div class="error">正在翻译中，请稍候...</div>';
+            this.disabled = true;
+
+            // 有道翻译要求的签名逻辑
+            const curtime = Math.round(new Date().getTime() / 1000); // 获取当前时间戳
+            const salt = curtime; 
+            const signStr = APP_KEY + inputText + salt + curtime + APP_SECRET;
+            
+            // 计算 SHA-256 签名
+            crypto.subtle.digest('SHA-256', new TextEncoder().encode(signStr))
+                .then(buffer => Array.from(new Uint8Array(buffer))
+                .map(b => ('0' + b.toString(16)).slice(-2)).join(''))
+                .then(hash => {
+                    // 发送翻译请求
+                    return fetch('https://openapi.youdao.com/api?' + new URLSearchParams({
+                        q: inputText,
+                        appKey: APP_KEY,
+                        salt: salt,
+                        sign: hash,
+                        signType: 'v3',
+                        curtime: curtime,
+                        from: 'AUTO',
+                        to: 'AUTO'
+                    }));
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.errorCode === '0') {
+                        const translations = data.translation.join('\n');
+                        let output = `<strong>翻译结果：</strong><br>${translations}`;
+                        if (data.basic) {
+                            output += `<br><br><strong>发音：</strong>${data.basic.phonetic || ''}<br><strong>释义：</strong>${data.basic.explains.join(', ')}`;
+                        }
+                        resultDiv.innerHTML = output;
+                    } else {
+                        resultDiv.innerHTML = `<div class="error">翻译出错（错误码：${data.errorCode}），请检查密钥是否正确。</div>`;
+                    }
+                })
+                .catch(err => {
+                    resultDiv.innerHTML = `<div class="error">网络请求失败：${err.message}</div>`;
+                })
+                .finally(() => {
+                    document.getElementById('translateBtn').disabled = false;
+                });
+        });
+    </script>
 </body>
 </html>
