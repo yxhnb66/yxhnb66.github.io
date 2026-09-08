@@ -6,12 +6,7 @@
     <title>Word Mate - 极简背单词</title>
     <style>
         /* 基础样式重置 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f4f5f7;
@@ -23,230 +18,175 @@
             padding: 20px;
         }
 
-        /* 核心卡片容器 */
+        /* 卡片容器 */
         .app-container {
             background-color: #ffffff;
             width: 100%;
-            max-width: 450px;
-            padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+            max-width: 400px;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
             text-align: center;
         }
 
-        .app-title {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 30px;
-            color: #222;
-        }
-
-        /* 输入框与按钮区域 */
-        .input-group {
-            margin-bottom: 20px;
-        }
-
-        #inputText {
-            width: 100%;
-            padding: 14px 20px;
-            font-size: 16px;
-            border: 1px solid #e1e4e8;
-            border-radius: 8px;
-            background-color: #fafafa;
-            color: #333;
-            outline: none;
-            transition: all 0.2s ease;
-            margin-bottom: 15px;
-        }
-
-        #inputText:focus {
-            border-color: #4a90e2;
-            background-color: #fff;
-            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
-        }
-
-        #translateBtn {
+        h1 { font-size: 22px; margin-bottom: 25px; color: #2c3e50; }
+        
+        input {
             width: 100%;
             padding: 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
             font-size: 16px;
-            color: #fff;
-            background-color: #3475a9; /* 有道风格蓝 */
+            outline: none;
+            transition: border-color 0.3s;
+            margin-bottom: 20px;
+        }
+        input:focus { border-color: #3498db; }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #3498db;
+            color: white;
             border: none;
             border-radius: 8px;
+            font-size: 16px;
             cursor: pointer;
-            font-weight: 500;
-            transition: background-color 0.2s ease;
+            transition: background-color 0.3s;
         }
+        button:active { background-color: #2980b9; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
 
-        #translateBtn:hover {
-            background-color: #2b628e;
-        }
-
-        #translateBtn:active {
-            background-color: #245379;
-        }
-
-        /* 翻译结果展示区域 */
         .result-box {
-            margin-top: 30px;
+            margin-top: 25px;
             text-align: left;
-            padding: 20px;
-            background-color: #f9fafc;
-            border-radius: 8px;
-            border: 1px dashed #e1e4e8;
-            display: none; /* 默认隐藏 */
+            min-height: 100px;
         }
 
-        .result-box h3 {
-            font-size: 15px;
-            color: #888;
-            margin-bottom: 10px;
-            font-weight: normal;
-        }
-
-        .result-box p {
-            font-size: 18px;
-            color: #222;
-            line-height: 1.6;
-        }
-
-        .status-tip {
-            font-size: 13px;
-            color: #999;
-            margin-top: 15px;
-            min-height: 20px;
-        }
+        .word-title { font-size: 20px; font-weight: bold; color: #2c3e50; margin-bottom: 5px; }
+        .phonetic { font-size: 14px; color: #7f8c8d; margin-bottom: 15px; }
+        
+        .translation-section { margin-bottom: 15px; }
+        .pos { font-size: 14px; font-weight: bold; color: #3498db; margin-bottom: 4px; }
+        .trans-list { list-style-type: decimal; padding-left: 20px; }
+        .trans-list li { font-size: 15px; line-height: 1.6; color: #34495e; margin-bottom: 4px; }
+        
+        .message { font-size: 15px; color: #e74c3c; margin-top: 20px; }
+        .message.success { color: #27ae60; }
     </style>
 </head>
 <body>
-
-<div class="app-container">
-    <div class="app-title">Word Mate 翻译助手</div>
-    
-    <div class="input-group">
-        <input type="text" id="inputText" placeholder="请输入要查询的单词或句子...">
+    <div class="app-container">
+        <h1>Word Mate 翻译助手</h1>
+        <input type="text" id="inputText" placeholder="请输入要查询的单词 (如: apple)">
         <button id="translateBtn">查询翻译</button>
+        <div class="result-box" id="resultBox"></div>
     </div>
 
-    <div class="status-tip" id="statusTip"></div>
+    <script>
+        // ==========================================
+        // 你的有道智云 API 配置信息
+        // ==========================================
+        const appId = '4e0f9a927fa1fddc'; 
+        const appKey = 'wZRV8fAD1oHimBLkSGiz9GA3bJDG0MEt'; 
 
-    <!-- 翻译结果展示区 -->
-    <div class="result-box" id="resultBox">
-        <h3>翻译结果</h3>
-        <p id="translationResult"></p>
-    </div>
-</div>
+        // ==========================================
+        // 核心翻译逻辑 (v1 签名 + 公共代理绕过跨域)
+        // ==========================================
+        async function translate() {
+            const inputText = document.getElementById('inputText').value.trim();
+            const resultBox = document.getElementById('resultBox');
+            const translateBtn = document.getElementById('translateBtn');
 
-<script>
-    // ==========================================
-    // 1. 在这里配置你的有道智云密钥（已填入）
-    // ==========================================
-    const APP_ID = '4e0f9a927fa1fddc';
-    const APP_KEY = 'wZRV8fAD1oHimBLkSGiz9GA3bJDG0MEt';
+            if (!inputText) {
+                resultBox.innerHTML = '<p class="message">❌ 请输入要查询的单词</p>';
+                return;
+            }
 
-    // DOM 元素获取
-    const inputText = document.getElementById('inputText');
-    const translateBtn = document.getElementById('translateBtn');
-    const resultBox = document.getElementById('resultBox');
-    const translationResult = document.getElementById('translationResult');
-    const statusTip = document.getElementById('statusTip');
+            // 显示加载状态
+            resultBox.innerHTML = '<p class="message" style="color:#3498db">🔄 正在有道词典中查询...</p>';
+            translateBtn.disabled = true;
+            translateBtn.innerText = '查询中...';
 
-    // 触发翻译事件
-    translateBtn.addEventListener('click', performTranslation);
-    inputText.addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') performTranslation();
-    });
+            try {
+                // 1. 生成 v1 签名 (MD5)
+                const curTime = Math.round(new Date().getTime() / 1000).toString();
+                const salt = '123456'; // 随机盐值
+                
+                // v1签名公式: MD5(appId + input + salt + curTime + appKey)
+                const signStr = appId + inputText + salt + curTime + appKey;
+                const sign = await MD5(signStr);
 
-    // 核心翻译逻辑
-    function performTranslation() {
-        const text = inputText.value.trim();
-        if (!text) {
-            statusTip.textContent = '请先输入内容哦...';
-            resultBox.style.display = 'none';
-            return;
+                // 2. 构造有道翻译真实请求链接
+                const youdaoApi = `https://openapi.youdao.com/api?q=${encodeURIComponent(inputText)}&from=auto&to=zh-CHS&appKey=${appId}&salt=${salt}&curtime=${curTime}&sign=${sign}&signType=v1`;
+                
+                // 3. 使用公共代理绕过 GitHub Pages 的跨域限制
+                const proxyUrl = 'https://cors-anywhere.herokuapp.com/'; 
+                
+                const response = await fetch(proxyUrl + youdaoApi);
+                
+                if (!response.ok) throw new Error('网络响应异常，请稍后重试');
+                
+                const data = await response.json();
+
+                // 4. 解析并展示结果
+                if (data.errorCode === '0') {
+                    let html = '';
+                    // 提取基本释义
+                    if (data.basic) {
+                        html += `<div class="word-title">${data.basic.explains.join(' ')}</div>`;
+                    }
+                    // 提取英文释义（背单词更有用）
+                    if (data.web_translation && data.web_translation.length > 0) {
+                        html += `<div class="translation-section">`;
+                        html += `<div class="pos">英文释义与例句：</div><ul class="trans-list">`;
+                        // 取前3条释义
+                        for(let i=0; i < Math.min(3, data.web_translation.length); i++) {
+                            html += `<li>${data.web_translation[i].value.join('，')}</li>`;
+                        }
+                        html += `</ul></div>`;
+                    }
+                    resultBox.innerHTML = html;
+                } else {
+                    resultBox.innerHTML = `<p class="message">❌ 查询失败(错误码: ${data.errorCode})</p>`;
+                }
+            } catch (error) {
+                console.error('请求失败:', error);
+                resultBox.innerHTML = '<p class="message">❌ 网络请求失败，请检查网络后重试</p>';
+            } finally {
+                translateBtn.disabled = false;
+                translateBtn.innerText = '查询翻译';
+            }
         }
 
-        // 界面状态更新为加载中
-        statusTip.textContent = '正在有道智云查询中...';
-        resultBox.style.display = 'none';
-        translateBtn.disabled = true;
+        // 绑定点击事件和回车事件
+        document.getElementById('translateBtn').addEventListener('click', translate);
+        document.getElementById('inputText').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') translate();
+        });
 
-        // 1. 生成加密参数 (盐值salt + 签名sign)
-        const salt = (new Date).getTime();
-        const curtime = Math.round(new Date().getTime() / 1000);
-        const str1 = APP_ID + truncate(text) + salt + curtime + APP_KEY;
-        const sign = CryptoJS.MD5(str1).toString();
-
-        // 2. 组装请求参数
-        const url = 'https://openapi.youdao.com/v2/api';
-        const data = {
-            q: text,
-            appKey: APP_ID,
-            salt: salt,
-            from: 'auto',
-            to: 'zh-CHS',
-            sign: sign,
-            signType: 'v3',
-            curtime: curtime
-        };
-
-        // 将参数转换为 URL 搜索字符串
-        const params = new URLSearchParams(data);
-        
-        // 3. 使用免费公共代理服务器，完美绕过 GitHub Pages 跨域限制
-        const proxyUrl = 'https://corsproxy.io/?';
-        const targetUrl = `${proxyUrl}${encodeURIComponent(url)}&${params.toString()}`;
-
-        // 4. 发起网络请求
-        fetch(targetUrl)
-            .then(response => response.json())
-            .then(resultData => {
-                if (resultData.errorCode === '0') {
-                    // 翻译成功，展示结果
-                    resultBox.style.display = 'block';
-                    let resultText = '';
-                    if (resultData.isWord) {
-                        // 如果是单词，展示基本释义
-                        if(resultData.basic && resultData.basic.explains) {
-                            resultText = resultData.basic.explains.join('\n');
-                        } else {
-                            resultText = '未找到基本释义，请检查拼写。';
-                        }
-                    } else {
-                        // 如果是句子，展示翻译结果
-                        if(resultData.translation) {
-                            resultText = resultData.translation.join(' ');
-                        } else {
-                            resultText = '未返回翻译结果。';
-                        }
-                    }
-                    translationResult.textContent = resultText;
-                    statusTip.textContent = '✅ 翻译完成';
-                } else {
-                    throw new Error(`有道API错误码: ${resultData.errorCode}`);
-                }
-            })
-            .catch(error => {
-                // 翻译失败
-                statusTip.textContent = '❌ 网络请求失败，请稍后重试。';
-                console.error(error);
-            })
-            .finally(() => {
-                // 恢复按钮可用状态
-                translateBtn.disabled = false;
-            });
-    }
-
-    // 辅助函数：截取字符串用于签名（官方要求）
-    function truncate(q) {
-        const len = q.length;
-        if (len <= 20) return q;
-        return q.substring(0, 10) + len + q.substring(len - 10, len);
-    }
-</script>
-
-<!-- 引入 MD5 加密库 (用于生成有道签名) -->
-<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
-
+        // ==========================================
+        // 内置 MD5 加密库 (无需引入外部JS)
+        // ==========================================
+        async function MD5(string) {
+            function RotateLeft(lValue, iShiftBits) { return (lValue<<iShiftBits) | (lValue>>>(32-iShiftBits)); }
+            function AddUnsigned(lX,lY) { var lX4,lY4,lX8,lY8,lResult; lX8=(lX&0x80000000); lY8=(lY&0x80000000); lX4=(lX&0x40000000); lY4=(lY&0x40000000); lResult=(lX&0x3FFFFFFF)+(lY&0x3FFFFFFF); if(lX4&lY4) return(lResult^0x80000000^lX8^lY8); if(lX4|lY4) { if(lResult&0x40000000) return(lResult^0xC0000000^lX8^lY8); else return(lResult^0x40000000^lX8^lY8); } else { return(lResult^lX8^lY8); } }
+            function F(x,y,z) { return(x&y)|((~x)&z); }
+            function G(x,y,z) { return(x&z)|(y&(~z)); }
+            function H(x,y,z) { return(x^y^z); }
+            function I(x,y,z) { return(y^(x|(~z))); }
+            function FF(a,b,c,d,x,s,ac) { a=AddUnsigned(a,AddUnsigned(AddUnsigned(F(b,c,d),x),ac)); return AddUnsigned(RotateLeft(a,s),b); }
+            function GG(a,b,c,d,x,s,ac) { a=AddUnsigned(a,AddUnsigned(AddUnsigned(G(b,c,d),x),ac)); return AddUnsigned(RotateLeft(a,s),b); }
+            function HH(a,b,c,d,x,s,ac) { a=AddUnsigned(a,AddUnsigned(AddUnsigned(H(b,c,d),x),ac)); return AddUnsigned(RotateLeft(a,s),b); }
+            function II(a,b,c,d,x,s,ac) { a=AddUnsigned(a,AddUnsigned(AddUnsigned(I(b,c,d),x),ac)); return AddUnsigned(RotateLeft(a,s),b); }
+            function ConvertToWordArray(string) { var lWordCount; var lMessageLength=string.length; var lNumberOfWords_temp1=lMessageLength+8; var lNumberOfWords_temp2=(lNumberOfWords_temp1-(lNumberOfWords_temp1%64))/64; var lNumberOfWords=(lNumberOfWords_temp2+1)*16; var lWordArray=Array(lNumberOfWords-1); var lBytePosition=0; var lByteCount=0; while(lByteCount<lMessageLength){ lWordCount=(lByteCount-(lByteCount%4))/4; lBytePosition=(lByteCount%4)*8; lWordArray[lWordCount]=(lWordArray[lWordCount]|(string.charCodeAt(lByteCount)<<lBytePosition)); lByteCount++; } lWordCount=(lByteCount-(lByteCount%4))/4; lBytePosition=(lByteCount%4)*8; lWordArray[lWordCount]=lWordArray[lWordCount]|(0x80<<lBytePosition); lWordArray[lNumberOfWords-2]=lMessageLength<<3; lWordArray[lNumberOfWords-1]=lMessageLength>>>29; return lWordArray; }
+            function WordToHex(lValue) { var WordToHexValue="",WordToHexValue_temp="",lByte,lCount; for(lCount=0;lCount<=3;lCount++){ lByte=(lValue>>>(lCount*8))&255; WordToHexValue_temp="0"+lByte.toString(16); WordToHexValue=WordToHexValue+WordToHexValue_temp.substr(WordToHexValue_temp.length-2,2); } return WordToHexValue; }
+            
+            let x=Array(); var k,AA,BB,CC,DD,a,b,c,d; var S11=7, S12=12, S13=17, S14=22; var S21=5, S22=9 , S23=14, S24=20; var S31=4, S32=11, S33=16, S34=23; var S41=6, S42=10, S43=15, S44=21;
+            x=ConvertToWordArray(string); a=0x67452301; b=0xEFCDAB89; c=0x98BADCFE; d=0x10325476;
+            for(k=0;k<x.length;k+=16){ AA=a; BB=b; CC=c; DD=d; a=FF(a,b,c,d,x[k+0], S11,0xD76AA478); d=FF(d,a,b,c,x[k+1], S12,0xE8C7B756); c=FF(c,d,a,b,x[k+2], S13,0x242070DB); b=FF(b,c,d,a,x[k+3], S14,0xC1BDCEEE); a=FF(a,b,c,d,x[k+4], S11,0xF57C0FAF); d=FF(d,a,b,c,x[k+5], S12,0x4787C62A); c=FF(c,d,a,b,x[k+6], S13,0xA8304613); b=FF(b,c,d,a,x[k+7], S14,0xFD469501); a=FF(a,b,c,d,x[k+8], S11,0x698098D8); d=FF(d,a,b,c,x[k+9], S12,0x8B44F7AF); c=FF(c,d,a,b,x[k+10],S13,0xFFFF5BB1); b=FF(b,c,d,a,x[k+11],S14,0x895CD7BE); a=FF(a,b,c,d,x[k+12],S11,0x6B901122); d=FF(d,a,b,c,x[k+13],S12,0xFD987193); c=FF(c,d,a,b,x[k+14],S13,0xA679438E); b=FF(b,c,d,a,x[k+15],S14,0x49B40821); a=GG(a,b,c,d,x[k+1], S21,0xF61E2562); d=GG(d,a,b,c,x[k+6], S22,0xC040B340); c=GG(c,d,a,b,x[k+11],S23,0x265E5A51); b=GG(b,c,d,a,x[k+0], S24,0xE9B6C7AA); a=GG(a,b,c,d,x[k+5], S21,0xD62F105D); d=GG(d,a,b,c,x[k+10],S22,0x2441453); c=GG(c,d,a,b,x[k+15],S23,0xD8A1E681); b=GG(b,c,d,a,x[k+4], S24,0xE7D3FBC8); a=GG(a,b,c,d,x[k+9], S21,0x21E1CDE6); d=GG(d,a,b,c,x[k+14],S22,0xC33707D6); c=GG(c,d,a,b,x[k+3], S23,0xF4D50D87); b=GG(b,c,d,a,x[k+8], S24,0x455A14ED); a=GG(a,b,c,d,x[k+13],S21,0xA9E3E905); d=GG(d,a,b,c,x[k+2], S22,0xFCEFA3F8); c=GG(c,d,a,b,x[k+7], S23,0x676F02D9); b=GG(b,c,d,a,x[k+12],S24,0x8D2A4C8A); a=HH(a,b,c,d,x[k+5], S31,0xFFFA3942); d=HH(d,a,b,c,x[k+8], S32,0x8771F681); c=HH(c,d,a,b,x[k+11],S33,0x6D9D6122); b=HH(b,c,d,a,x[k+14],S34,0xFDE5380C); a=HH(a,b,c,d,x[k+1], S31,0xA4BEEA44); d=HH(d,a,b,c,x[k+4], S32,0x4BDECFA9); c=HH(c,d,a,b,x[k+7], S33,0xF6BB4B60); b=HH(b,c,d,a,x[k+10],S34,0xBEBFBC70); a=HH(a,b,c,d,x[k+13],S31,0x289B7EC6); d=HH(d,a,b,c,x[k+0], S32,0xEAA127FA); c=HH(c,d,a,b,x[k+3], S33,0xD4EF3085); b=HH(b,c,d,a,x[k+6], S34,0x4881D05); a=HH(a,b,c,d,x[k+9], S31,0xD9D4D039); d=HH(d,a,b,c,x[k+12],S32,0xE6DB99E5); c=HH(c,d,a,b,x[k+15],S33,0x1FA27CF8); b=HH(b,c,d,a,x[k+2], S34,0xC4AC5665); a=II(a,b,c,d,x[k+0], S41,0xF4292244); d=II(d,a,b,c,x[k+7], S42,0x432AFF97); c=II(c,d,a,b,x[k+14],S43,0xAB9423A7); b=II(b,c,d,a,x[k+5], S44,0xFC93A039); a=II(a,b,c,d,x[k+12],S41,0x655B59C3); d=II(d,a,b,c,x[k+3], S42,0x8F0CCC92); c=II(c,d,a,b,x[k+10],S43,0xFFEFF47D); b=II(b,c,d,a,x[k+1], S44,0x85845DD1); a=II(a,b,c,d,x[k+8], S41,0x6FA87E4F); d=II(d,a,b,c,x[k+15],S42,0xFE2CE6E0); c=II(c,d,a,b,x[k+6], S43,0xA3014314); b=II(b,c,d,a,x[k+13],S44,0x4E0811A1); a=II(a,b,c,d,x[k+4], S41,0xF7537E82); d=II(d,a,b,c,x[k+11],S42,0xBD3AF235); c=II(c,d,a,b,x[k+2], S43,0x2AD7D2BB); b=II(b,c,d,a,x[k+9], S44,0xEB86D391); a=AddUnsigned(a,AA); b=AddUnsigned(b,BB); c=AddUnsigned(c,CC); d=AddUnsigned(d,DD); }
+            let tempValue = WordToHex(a)+WordToHex(b)+WordToHex(c)+WordToHex(d); return tempValue.toLowerCase();
+        }
+    </script>
 </body>
 </html>
