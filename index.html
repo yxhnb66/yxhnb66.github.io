@@ -14,34 +14,37 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
         }
+
         .container {
-            background-color: #fff;
-            padding: 30px;
+            background-color: #ffffff;
+            padding: 40px;
             border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             width: 100%;
             max-width: 400px;
             text-align: center;
         }
-        h1 { font-size: 22px; margin-bottom: 25px; color: #1a1a1a; }
+
+        h1 { font-size: 22px; margin-bottom: 30px; color: #222; }
+        
+        .input-group { margin-bottom: 20px; }
         input {
             width: 100%;
-            padding: 14px 15px;
+            padding: 15px;
             border: 1px solid #e1e4e8;
             border-radius: 8px;
             font-size: 16px;
-            margin-bottom: 15px;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.3s;
         }
-        input:focus { border-color: #4a90e2; }
+        input:focus { border-color: #4a90e2; box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1); }
+
         button {
             width: 100%;
-            padding: 14px;
+            padding: 15px;
             background-color: #4a90e2;
-            color: white;
+            color: #fff;
             border: none;
             border-radius: 8px;
             font-size: 16px;
@@ -49,112 +52,112 @@
             transition: background-color 0.3s;
         }
         button:hover { background-color: #357abd; }
-        button:disabled { background-color: #a0c5e8; cursor: not-allowed; }
-        #result { margin-top: 25px; text-align: left; line-height: 1.6; word-wrap: break-word;}
-        .error { color: #e64a19; }
-        .loading { color: #666; }
+        button:disabled { background-color: #ccc; cursor: not-allowed; }
+
+        .result-area {
+            margin-top: 30px;
+            text-align: left;
+            min-height: 50px;
+        }
+        .result-item { margin-bottom: 15px; }
+        .result-label { font-size: 12px; color: #888; margin-bottom: 5px; }
+        .result-text { font-size: 16px; color: #333; line-height: 1.5; }
+        
+        .error-text { color: #e74c3c; font-size: 14px; margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
+    <div class="container">
+        <h1>Word Mate 翻译助手</h1>
+        <div class="input-group">
+            <input type="text" id="inputText" placeholder="输入英文单词，如: apple" autocomplete="off">
+        </div>
+        <button id="translateBtn" onclick="doTranslate()">查询翻译</button>
+        
+        <div class="result-area" id="resultArea"></div>
+        <div class="error-text" id="errorText">❌ 查询失败，请检查网络或稍后重试。</div>
+    </div>
 
-<div class="container">
-    <h1>Word Mate 翻译助手</h1>
-    <input type="text" id="inputText" placeholder="请输入单词或句子" value="apple">
-    <button id="queryBtn" onclick="translateText()">查询翻译</button>
-    <div id="result"></div>
-</div>
+    <script>
+        // ⚠️ 请将引号内的内容替换为你有道云后台的真实 ID 和密钥
+        const APP_KEY = '你的应用ID'; 
+        const APP_SECRET = '你的应用密钥'; 
+        
+        const apiPath = '/v2/dict'; // 使用有道词典API
+        const proxyUrl = 'https://api.allorigins.win/raw?url='; // 公共跨域代理
 
-<script>
-    // ⚠️ 请在这里替换成你自己的真实密钥
-    const APP_KEY = '替换成你的应用ID';
-    const APP_SECRET = '替换成你的应用密钥';
+        async function doTranslate() {
+            const text = document.getElementById('inputText').value.trim();
+            const btn = document.getElementById('translateBtn');
+            const resultArea = document.getElementById('resultArea');
+            const errorText = document.getElementById('errorText');
 
-    async function translateText() {
-        const inputText = document.getElementById('inputText').value.trim();
-        const resultDiv = document.getElementById('result');
-        const queryBtn = document.getElementById('queryBtn');
+            if (!text) return;
 
-        if (!inputText) {
-            resultDiv.innerHTML = '<p class="error">❌ 请输入要查询的内容</p>';
-            return;
-        }
+            // 重置界面状态
+            btn.disabled = true;
+            btn.innerText = '正在查询...';
+            resultArea.innerHTML = '';
+            errorText.style.display = 'none';
 
-        // 设置加载状态
-        queryBtn.disabled = true;
-        resultDiv.innerHTML = '<p class="loading">⏳ 正在查询有道词典...</p>';
-
-        try {
-            // 1. 生成签名所需参数
+            // 核心逻辑：生成官方标准的 v3 签名
             const salt = new Date().getTime().toString();
             const curtime = Math.round(new Date().getTime() / 1000).toString();
+            const str1 = APP_KEY + truncateInput(text) + salt + curtime + APP_SECRET;
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str1);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const sign = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            // 拼接完整的有道API请求地址
+            const targetUrl = `https://openapi.youdao.com${apiPath}?q=${encodeURIComponent(text)}&langType=en&appKey=${APP_KEY}&salt=${salt}&sign=${sign}&signType=v3&curtime=${curtime}&dicts=ced&dicts=ec`;
             
-            let signStr = APP_KEY + truncate(inputText) + salt + curtime + APP_SECRET;
-            const sign = await sha256(signStr);
+            try {
+                // 通过代理发送请求
+                const response = await fetch(proxyUrl + encodeURIComponent(targetUrl));
+                const data = await response.json();
 
-            // 2. 构造参数 (使用 GET 请求格式以便代理)
-            const params = new URLSearchParams({
-                q: inputText,
-                from: 'auto',
-                to: 'zh-CHS',
-                appKey: APP_KEY,
-                salt: salt,
-                sign: sign,
-                signType: 'v3',
-                curtime: curtime
-            });
-
-            // 3. 使用可靠的公共 CORS 代理发起请求
-            const apiUrl = `https://openapi.youdao.com/api?${params.toString()}`;
-            const proxyUrl = 'https://api.allorigins.win/raw?url=' + encodeURIComponent(apiUrl);
-
-            const response = await fetch(proxyUrl);
-            if (!response.ok) {
-                throw new Error(`服务器错误，状态码: ${response.status}`);
-            }
-            const data = await response.json();
-
-            // 4. 解析并展示结果
-            if (data.errorCode === '0') {
-                const translation = data.translation.join(', ');
-                let details = '';
-                
-                // 提取基本释义 (explanations)
-                if (data.basic && data.basic.explains) {
-                    details = `<p style="margin-top:10px; color:#666;"><strong>详细释义：</strong><br>${data.basic.explains.join('<br>')}</p>`;
+                if (data.errorCode == '0') {
+                    let html = '';
+                    // 1. 提取音标 (如果有)
+                    if (data.basic && data.basic.ukphone) {
+                        html += `<div class="result-item"><div class="result-label">英式发音</div><div class="result-text">/${data.basic.ukphone}/</div></div>`;
+                    }
+                    // 2. 提取基础释义
+                    if (data.basic && data.basic.explains) {
+                        html += `<div class="result-item"><div class="result-label">基础释义</div><div class="result-text">${data.basic.explains.join('<br>')}</div></div>`;
+                    }
+                    // 3. 提取网络释义 (如果有)
+                    if (data.web && data.web.length > 0) {
+                        let webExplain = data.web.map(item => `<b>${item.key}</b>: ${item.value.join(', ')}`).join('<br><br>');
+                        html += `<div class="result-item"><div class="result-label">网络释义</div><div class="result-text">${webExplain}</div></div>`;
+                    }
+                    // 4. 提取例句 (如果有)
+                    if (data.web_translation && data.web_translation.length > 0) {
+                        let exampleText = data.web_translation[0].translateResult.map(t => `<p>${t.tgt}</p>`).join('');
+                        html += `<div class="result-item"><div class="result-label">例句翻译</div><div class="result-text">${exampleText}</div></div>`;
+                    }
+                    resultArea.innerHTML = html;
+                } else {
+                    throw new Error(data.errorCode);
                 }
-
-                resultDiv.innerHTML = `
-                    <p><strong>翻译结果：</strong>${translation}</p>
-                    ${details}
-                `;
-            } else {
-                throw new Error(`有道API返回错误码: ${data.errorCode}`);
+            } catch (err) {
+                errorText.style.display = 'block';
+                errorText.innerHTML = `❌ 查询失败: ${err.message}`;
+                console.error(err);
+            } finally {
+                btn.disabled = false;
+                btn.innerText = '查询翻译';
             }
-
-        } catch (error) {
-            console.error(error);
-            resultDiv.innerHTML = `<p class="error">❌ 查询失败：${error.message}</p>`;
-        } finally {
-            queryBtn.disabled = false;
         }
-    }
 
-    // SHA-256 签名生成函数
-    async function sha256(message) {
-        const msgBuffer = new TextEncoder().encode(message);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    }
-
-    // 辅助函数：截取签名用的字符串
-    function truncate(str) {
-        if (!str) return '';
-        const len = str.length;
-        if (len <= 20) return str;
-        return str.substring(0, 10) + len + str.substring(len - 10);
-    }
-</script>
-
+        // 官方要求的签名输入截取规则
+        function truncateInput(input) {
+            const len = input.length;
+            if (len <= 20) return input;
+            return input.substring(0, 10) + len + input.substring(len - 10, len);
+        }
+    </script>
 </body>
 </html>
