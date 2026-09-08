@@ -5,50 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Mate - 极简背单词</title>
     <style>
-        /* 重置基础样式 */
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f0f2f5;
+            background-color: #f4f6f8;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
-        }
-        /* 主容器样式 */
-        .app-container {
-            width: 100%;
-            max-width: 420px;
-            background: #ffffff;
-            padding: 40px 30px;
-            border-radius: 16px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
-        }
-        .app-title {
-            text-align: center;
-            font-size: 24px;
             color: #333;
-            margin-bottom: 30px;
-            font-weight: 700;
         }
-        .app-title span { color: #1890ff; }
-        /* 输入框与按钮 */
-        .input-group { margin-bottom: 20px; }
-        .input-group input {
+        .container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            width: 90%;
+            max-width: 450px;
+            text-align: center;
+        }
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 30px;
+        }
+        .title span { color: #4a90e2; }
+        
+        input {
             width: 100%;
-            padding: 16px;
-            border: 2px solid #e8e8e8;
+            padding: 15px;
+            border: 1px solid #e1e1e1;
             border-radius: 8px;
             font-size: 16px;
-            transition: border-color 0.3s;
+            margin-bottom: 20px;
             outline: none;
+            transition: all 0.3s;
         }
-        .input-group input:focus { border-color: #1890ff; }
-        .btn-translate {
+        input:focus { border-color: #4a90e2; }
+        
+        button {
             width: 100%;
-            padding: 16px;
-            background-color: #1890ff;
+            padding: 15px;
+            background-color: #4a90e2;
             color: white;
             border: none;
             border-radius: 8px;
@@ -56,111 +54,107 @@
             cursor: pointer;
             transition: background-color 0.3s;
         }
-        .btn-translate:hover { background-color: #40a9ff; }
-        .btn-translate:active { background-color: #096dd9; }
-        /* 结果展示区 */
-        .result-container {
-            margin-top: 30px;
-            min-height: 100px;
-            border-top: 1px solid #f0f0f0;
-            padding-top: 20px;
+        button:hover { background-color: #357abd; }
+        
+        #result {
+            margin-top: 25px;
+            text-align: left;
+            font-size: 15px;
+            line-height: 1.6;
+            color: #555;
+            word-break: break-word;
+            min-height: 50px;
         }
-        .word-phonetic { font-size: 14px; color: #888; margin-bottom: 12px; }
-        .word-definition { font-size: 18px; color: #333; line-height: 1.6; }
-        .word-definition li { list-style: none; margin-bottom: 8px; }
-        .word-definition li::before { content: "• "; color: #1890ff; font-weight: bold; margin-right: 5px; }
-        .loading { text-align: center; color: #1890ff; font-size: 15px; }
-        .error { color: #ff4d4f; text-align: center; font-size: 14px; }
+        .error { color: #e74c3c; text-align: center; }
+        .loading { text-align: center; color: #888; }
+        
+        .word-title { font-size: 18px; font-weight: bold; color: #333; margin-bottom: 10px;}
+        .word-phonetic { font-style: italic; color: #888; margin-bottom: 15px; font-size: 14px;}
+        .def-item { margin-bottom: 10px; }
+        .def-pos { font-weight: bold; color: #4a90e2; font-size: 13px; margin-right: 5px;}
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <h1 class="app-title"><span>Word</span> Mate</h1>
-        
-        <div class="input-group">
-            <input type="text" id="inputText" placeholder="输入英文单词，回车查询..." autocomplete="off">
-        </div>
-        
-        <button class="btn-translate" onclick="doTranslate()">查询释义</button>
-
-        <div id="result" class="result-container">
-            <div style="text-align: center; color: #bfbfbf; padding-top: 30px;">
-                输入单词开始探索<br>
-                (例如: apple, hello, code)
-            </div>
-        </div>
+    <div class="container">
+        <div class="title"><span>Word</span> Mate</div>
+        <input type="text" id="inputText" placeholder="请输入英文单词，例如 apple" autocomplete="off">
+        <button onclick="doTranslate()">查询释义</button>
+        <div id="result"></div>
     </div>
 
     <script>
-        // 监听回车键，按回车直接查询
-        document.getElementById('inputText').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                doTranslate();
-            }
-        });
-
         async function doTranslate() {
-            const input = document.getElementById('inputText').value.trim();
+            const input = document.getElementById('inputText').value.trim().toLowerCase();
             const resultDiv = document.getElementById('result');
             
             if (!input) return;
 
-            // 显示加载状态
-            resultDiv.innerHTML = '<div class="loading">正在查询中...</div>';
+            resultDiv.innerHTML = '<div class="loading">正在查询...</div>';
 
             try {
-                // 1. 调用纯英文免费API，完全不受浏览器限制
-                const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${input}`;
+                // 使用百度翻译的英英词典接口，国内访问极其稳定
+                const url = `https://dict.youdao.com/jsonapi?q=${input}&le=eng&doctype=json`;
+                
                 const response = await fetch(url);
-                
-                // 2. 如果查询不到单词 (404)
-                if (!response.ok && response.status === 404) {
-                    throw new Error('抱歉，未找到该单词的释义，请检查拼写。');
-                }
-                // 3. 如果是其他网络错误
                 if (!response.ok) {
-                    throw new Error('网络连接出现问题，请稍后再试。');
+                    throw new Error('网络响应异常');
                 }
-
-                const data = await response.json();
-                const wordData = data[0];
                 
-                // 提取音标
-                let phoneticText = '';
-                if (wordData.phonetic) {
-                    phoneticText = `/${wordData.phonetic}/`;
-                } else if (wordData.phonetics && wordData.phonetics[0].text) {
-                    phoneticText = wordData.phonetics[0].text;
+                const data = await response.json();
+                
+                // 解析英英词典数据
+                const ec = data.ec;
+                if (!ec) {
+                    resultDiv.innerHTML = '<div class="error">❌ 未找到该单词的释义</div>';
+                    return;
                 }
 
-                // 提取释义 (只提取前2个词性的释义，保持界面极简)
-                let html = `<div class="word-phonetic">${phoneticText}</div><ul class="word-definition">`;
-                let defCount = 0;
-                for (let i = 0; i < wordData.meanings.length; i++) {
-                    const meaning = wordData.meanings[i];
-                    const partOfSpeech = meaning.partOfSpeech; // 词性，如 noun, verb
-                    
-                    for (let j = 0; j < meaning.definitions.length; j++) {
-                        if (defCount >= 3) break; // 最多显示3条释义，保持极简
-                        
-                        const definition = meaning.definitions[j].definition;
-                        html += `<li><b>[${partOfSpeech}]</b> ${definition}</li>`;
-                        defCount++;
-                    }
-                    if (defCount >= 3) break;
+                let html = `<div class="word-title">${input}</div>`;
+                
+                // 获取音标
+                const phonetics = data.collins && data.collins.word[0]?.phones?.phone;
+                let phoneticStr = '';
+                if (phonetics && phonetics.length > 0) {
+                    // 尝试获取英音或美音
+                    const uk = phonetics.find(p => p.type === 'uk');
+                    const us = phonetics.find(p => p.type === 'us');
+                    phoneticStr += us ? `US: ${us.value} ` : '';
+                    phoneticStr += uk ? `UK: ${uk.value}` : '';
                 }
-                html += `</ul>`;
+                
+                if (phoneticStr) {
+                    html += `<div class="word-phonetic">${phoneticStr}</div>`;
+                }
 
-                // 渲染结果
+                // 获取释义列表
+                const trs = ec.word[0].trs;
+                if (trs && trs.length > 0) {
+                    trs.forEach(tr => {
+                        const pos = tr.tr[0].l?.i?.[0] || ''; // 词性
+                        const def = tr.tr[0].l?.i?.[1] || tr.tr[0].l?.i?.[0] || ''; // 释义
+                        if (def) {
+                            html += `<div class="def-item">
+                                        ${pos ? `<span class="def-pos">[${pos}]</span>` : ''}${def}
+                                    </div>`;
+                        }
+                    });
+                }
+
                 resultDiv.innerHTML = html;
 
             } catch (error) {
-                // 错误处理，直接展示错误信息
-                resultDiv.innerHTML = `<div class="error">❌ ${error.message}</div>`;
-                console.error(error);
+                console.error("Error:", error);
+                resultDiv.innerHTML = '<div class="error">❌ 查询失败，请检查网络后重试</div>';
             }
         }
+
+        // 允许按回车键触发查询
+        document.getElementById('inputText').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                doTranslate();
+            }
+        });
     </script>
 </body>
 </html>
