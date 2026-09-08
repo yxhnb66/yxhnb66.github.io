@@ -5,244 +5,248 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Word Mate - 极简背单词</title>
     <style>
-        :root {
-            --bg-color: #f4f7f9;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --sub-text-color: #666666;
-            --primary-color: #4a90e2;
-            --primary-hover: #357abd;
-            --border-color: #e1e4e8;
-            --shadow: 0 4px 12px rgba(0,0,0,0.05);
-        }
-
-        [data-theme="dark"] {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --sub-text-color: #a0a0a0;
-            --primary-color: #5c9ce6;
-            --primary-hover: #4a8ad4;
-            --border-color: #333333;
-            --shadow: 0 4px 12px rgba(0,0,0,0.3);
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            transition: background-color 0.3s, color 0.3s;
+            background-color: #f4f5f7;
+            color: #333;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            margin: 0;
             padding: 20px;
         }
 
+        /* 核心卡片容器 */
         .app-container {
+            background-color: #ffffff;
             width: 100%;
-            max-width: 400px;
-            background-color: var(--card-bg);
+            max-width: 450px;
+            padding: 40px 30px;
             border-radius: 16px;
-            box-shadow: var(--shadow);
-            padding: 30px;
-            box-sizing: border-box;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
             text-align: center;
         }
 
-        h1 {
+        .app-title {
             font-size: 24px;
-            margin-bottom: 20px;
-            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 30px;
+            color: #222;
         }
 
+        /* 输入框与按钮区域 */
         .input-group {
             margin-bottom: 20px;
-            text-align: left;
         }
 
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: var(--sub-text-color);
-        }
-
-        input[type="text"] {
+        #inputText {
             width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
+            padding: 14px 20px;
             font-size: 16px;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            box-sizing: border-box;
+            border: 1px solid #e1e4e8;
+            border-radius: 8px;
+            background-color: #fafafa;
+            color: #333;
             outline: none;
-            transition: border-color 0.3s;
+            transition: all 0.2s ease;
+            margin-bottom: 15px;
         }
 
-        input[type="text"]:focus {
-            border-color: var(--primary-color);
+        #inputText:focus {
+            border-color: #4a90e2;
+            background-color: #fff;
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
         }
 
-        button {
+        #translateBtn {
             width: 100%;
-            padding: 12px;
-            background-color: var(--primary-color);
-            color: white;
+            padding: 14px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #3475a9; /* 有道风格蓝 */
             border: none;
             border-radius: 8px;
-            font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            font-weight: 500;
+            transition: background-color 0.2s ease;
         }
 
-        button:hover {
-            background-color: var(--primary-hover);
+        #translateBtn:hover {
+            background-color: #2b628e;
         }
 
-        .result-area {
-            margin-top: 25px;
+        #translateBtn:active {
+            background-color: #245379;
+        }
+
+        /* 翻译结果展示区域 */
+        .result-box {
+            margin-top: 30px;
             text-align: left;
-            border-top: 1px solid var(--border-color);
-            padding-top: 20px;
+            padding: 20px;
+            background-color: #f9fafc;
+            border-radius: 8px;
+            border: 1px dashed #e1e4e8;
             display: none; /* 默认隐藏 */
         }
 
-        .word-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .phonetic {
-            font-family: "Lucida Sans Unicode", "Arial Unicode MS", sans-serif;
-            color: var(--sub-text-color);
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-
-        .translation {
-            line-height: 1.6;
+        .result-box h3 {
             font-size: 15px;
+            color: #888;
+            margin-bottom: 10px;
+            font-weight: normal;
         }
 
-        .loading {
-            color: var(--sub-text-color);
-            font-size: 14px;
-            margin-top: 10px;
-            display: none;
+        .result-box p {
+            font-size: 18px;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        .status-tip {
+            font-size: 13px;
+            color: #999;
+            margin-top: 15px;
+            min-height: 20px;
         }
     </style>
 </head>
 <body>
 
 <div class="app-container">
-    <h1>Word Mate</h1>
+    <div class="app-title">Word Mate 翻译助手</div>
     
     <div class="input-group">
-        <label for="wordInput">输入单词进行查询</label>
-        <input type="text" id="wordInput" placeholder="例如：apple">
+        <input type="text" id="inputText" placeholder="请输入要查询的单词或句子...">
+        <button id="translateBtn">查询翻译</button>
     </div>
 
-    <button onclick="translateWord()">查询翻译</button>
+    <div class="status-tip" id="statusTip"></div>
 
-    <div id="loading" class="loading">正在查询有道词典...</div>
-
-    <div id="resultArea" class="result-area">
-        <div id="wordTitle" class="word-title"></div>
-        <div id="phonetic" class="phonetic"></div>
-        <div id="translation" class="translation"></div>
+    <!-- 翻译结果展示区 -->
+    <div class="result-box" id="resultBox">
+        <h3>翻译结果</h3>
+        <p id="translationResult"></p>
     </div>
 </div>
 
 <script>
-    // --- 配置区域 (已填入你的密钥) ---
-    const APP_ID = '4e0f9a927fa1fddc'; 
-    const APP_KEY = 'wZRV8fAD1oHimBLkSGiz9GA3bJDG0MEt'; 
+    // ==========================================
+    // 1. 在这里配置你的有道智云密钥（已填入）
+    // ==========================================
+    const APP_ID = '4e0f9a927fa1fddc';
+    const APP_KEY = 'wZRV8fAD1oHimBLkSGiz9GA3bJDG0MEt';
 
-    async function translateWord() {
-        const input = document.getElementById('wordInput').value.trim();
-        const resultArea = document.getElementById('resultArea');
-        const loading = document.getElementById('loading');
-        
-        if (!input) {
-            alert("请输入一个单词！");
+    // DOM 元素获取
+    const inputText = document.getElementById('inputText');
+    const translateBtn = document.getElementById('translateBtn');
+    const resultBox = document.getElementById('resultBox');
+    const translationResult = document.getElementById('translationResult');
+    const statusTip = document.getElementById('statusTip');
+
+    // 触发翻译事件
+    translateBtn.addEventListener('click', performTranslation);
+    inputText.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') performTranslation();
+    });
+
+    // 核心翻译逻辑
+    function performTranslation() {
+        const text = inputText.value.trim();
+        if (!text) {
+            statusTip.textContent = '请先输入内容哦...';
+            resultBox.style.display = 'none';
             return;
         }
 
-        // 显示加载状态，隐藏旧结果
-        loading.style.display = 'block';
-        resultArea.style.display = 'none';
+        // 界面状态更新为加载中
+        statusTip.textContent = '正在有道智云查询中...';
+        resultBox.style.display = 'none';
+        translateBtn.disabled = true;
 
-        // 构造有道API所需的加密签名
+        // 1. 生成加密参数 (盐值salt + 签名sign)
+        const salt = (new Date).getTime();
         const curtime = Math.round(new Date().getTime() / 1000);
-        const salt = (new Date()).getTime();
-        const str1 = APP_ID + truncate(input) + salt + curtime + APP_KEY;
-        
-        // 使用浏览器内置的加密库计算 SHA256
-        const signBuffer = new TextEncoder().encode(str1);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', signBuffer);
-        const signArray = Array.from(new Uint8Array(hashBuffer));
-        const sign = signArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        const str1 = APP_ID + truncate(text) + salt + curtime + APP_KEY;
+        const sign = CryptoJS.MD5(str1).toString();
 
-        // 构造请求参数
-        const params = new URLSearchParams({
-            q: input,
-            from: 'en',
-            to: 'zh-CHS',
+        // 2. 组装请求参数
+        const url = 'https://openapi.youdao.com/v2/api';
+        const data = {
+            q: text,
             appKey: APP_ID,
             salt: salt,
-            curtime: curtime,
+            from: 'auto',
+            to: 'zh-CHS',
             sign: sign,
-            signType: 'v3'
-        });
+            signType: 'v3',
+            curtime: curtime
+        };
 
-        try {
-            // 发送请求到有道API
-            const response = await fetch(`https://openapi.youdao.com/api?${params}`);
-            const data = await response.json();
+        // 将参数转换为 URL 搜索字符串
+        const params = new URLSearchParams(data);
+        
+        // 3. 使用免费公共代理服务器，完美绕过 GitHub Pages 跨域限制
+        const proxyUrl = 'https://corsproxy.io/?';
+        const targetUrl = `${proxyUrl}${encodeURIComponent(url)}&${params.toString()}`;
 
-            if (data.errorCode === '0') {
-                // 查询成功，显示结果
-                document.getElementById('wordTitle').innerText = data.query;
-                
-                // 处理音标（如果有）
-                let phoneText = '';
-                if (data.basic && data.basic.phonetic) {
-                    phoneText = `/${data.basic.phonetic}/`;
+        // 4. 发起网络请求
+        fetch(targetUrl)
+            .then(response => response.json())
+            .then(resultData => {
+                if (resultData.errorCode === '0') {
+                    // 翻译成功，展示结果
+                    resultBox.style.display = 'block';
+                    let resultText = '';
+                    if (resultData.isWord) {
+                        // 如果是单词，展示基本释义
+                        if(resultData.basic && resultData.basic.explains) {
+                            resultText = resultData.basic.explains.join('\n');
+                        } else {
+                            resultText = '未找到基本释义，请检查拼写。';
+                        }
+                    } else {
+                        // 如果是句子，展示翻译结果
+                        if(resultData.translation) {
+                            resultText = resultData.translation.join(' ');
+                        } else {
+                            resultText = '未返回翻译结果。';
+                        }
+                    }
+                    translationResult.textContent = resultText;
+                    statusTip.textContent = '✅ 翻译完成';
+                } else {
+                    throw new Error(`有道API错误码: ${resultData.errorCode}`);
                 }
-                document.getElementById('phonetic').innerText = phoneText;
-
-                // 处理释义
-                let transText = '';
-                if (data.basic && data.basic.explains) {
-                    transText = data.basic.explains.join('\n');
-                } else if (data.translation) {
-                    transText = data.translation.join('\n');
-                }
-                document.getElementById('translation').innerText = transText;
-
-                resultArea.style.display = 'block';
-            } else {
-                alert('查询出错，错误码：' + data.errorCode);
-            }
-        } catch (error) {
-            console.error(error);
-            alert('网络请求失败，请检查网络或控制台。');
-        } finally {
-            loading.style.display = 'none';
-        }
+            })
+            .catch(error => {
+                // 翻译失败
+                statusTip.textContent = '❌ 网络请求失败，请稍后重试。';
+                console.error(error);
+            })
+            .finally(() => {
+                // 恢复按钮可用状态
+                translateBtn.disabled = false;
+            });
     }
 
-    // 辅助函数：处理长文本截断（API要求）
+    // 辅助函数：截取字符串用于签名（官方要求）
     function truncate(q) {
         const len = q.length;
         if (len <= 20) return q;
         return q.substring(0, 10) + len + q.substring(len - 10, len);
     }
 </script>
+
+<!-- 引入 MD5 加密库 (用于生成有道签名) -->
+<script src="https://cdn.jsdelivr.net/npm/crypto-js@4.1.1/crypto-js.min.js"></script>
 
 </body>
 </html>
