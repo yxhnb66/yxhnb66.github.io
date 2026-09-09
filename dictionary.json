@@ -14,7 +14,29 @@
 "accustom":{"phonetic":"/əˈkʌstəm/","pos":"动词","en_definition":"to make someone familiar with something","zh_definition":"使习惯","examples":[{"en":"Accustom yourself to early rising.","zh":"让自己习惯早起。"}],"level":"六级"},
 "acknowledge":{"phonetic":"/əkˈnɒlɪdʒ/","pos":"动词","en_definition":"to accept or admit that something is true","zh_definition":"承认；致谢","examples":[{"en":"He acknowledged his mistake.","zh":"他承认了错误。"}],"level":"六级"},
 "acquire":{"phonetic":"/əˈkwaɪə/","pos":"动词","en_definition":"to get or gain something","zh_definition":"获得；习得","examples":[{"en":"She acquired a new skill.","zh":"她学会了一项新技能。"}],"level":"四级"},
-"adapt":{"phonetic":"/əˈdæpt/","pos":"动词","en_definition":"to change to fit new conditions","zh_definition":"适应；改编","examples":[{"en":"Animals adapt to their environment.","zh":"动物适应环境。"}],"level":"四级"},
+"adapt": {
+  "phonetic": "/əˈdæpt/",
+  "pos": "动词",
+  "en_definition": "to change your behavior or ideas to fit a new situation; to modify something for a different use",
+  "zh_definition": "适应；改编；改造",
+  "examples": [
+    {"en": "It takes time to adapt to a new environment.", "zh": "适应新环境需要时间。"},
+    {"en": "The novel was adapted for film.", "zh": "这部小说被改编成了电影。"}
+  ],
+  "phrases": [
+    {"en": "adapt to", "zh": "适应；适合"},
+    {"en": "adapt oneself to", "zh": "使自己适应"},
+    {"en": "adapt for", "zh": "为...改编；为...改造"},
+    {"en": "adapt from", "zh": "根据...改编"},
+    {"en": "adapt into", "zh": "改编成"},
+    {"en": "adapt well to", "zh": "很好地适应"},
+    {"en": "adapt quickly", "zh": "迅速适应"},
+    {"en": "adapt to change", "zh": "适应变化"},
+    {"en": "adapt to the environment", "zh": "适应环境"},
+    {"en": "adapt to local conditions", "zh": "因地制宜"}
+  ],
+  "level": "四级"
+},
 "adequate":{"phonetic":"/ˈædɪkwət/","pos":"形容词","en_definition":"enough for what is needed","zh_definition":"足够的；适当的","examples":[{"en":"The food supply is adequate.","zh":"食物供应充足。"}],"level":"六级"},
 "adjust":{"phonetic":"/əˈdʒʌst/","pos":"动词","en_definition":"to change slightly to make better","zh_definition":"调整；适应","examples":[{"en":"Adjust the volume, please.","zh":"请调整音量。"}],"level":"四级"},
 "administration":{"phonetic":"/ədˌmɪnɪˈstreɪʃn/","pos":"名词","en_definition":"the management of an organization","zh_definition":"管理；行政","examples":[{"en":"School administration is complex.","zh":"学校管理很复杂。"}],"level":"四级"},
