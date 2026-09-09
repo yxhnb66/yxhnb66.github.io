@@ -13,7 +13,7 @@
             padding: 15px;
         }
         .container {
-            max-width: 700px;
+            max-width: 720px;
             margin: 0 auto;
             background: white;
             border-radius: 16px;
@@ -81,6 +81,15 @@
         .definition { padding-left: 15px; line-height: 1.7; color: #333; }
         .example { padding-left: 30px; color: #555; font-size: 14px; margin-bottom: 3px; }
         .example-zh { padding-left: 45px; color: #888; font-size: 13px; margin-bottom: 8px; }
+        .phrase-item {
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid #667eea;
+        }
+        .phrase-en { font-weight: bold; color: #333; }
+        .phrase-zh { color: #666; font-size: 13px; margin-top: 2px; }
         .fav-item {
             background: #fafafa; padding: 12px 15px; border-radius: 8px;
             margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
@@ -124,8 +133,6 @@
             margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
             border-left: 3px solid #ff4757;
         }
-        .wrong-word { font-weight: bold; font-size: 16px; }
-        .wrong-meaning { color: #666; font-size: 13px; flex: 1; margin: 0 10px; }
     </style>
 </head>
 <body>
@@ -160,7 +167,6 @@
     <div class="page" id="statsPage"><div id="statsArea"></div></div>
 </div>
 <div class="toast" id="toast"></div>
-
 <script>
 // ============ 全局变量 ============
 let dictionary = {};
@@ -177,7 +183,7 @@ let testMode = 'en2cn';
 // ============ 加载词库 ============
 async function loadDictionary() {
     try {
-        const response = await fetch('https://yxhnb66.github.io/dictionary.json?v=' + Date.now());
+        const response = await fetch('dictionary.json?v=' + Date.now());
         if (!response.ok) throw new Error('HTTP ' + response.status);
         dictionary = await response.json();
         showToast('✅ 词库加载成功，共 ' + Object.keys(dictionary).length + ' 词');
@@ -205,6 +211,7 @@ function searchWord() {
     if (!word) return;
     document.getElementById('suggestions').style.display = 'none';
     const resultDiv = document.getElementById('result');
+    
     if (dictionary[word]) {
         currentWord = word;
         displayResult(word, dictionary[word]);
@@ -229,9 +236,12 @@ function displayResult(word, d) {
     let html = '<div class="result-card"><div class="word-title">' + word + '</div>';
     if (d.phonetic) html += '<div class="phonetic">' + d.phonetic + '</div>';
     html += '<button onclick="speakWord(\'' + word + '\')" style="padding:8px 15px;background:#34c759;color:white;border:none;border-radius:50px;cursor:pointer;font-size:14px;margin-bottom:10px;">🔊 发音</button>';
+    
     if (d.pos) html += '<div class="meaning-block"><div class="pos">词性：' + d.pos + '</div></div>';
     if (d.en_definition) html += '<div class="meaning-block"><div class="pos">📖 英文释义</div><div class="definition">' + d.en_definition + '</div></div>';
     if (d.zh_definition) html += '<div class="meaning-block"><div class="pos">🇨🇳 中文释义</div><div class="definition">' + d.zh_definition + '</div></div>';
+    
+    // 例句
     if (d.examples) {
         html += '<div class="meaning-block"><div class="pos">例句</div>';
         d.examples.forEach(ex => {
@@ -243,9 +253,20 @@ function displayResult(word, d) {
         });
         html += '</div>';
     }
+    
+    // 相关短语
+    if (d.phrases && d.phrases.length) {
+        html += '<div class="meaning-block"><div class="pos">🔗 相关短语</div>';
+        d.phrases.forEach(p => {
+            html += '<div class="phrase-item"><div class="phrase-en">' + p.en + '</div><div class="phrase-zh">' + p.zh + '</div></div>';
+        });
+        html += '</div>';
+    }
+    
     if (d.synonyms && d.synonyms.length) html += '<div class="meaning-block"><div class="pos">同义词</div><div class="definition">' + d.synonyms.join(', ') + '</div></div>';
     if (d.antonyms && d.antonyms.length) html += '<div class="meaning-block"><div class="pos">反义词</div><div class="definition">' + d.antonyms.join(', ') + '</div></div>';
     if (d.level) html += '<div class="meaning-block"><div class="pos">等级</div><div class="definition">' + d.level + '</div></div>';
+    
     html += '</div>';
     div.innerHTML = html;
 }
@@ -403,7 +424,7 @@ function addToWrongBook(word) {
 function renderWrongBook() {
     const div = document.getElementById('wrongList');
     if (!wrongBook.length) { div.innerHTML = '<div class="empty-state"><h3>暂无错题</h3><p>答题错误的单词会自动记录</p></div>'; return; }
-    div.innerHTML = wrongBook.map((w, i) => '<div class="wrong-item"><span class="wrong-word">' + w.word + '</span><span class="wrong-meaning">' + (w.meaning || '') + '</span><button class="remove-btn" onclick="removeWrong(' + i + ')">×</button></div>').join('');
+    div.innerHTML = wrongBook.map((w, i) => '<div class="wrong-item"><span class="fav-word">' + w.word + '</span><span class="fav-meaning">' + (w.meaning || '') + '</span><button class="remove-btn" onclick="removeWrong(' + i + ')">×</button></div>').join('');
 }
 function removeWrong(i) {
     wrongBook.splice(i, 1);
