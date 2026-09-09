@@ -1,64 +1,119 @@
 {
   "apple": {
     "phonetic": "/ˈæpəl/",
-    "meaning": "苹果",
     "pos": "名词",
-    "examples": ["I eat an apple every day.", "The apple is red."]
+    "en_definition": "a round fruit with red, green, or yellow skin and firm white flesh",
+    "zh_definition": "苹果",
+    "examples": [
+      {"en": "I eat an apple every day.", "zh": "我每天吃一个苹果。"},
+      {"en": "The apple fell from the tree.", "zh": "苹果从树上掉了下来。"}
+    ],
+    "synonyms": [],
+    "antonyms": []
   },
   "book": {
     "phonetic": "/bʊk/",
-    "meaning": "书；预订",
     "pos": "名词/动词",
-    "examples": ["I read a book.", "Book a hotel room."]
+    "en_definition": "a written or printed work consisting of pages glued together; to reserve accommodation or a ticket",
+    "zh_definition": "书；预订",
+    "examples": [
+      {"en": "I am reading an interesting book.", "zh": "我正在读一本有趣的书。"},
+      {"en": "I need to book a hotel room.", "zh": "我需要预订一个酒店房间。"}
+    ],
+    "synonyms": ["volume", "reserve"],
+    "antonyms": []
   },
   "cat": {
     "phonetic": "/kæt/",
-    "meaning": "猫",
     "pos": "名词",
-    "examples": ["The cat is sleeping."]
+    "en_definition": "a small domesticated animal with soft fur, a short snout, and retractable claws",
+    "zh_definition": "猫",
+    "examples": [
+      {"en": "The cat is sleeping on the sofa.", "zh": "猫在沙发上睡觉。"}
+    ],
+    "synonyms": ["feline", "kitten"],
+    "antonyms": []
   },
   "dog": {
     "phonetic": "/dɒɡ/",
-    "meaning": "狗",
     "pos": "名词",
-    "examples": ["The dog barked."]
+    "en_definition": "a domesticated carnivorous mammal that typically has a long snout, an acute sense of smell, and a barking voice",
+    "zh_definition": "狗",
+    "examples": [
+      {"en": "The dog is playing in the garden.", "zh": "狗在花园里玩耍。"}
+    ],
+    "synonyms": ["canine", "puppy"],
+    "antonyms": []
   },
   "water": {
     "phonetic": "/ˈwɔːtə/",
-    "meaning": "水；浇水",
     "pos": "名词/动词",
-    "examples": ["Drink more water.", "Water the flowers."]
+    "en_definition": "a colorless, transparent, odorless liquid that forms the seas, lakes, rivers, and rain; to pour water on plants",
+    "zh_definition": "水；浇水",
+    "examples": [
+      {"en": "Drink more water every day.", "zh": "每天多喝水。"},
+      {"en": "Water the flowers in the morning.", "zh": "早上给花浇水。"}
+    ],
+    "synonyms": ["H2O", "liquid"],
+    "antonyms": []
   },
   "happy": {
     "phonetic": "/ˈhæpi/",
-    "meaning": "快乐的；幸福的",
     "pos": "形容词",
-    "examples": ["I'm very happy today."]
+    "en_definition": "feeling or showing pleasure or contentment",
+    "zh_definition": "快乐的；幸福的",
+    "examples": [
+      {"en": "I am very happy today.", "zh": "我今天很开心。"}
+    ],
+    "synonyms": ["glad", "joyful", "cheerful"],
+    "antonyms": ["sad", "unhappy"]
   },
   "school": {
     "phonetic": "/skuːl/",
-    "meaning": "学校",
     "pos": "名词",
-    "examples": ["The children go to school."]
+    "en_definition": "an institution for educating children",
+    "zh_definition": "学校",
+    "examples": [
+      {"en": "The children go to school by bus.", "zh": "孩子们乘公交车去上学。"}
+    ],
+    "synonyms": ["academy", "institution"],
+    "antonyms": []
   },
   "friend": {
     "phonetic": "/frend/",
-    "meaning": "朋友",
     "pos": "名词",
-    "examples": ["She is my best friend."]
+    "en_definition": "a person with whom one has a bond of mutual affection",
+    "zh_definition": "朋友",
+    "examples": [
+      {"en": "She is my best friend.", "zh": "她是我最好的朋友。"}
+    ],
+    "synonyms": ["companion", "buddy"],
+    "antonyms": ["enemy"]
   },
   "run": {
     "phonetic": "/rʌn/",
-    "meaning": "跑；运行",
     "pos": "动词/名词",
-    "examples": ["She runs every morning.", "Run the program."]
+    "en_definition": "to move at a speed faster than a walk; an act of running",
+    "zh_definition": "跑；运行",
+    "examples": [
+      {"en": "She runs every morning in the park.", "zh": "她每天早上在公园跑步。"},
+      {"en": "Run the computer program.", "zh": "运行电脑程序。"}
+    ],
+    "synonyms": ["sprint", "jog"],
+    "antonyms": ["walk", "stop"]
   },
   "eat": {
     "phonetic": "/iːt/",
-    "meaning": "吃",
     "pos": "动词",
-    "examples": ["Let's eat dinner."]
-  },
+    "en_definition": "to put food into the mouth, chew, and swallow it",
+    "zh_definition": "吃",
+    "examples": [
+      {"en": "We eat dinner at seven o'clock.", "zh": "我们七点吃晚饭。"}
+    ],
+    "synonyms": ["consume", "devour"],
+    "antonyms": ["fast", "starve"]
+  }
+}
   "beautiful": {
     "phonetic": "/ˈbjuːtɪfl/",
     "meaning": "美丽的",
