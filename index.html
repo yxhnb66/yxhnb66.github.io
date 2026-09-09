@@ -353,44 +353,7 @@
             document.getElementById('favArea').style.display = 'none';
         }
 
-        function displayLocalResult(word, data) {
-            const resultDiv = document.getElementById('result');
-            let html = '<div class="result-card">';
-            html += `<div class="word-title">${word}</div>`;
-            
-            if (data.phonetic) {
-                html += `<div class="phonetic">${data.phonetic}</div>`;
-            }
-            
-            // 发音按钮
-            html += `<button onclick="speakWord('${word}')" style="padding:8px 15px;background:#34c759;color:white;border:none;border-radius:50px;cursor:pointer;font-size:14px;margin-bottom:10px;">🔊 发音</button>`;
-            
-            if (data.pos) {
-                html += `<div class="meaning-block"><div class="pos">${data.pos}</div></div>`;
-            }
-            
-            if (data.meaning) {
-                html += '<div class="meaning-block"><div class="pos">中文释义</div>';
-                html += `<div class="definition">${data.meaning}</div>`;
-                html += '</div>';
-            }
-            
-            if (data.examples && data.examples.length > 0) {
-                html += '<div class="meaning-block"><div class="pos">例句</div>';
-                data.examples.forEach(ex => {
-                    html += `<div class="example">• ${ex}</div>`;
-                });
-                html += '</div>';
-            }
-            
-            // 考试等级标签
-            if (data.level) {
-                html += `<div class="meaning-block"><div class="pos">考试等级</div><div class="definition">${data.level}</div></div>`;
-            }
-            
-            html += '</div>';
-            resultDiv.innerHTML = html;
-        }
+        
 
         // ============ 自动补全 ============
         function handleInput() {
@@ -418,7 +381,78 @@
                 suggestionsDiv.style.display = 'none';
             }
         }
-
+function displayLocalResult(word, data) {
+    const resultDiv = document.getElementById('result');
+    let html = '<div class="result-card">';
+    
+    // 单词标题
+    html += `<div class="word-title">${word}</div>`;
+    
+    // 音标
+    if (data.phonetic) {
+        html += `<div class="phonetic">${data.phonetic}</div>`;
+    }
+    
+    // 发音按钮
+    html += `<button onclick="speakWord('${word}')" style="padding:8px 15px;background:#34c759;color:white;border:none;border-radius:50px;cursor:pointer;font-size:14px;margin-bottom:10px;">🔊 发音</button>`;
+    
+    // 词性
+    if (data.pos) {
+        html += `<div class="meaning-block"><div class="pos">词性：${data.pos}</div></div>`;
+    }
+    
+    // 英文释义
+    if (data.en_definition) {
+        html += '<div class="meaning-block"><div class="pos">📖 英文释义</div>';
+        html += `<div class="definition">${data.en_definition}</div>`;
+        html += '</div>';
+    }
+    
+    // 中文释义
+    if (data.zh_definition) {
+        html += '<div class="meaning-block"><div class="pos">🇨🇳 中文释义</div>';
+        html += `<div class="definition">${data.zh_definition}</div>`;
+        html += '</div>';
+    }
+    
+    // 兼容旧格式的 meaning 字段
+    if (!data.zh_definition && data.meaning) {
+        html += '<div class="meaning-block"><div class="pos">中文释义</div>';
+        html += `<div class="definition">${data.meaning}</div>`;
+        html += '</div>';
+    }
+    
+    // 例句
+    if (data.examples && data.examples.length > 0) {
+        html += '<div class="meaning-block"><div class="pos">例句</div>';
+        data.examples.forEach(ex => {
+            if (typeof ex === 'object' && ex.en) {
+                html += `<div class="example">• ${ex.en}</div>`;
+                html += `<div class="example" style="color:#888;padding-left:45px;">${ex.zh}</div>`;
+            } else {
+                html += `<div class="example">• ${ex}</div>`;
+            }
+        });
+        html += '</div>';
+    }
+    
+    // 同义词
+    if (data.synonyms && data.synonyms.length > 0) {
+        html += '<div class="meaning-block"><div class="pos">同义词</div>';
+        html += `<div class="definition">${data.synonyms.join(', ')}</div>`;
+        html += '</div>';
+    }
+    
+    // 反义词
+    if (data.antonyms && data.antonyms.length > 0) {
+        html += '<div class="meaning-block"><div class="pos">反义词</div>';
+        html += `<div class="definition">${data.antonyms.join(', ')}</div>`;
+        html += '</div>';
+    }
+    
+    html += '</div>';
+    resultDiv.innerHTML = html;
+}
         function selectSuggestion(word) {
             document.getElementById('searchBox').value = word;
             document.getElementById('suggestions').style.display = 'none';
