@@ -572,7 +572,8 @@
     "zh_definition": "时间",
     "examples": [{"en": "Time flies.", "zh": "时间飞逝。"}],
     "level": "常用"
-  }，
+      }
+}，
  "chair": {
   "phonetic": "/tʃeə/",
   "pos": "名词",
