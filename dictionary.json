@@ -572,7 +572,8 @@
     "zh_definition": "时间",
     "examples": [{"en": "Time flies.", "zh": "时间飞逝。"}],
     "level": "常用"
-  }，
+  },
+}
   "chair": {"phonetic": "/tʃeə/", "pos": "名词", "en_definition": "a seat with a back, for one person", "zh_definition": "椅子", "examples": [{"en": "Sit on the chair.", "zh": "坐在椅子上。"}], "level": "小学"},
 "table": {"phonetic": "/ˈteɪbl/", "pos": "名词", "en_definition": "a piece of furniture with a flat top and legs", "zh_definition": "桌子", "examples": [{"en": "The book is on the table.", "zh": "书在桌子上。"}], "level": "小学"},
 "door": {"phonetic": "/dɔː/", "pos": "名词", "en_definition": "a movable barrier used to open and close an entrance", "zh_definition": "门", "examples": [{"en": "Close the door.", "zh": "关上门。"}], "level": "小学"},
