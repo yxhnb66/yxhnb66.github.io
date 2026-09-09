@@ -41,28 +41,22 @@
             font-weight: bold;
             transition: all 0.2s;
         }
-        .nav-btn.active {
-            background: #667eea;
-            color: white;
-        }
+        .nav-btn.active { background: #667eea; color: white; }
 
         .page { display: none; }
         .page.active { display: block; }
 
-        .search-box {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-        input {
-            flex: 1;
+        .search-box { display: flex; gap: 10px; margin-bottom: 15px; }
+        .search-wrapper { position: relative; flex: 1; }
+        .search-wrapper input {
+            width: 100%;
             padding: 14px;
             font-size: 16px;
             border: 2px solid #ddd;
             border-radius: 10px;
             outline: none;
         }
-        input:focus { border-color: #667eea; }
+        .search-wrapper input:focus { border-color: #667eea; }
         button {
             padding: 14px 18px;
             background: #667eea;
@@ -73,12 +67,8 @@
             cursor: pointer;
             font-weight: bold;
         }
-        .btn-fav {
-            background: #ff9500;
-        }
-        .btn-fav.active {
-            background: #ff4757;
-        }
+        .btn-fav { background: #ff9500; }
+        .btn-fav.active { background: #ff4757; }
 
         .suggestions {
             position: absolute;
@@ -99,18 +89,9 @@
             cursor: pointer;
             border-bottom: 1px solid #f0f0f0;
         }
-        .suggestion-item:hover {
-            background: #f0f7ff;
-        }
-        .suggestion-word {
-            font-weight: bold;
-            color: #333;
-        }
-        .suggestion-meaning {
-            color: #666;
-            font-size: 13px;
-            margin-left: 10px;
-        }
+        .suggestion-item:hover { background: #f0f7ff; }
+        .suggestion-word { font-weight: bold; color: #333; }
+        .suggestion-meaning { color: #666; font-size: 13px; margin-left: 10px; }
 
         .result-card {
             background: #fafafa;
@@ -118,30 +99,13 @@
             padding: 20px;
             margin-top: 15px;
         }
-        .word-title {
-            font-size: 26px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
+        .word-title { font-size: 26px; font-weight: bold; margin-bottom: 5px; }
         .phonetic { color: #666; margin-bottom: 10px; }
         .meaning-block { margin-bottom: 15px; }
-        .pos {
-            font-style: italic;
-            color: #667eea;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-        .definition {
-            padding-left: 15px;
-            line-height: 1.7;
-            color: #333;
-        }
-        .example {
-            padding-left: 30px;
-            color: #666;
-            font-style: italic;
-            font-size: 14px;
-        }
+        .pos { font-style: italic; color: #667eea; font-weight: bold; margin-bottom: 5px; }
+        .definition { padding-left: 15px; line-height: 1.7; color: #333; }
+        .example { padding-left: 30px; color: #666; font-style: italic; font-size: 14px; margin-bottom: 3px; }
+        .example-zh { padding-left: 45px; color: #888; font-size: 13px; margin-bottom: 8px; }
 
         .fav-list { margin-top: 15px; }
         .fav-item {
@@ -169,12 +133,7 @@
 
         .test-container { text-align: center; padding: 20px; }
         .test-word { font-size: 28px; font-weight: bold; margin: 15px 0; }
-        .test-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin: 15px 0;
-        }
+        .test-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0; }
         .test-option {
             padding: 15px;
             border: 2px solid #ddd;
@@ -186,13 +145,7 @@
         .test-option:hover { border-color: #667eea; background: #f0f0ff; }
         .test-option.correct { border-color: #4caf50; background: #e8f5e9; }
         .test-option.wrong { border-color: #ff4757; background: #ffe5e5; }
-        .level-btns {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
+        .level-btns { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px; }
         .level-btn {
             padding: 8px 14px;
             border: 2px solid #667eea;
@@ -203,19 +156,9 @@
             font-size: 13px;
             font-weight: bold;
         }
-        .level-btn.active {
-            background: #667eea;
-            color: white;
-        }
-        .score-display {
-            font-size: 18px;
-            margin: 10px 0;
-        }
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #999;
-        }
+        .level-btn.active { background: #667eea; color: white; }
+        .score-display { font-size: 18px; margin: 10px 0; }
+        .empty-state { text-align: center; padding: 40px 20px; color: #999; }
         .toast {
             position: fixed;
             top: 20px;
@@ -231,8 +174,6 @@
         }
         .toast.show { transform: translateX(0); }
         .toast.error { background: #ff4757; }
-        .search-wrapper { position: relative; flex: 1; }
-        .search-wrapper input { width: 100%; }
     </style>
 </head>
 <body>
@@ -270,7 +211,8 @@
     </div>
 
     <div class="toast" id="toast"></div>
-        <script>
+
+    <script>
         // ============ 全局变量 ============
         let dictionary = {};
         let currentWord = '';
@@ -281,24 +223,16 @@
         let testQuestions = [];
         let testMode = 'en2cn';
 
-        // ============ 测试等级标签 ============
-        const levelTags = {
-            elementary: ['小学'],
-            junior: ['初中'],
-            senior: ['高中'],
-            cet4: ['四级', 'CET4'],
-            cet6: ['六级', 'CET6'],
-            tem8: ['专八', 'TEM8']
-        };
-
         // ============ 加载词库 ============
         async function loadDictionary() {
             try {
                 const response = await fetch('dictionary.json');
+                if (!response.ok) throw new Error('HTTP ' + response.status);
                 dictionary = await response.json();
-                console.log('词库加载成功，共 ' + Object.keys(dictionary).length + ' 个词');
+                showToast('✅ 词库加载成功，共 ' + Object.keys(dictionary).length + ' 词');
             } catch (e) {
-                console.error('词库加载失败:', e);
+                console.error('加载失败:', e);
+                showToast('❌ 词库加载失败', 'error');
             }
         }
 
@@ -306,7 +240,6 @@
         function switchPage(page) {
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            
             if (page === 'lookup') {
                 document.querySelectorAll('.nav-btn')[0].classList.add('active');
                 document.getElementById('lookupPage').classList.add('active');
@@ -321,170 +254,112 @@
             }
         }
 
-        // ============ 查词功能（本地优先） ============
+        // ============ 查词 ============
         function searchWord() {
             const word = document.getElementById('searchBox').value.trim().toLowerCase();
             if (!word) return;
-            
-            const resultDiv = document.getElementById('result');
             document.getElementById('suggestions').style.display = 'none';
-            
-            // 本地查询
+
+            const resultDiv = document.getElementById('result');
+
             if (dictionary[word]) {
                 currentWord = word;
-                displayLocalResult(word, dictionary[word]);
+                displayResult(word, dictionary[word]);
                 document.getElementById('favArea').style.display = 'block';
                 updateFavButton();
                 return;
             }
-            
-            // 模糊匹配
-            const matches = Object.keys(dictionary).filter(w => w.startsWith(word));
-            if (matches.length > 0) {
-                currentWord = matches[0];
-                displayLocalResult(matches[0], dictionary[matches[0]]);
+
+            // 前缀匹配
+            const match = Object.keys(dictionary).find(w => w.startsWith(word));
+            if (match) {
+                currentWord = match;
+                displayResult(match, dictionary[match]);
                 document.getElementById('favArea').style.display = 'block';
                 updateFavButton();
                 return;
             }
-            
-            // 未找到
-            resultDiv.innerHTML = '<div class="empty-state"><h3>未找到该单词</h3><p>词库中暂无此词，请检查拼写</p></div>';
+
+            resultDiv.innerHTML = '<div class="empty-state"><h3>未找到该单词</h3><p>词库中暂无此词</p></div>';
             document.getElementById('favArea').style.display = 'none';
         }
 
-        
+        function displayResult(word, d) {
+            const resultDiv = document.getElementById('result');
+            let html = '<div class="result-card">';
+            html += '<div class="word-title">' + word + '</div>';
+            if (d.phonetic) html += '<div class="phonetic">' + d.phonetic + '</div>';
+            html += '<button onclick="speakWord(\'' + word + '\')" style="padding:8px 15px;background:#34c759;color:white;border:none;border-radius:50px;cursor:pointer;font-size:14px;margin-bottom:10px;">🔊 发音</button>';
+
+            if (d.pos) html += '<div class="meaning-block"><div class="pos">词性：' + d.pos + '</div></div>';
+            if (d.en_definition) html += '<div class="meaning-block"><div class="pos">📖 英文释义</div><div class="definition">' + d.en_definition + '</div></div>';
+            if (d.zh_definition) html += '<div class="meaning-block"><div class="pos">🇨🇳 中文释义</div><div class="definition">' + d.zh_definition + '</div></div>';
+            if (!d.zh_definition && d.meaning) html += '<div class="meaning-block"><div class="pos">中文释义</div><div class="definition">' + d.meaning + '</div></div>';
+
+            if (d.examples && d.examples.length > 0) {
+                html += '<div class="meaning-block"><div class="pos">例句</div>';
+                for (const ex of d.examples) {
+                    if (typeof ex === 'object' && ex.en) {
+                        html += '<div class="example">• ' + ex.en + '</div>';
+                        html += '<div class="example-zh">' + (ex.zh || '') + '</div>';
+                    } else {
+                        html += '<div class="example">• ' + ex + '</div>';
+                    }
+                }
+                html += '</div>';
+            }
+
+            if (d.synonyms && d.synonyms.length) html += '<div class="meaning-block"><div class="pos">同义词</div><div class="definition">' + d.synonyms.join(', ') + '</div></div>';
+            if (d.antonyms && d.antonyms.length) html += '<div class="meaning-block"><div class="pos">反义词</div><div class="definition">' + d.antonyms.join(', ') + '</div></div>';
+
+            html += '</div>';
+            resultDiv.innerHTML = html;
+        }
 
         // ============ 自动补全 ============
         function handleInput() {
-            const query = document.getElementById('searchBox').value.trim().toLowerCase();
-            const suggestionsDiv = document.getElementById('suggestions');
-            
-            if (query.length < 1) {
-                suggestionsDiv.style.display = 'none';
-                return;
-            }
-            
-            const matches = Object.keys(dictionary)
-                .filter(w => w.startsWith(query))
-                .slice(0, 15);
-            
-            if (matches.length > 0) {
-                suggestionsDiv.innerHTML = matches.map(w => `
-                    <div class="suggestion-item" onclick="selectSuggestion('${w}')">
-                        <span class="suggestion-word">${w}</span>
-                        <span class="suggestion-meaning">${dictionary[w].meaning || ''}</span>
-                    </div>
-                `).join('');
-                suggestionsDiv.style.display = 'block';
+            const q = document.getElementById('searchBox').value.trim().toLowerCase();
+            const box = document.getElementById('suggestions');
+            if (!q) { box.style.display = 'none'; return; }
+            const matches = Object.keys(dictionary).filter(w => w.startsWith(q)).slice(0, 15);
+            if (matches.length) {
+                box.innerHTML = matches.map(w => '<div class="suggestion-item" onclick="selectSuggestion(\'' + w + '\')"><span class="suggestion-word">' + w + '</span><span class="suggestion-meaning">' + (dictionary[w].zh_definition || dictionary[w].meaning || '') + '</span></div>').join('');
+                box.style.display = 'block';
             } else {
-                suggestionsDiv.style.display = 'none';
-            }
-        }
-function displayLocalResult(word, data) {
-    const resultDiv = document.getElementById('result');
-    let html = '<div class="result-card">';
-    
-    // 单词标题
-    html += `<div class="word-title">${word}</div>`;
-    
-    // 音标
-    if (data.phonetic) {
-        html += `<div class="phonetic">${data.phonetic}</div>`;
-    }
-    
-    // 发音按钮
-    html += `<button onclick="speakWord('${word}')" style="padding:8px 15px;background:#34c759;color:white;border:none;border-radius:50px;cursor:pointer;font-size:14px;margin-bottom:10px;">🔊 发音</button>`;
-    
-    // 词性
-    if (data.pos) {
-        html += `<div class="meaning-block"><div class="pos">词性：${data.pos}</div></div>`;
-    }
-    
-    // 英文释义
-    if (data.en_definition) {
-        html += '<div class="meaning-block"><div class="pos">📖 英文释义</div>';
-        html += `<div class="definition">${data.en_definition}</div>`;
-        html += '</div>';
-    }
-    
-    // 中文释义
-    if (data.zh_definition) {
-        html += '<div class="meaning-block"><div class="pos">🇨🇳 中文释义</div>';
-        html += `<div class="definition">${data.zh_definition}</div>`;
-        html += '</div>';
-    }
-    
-    // 兼容旧格式的 meaning 字段
-    if (!data.zh_definition && data.meaning) {
-        html += '<div class="meaning-block"><div class="pos">中文释义</div>';
-        html += `<div class="definition">${data.meaning}</div>`;
-        html += '</div>';
-    }
-    
-    // 例句
-    if (data.examples && data.examples.length > 0) {
-        html += '<div class="meaning-block"><div class="pos">例句</div>';
-        data.examples.forEach(ex => {
-            if (typeof ex === 'object' && ex.en) {
-                html += `<div class="example">• ${ex.en}</div>`;
-                html += `<div class="example" style="color:#888;padding-left:45px;">${ex.zh}</div>`;
-            } else {
-                html += `<div class="example">• ${ex}</div>`;
-            }
-        });
-        html += '</div>';
-    }
-    
-    // 同义词
-    if (data.synonyms && data.synonyms.length > 0) {
-        html += '<div class="meaning-block"><div class="pos">同义词</div>';
-        html += `<div class="definition">${data.synonyms.join(', ')}</div>`;
-        html += '</div>';
-    }
-    
-    // 反义词
-    if (data.antonyms && data.antonyms.length > 0) {
-        html += '<div class="meaning-block"><div class="pos">反义词</div>';
-        html += `<div class="definition">${data.antonyms.join(', ')}</div>`;
-        html += '</div>';
-    }
-    
-    html += '</div>';
-    resultDiv.innerHTML = html;
-}
-        function selectSuggestion(word) {
-            document.getElementById('searchBox').value = word;
-            document.getElementById('suggestions').style.display = 'none';
-            searchWord();
-        }
-            
-        // ============ 发音（浏览器语音） ============
-        function speakWord(word) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(word);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.9;
-                speechSynthesis.speak(utterance);
-            } else {
-                showToast('浏览器不支持语音功能', 'error');
+                box.style.display = 'none';
             }
         }
 
-        // ============ 收藏功能 ============
+        function selectSuggestion(w) {
+            document.getElementById('searchBox').value = w;
+            document.getElementById('suggestions').style.display = 'none';
+            searchWord();
+        }
+
+        // ============ 发音 ============
+        function speakWord(word) {
+            if ('speechSynthesis' in window) {
+                const u = new SpeechSynthesisUtterance(word);
+                u.lang = 'en-US';
+                u.rate = 0.9;
+                speechSynthesis.speak(u);
+            } else {
+                showToast('浏览器不支持语音', 'error');
+            }
+        }
+
+        // ============ 收藏 ============
         function toggleFavorite() {
             if (!currentWord) return;
-            
-            const index = favorites.findIndex(f => f.word === currentWord);
-            if (index > -1) {
-                favorites.splice(index, 1);
+            const idx = favorites.findIndex(f => f.word === currentWord);
+            if (idx > -1) {
+                favorites.splice(idx, 1);
                 showToast('已取消收藏');
             } else {
-                const meaning = dictionary[currentWord] ? dictionary[currentWord].meaning : '';
-                favorites.unshift({ word: currentWord, meaning: meaning });
+                const mean = dictionary[currentWord] ? (dictionary[currentWord].zh_definition || dictionary[currentWord].meaning || '') : '';
+                favorites.unshift({ word: currentWord, meaning: mean });
                 showToast('已收藏 ⭐');
             }
-            
             localStorage.setItem('favorites', JSON.stringify(favorites));
             updateFavButton();
             renderFavorites();
@@ -498,210 +373,125 @@ function displayLocalResult(word, data) {
         }
 
         function renderFavorites() {
-            const favDiv = document.getElementById('favList');
-            
-            if (favorites.length === 0) {
-                favDiv.innerHTML = '<div class="empty-state"><h3>暂无收藏</h3><p>查词后点击收藏即可保存</p></div>';
+            const div = document.getElementById('favList');
+            if (!favorites.length) {
+                div.innerHTML = '<div class="empty-state"><h3>暂无收藏</h3></div>';
                 return;
             }
-            
-            let html = '';
-            favorites.forEach((f, index) => {
-                html += `
-                    <div class="fav-item" onclick="viewFavorite('${f.word}')">
-                        <span class="fav-word">${f.word}</span>
-                        <span class="fav-meaning">${f.meaning || ''}</span>
-                        <button class="remove-btn" onclick="event.stopPropagation(); removeFavorite(${index})">×</button>
-                    </div>
-                `;
-            });
-            favDiv.innerHTML = html;
+            div.innerHTML = favorites.map((f, i) =>
+                '<div class="fav-item" onclick="viewFavorite(\'' + f.word + '\')"><span class="fav-word">' + f.word + '</span><span class="fav-meaning">' + (f.meaning || '') + '</span><button class="remove-btn" onclick="event.stopPropagation();removeFavorite(' + i + ')">×</button></div>'
+            ).join('');
         }
 
-        function viewFavorite(word) {
-            document.getElementById('searchBox').value = word;
+        function viewFavorite(w) {
+            document.getElementById('searchBox').value = w;
             switchPage('lookup');
             searchWord();
         }
 
-        function removeFavorite(index) {
-            favorites.splice(index, 1);
+        function removeFavorite(i) {
+            favorites.splice(i, 1);
             localStorage.setItem('favorites', JSON.stringify(favorites));
             renderFavorites();
             updateFavButton();
-            showToast('已移除');
         }
 
-        // ============ 测试功能 ============
+        // ============ 测试 ============
         function showTestLevels() {
-            const testArea = document.getElementById('testArea');
-            const levels = [
-                { key: 'elementary', name: '小学' },
-                { key: 'junior', name: '初中' },
-                { key: 'senior', name: '高中' },
-                { key: 'cet4', name: '四级' },
-                { key: 'cet6', name: '六级' },
-                { key: 'tem8', name: '专八' }
-            ];
-            
-            let html = '<div class="test-container">';
-            html += '<h2>选择测试等级</h2>';
-            html += '<div class="level-btns">';
-            levels.forEach(l => {
-                const count = getLevelWords(l.key).length;
-                html += `<button class="level-btn" onclick="startTest('${l.key}')">${l.name} (${count}词)</button>`;
-            });
-            html += '</div>';
-            html += '<div class="level-btns" style="margin-top:15px;">';
-            html += '<button class="level-btn" onclick="setTestMode(\'en2cn\')" style="' + (testMode === 'en2cn' ? 'background:#667eea;color:white;' : '') + '">英→中</button>';
-            html += '<button class="level-btn" onclick="setTestMode(\'cn2en\')" style="' + (testMode === 'cn2en' ? 'background:#667eea;color:white;' : '') + '">中→英</button>';
+            const area = document.getElementById('testArea');
+            const levels = [['elementary','小学'],['junior','初中'],['senior','高中'],['cet4','四级'],['cet6','六级'],['tem8','专八']];
+            let html = '<div class="test-container"><h2>选择测试等级</h2><div class="level-btns">';
+            for (const [key, name] of levels) {
+                html += '<button class="level-btn" onclick="startTest(\'' + key + '\')">' + name + '</button>';
+            }
+            html += '</div><div class="level-btns" style="margin-top:15px;">';
+            html += '<button class="level-btn' + (testMode === 'en2cn' ? ' active' : '') + '" onclick="setTestMode(\'en2cn\')">英→中</button>';
+            html += '<button class="level-btn' + (testMode === 'cn2en' ? ' active' : '') + '" onclick="setTestMode(\'cn2en\')">中→英</button>';
             html += '</div></div>';
-            
-            testArea.innerHTML = html;
+            area.innerHTML = html;
         }
 
-        function setTestMode(mode) {
-            testMode = mode;
-            showTestLevels();
-        }
-
-        function getLevelWords(level) {
-            return Object.keys(dictionary).filter(word => {
-                const data = dictionary[word];
-                return data.level && data.level.includes(levelTags[level][0]);
-            });
-        }
+        function setTestMode(m) { testMode = m; showTestLevels(); }
 
         function startTest(level) {
             currentLevel = level;
             testScore = 0;
             testTotal = 0;
-            
-            const words = getLevelWords(level);
-            
-            if (words.length === 0) {
+            testQuestions = Object.keys(dictionary).filter(w => {
+                const d = dictionary[w];
+                return d.level && d.level.indexOf(level) > -1;
+            });
+            if (!testQuestions.length) {
                 showToast('该等级暂无词汇', 'error');
                 return;
             }
-            
-            // 随机抽取
-            testQuestions = words
-                .sort(() => Math.random() - 0.5)
-                .slice(0, 10);
-            
+            testQuestions = testQuestions.sort(() => Math.random() - 0.5).slice(0, 10);
             showNextQuestion();
         }
 
         function showNextQuestion() {
-            if (testTotal >= testQuestions.length) {
-                showTestResult();
-                return;
-            }
-            
-            const word = testQuestions[testTotal];
-            const data = dictionary[word];
-            
-            const testArea = document.getElementById('testArea');
+            if (testTotal >= testQuestions.length) { showTestResult(); return; }
+            const w = testQuestions[testTotal];
+            const d = dictionary[w];
+            const area = document.getElementById('testArea');
             let html = '<div class="test-container">';
-            
             if (testMode === 'en2cn') {
-                html += '<h3>选择正确的中文意思</h3>';
-                html += `<div class="test-word">${word}</div>`;
-                
-                const options = generateOptions(data.meaning, testQuestions.map(w => dictionary[w].meaning));
-                
-                html += `<div class="score-display">✅ ${testScore}  |  📝 ${testTotal}/${testQuestions.length}</div>`;
-                html += '<div class="test-options">';
-                options.forEach(opt => {
-                    html += `<div class="test-option" onclick="checkAnswer('${opt.replace(/'/g, "\\'")}', '${data.meaning.replace(/'/g, "\\'")}', this)">${opt}</div>`;
-                });
-                html += '</div>';
-            } else {
-                html += '<h3>选择正确的英文单词</h3>';
-                html += `<div class="test-word">${data.meaning}</div>`;
-                
-                const options = generateOptions(word, testQuestions);
-                
-                html += `<div class="score-display">✅ ${testScore}  |  📝 ${testTotal}/${testQuestions.length}</div>`;
-                html += '<div class="test-options">';
-                options.forEach(opt => {
-                    html += `<div class="test-option" onclick="checkAnswer('${opt}', '${word}', this)">${opt}</div>`;
-                });
-                html += '</div>';
-            }
-            
-            html += '</div>';
-            testArea.innerHTML = html;
-        }
-
-        function generateOptions(correct, allOptions) {
-            const options = [correct];
-            const others = allOptions.filter(o => o !== correct);
-            
-            while (options.length < 4 && others.length > 0) {
-                const randomIndex = Math.floor(Math.random() * others.length);
-                const option = others[randomIndex];
-                if (!options.includes(option)) {
-                    options.push(option);
+                html += '<h3>选择正确的中文意思</h3><div class="test-word">' + w + '</div>';
+                const correct = d.zh_definition || d.meaning || '';
+                const opts = [correct];
+                while (opts.length < 4) {
+                    const rw = testQuestions[Math.floor(Math.random() * testQuestions.length)];
+                    const rv = dictionary[rw].zh_definition || dictionary[rw].meaning || '';
+                    if (!opts.includes(rv)) opts.push(rv);
                 }
-                others.splice(randomIndex, 1);
+                opts.sort(() => Math.random() - 0.5);
+                html += '<div class="score-display">✅ ' + testScore + ' | 📝 ' + testTotal + '/' + testQuestions.length + '</div><div class="test-options">';
+                for (const o of opts) html += '<div class="test-option" onclick="checkAnswer(\'' + o.replace(/'/g, "\\'") + '\',\'' + correct.replace(/'/g, "\\'") + '\',this)">' + o + '</div>';
+                html += '</div>';
+            } else {
+                const correct = w;
+                html += '<h3>选择正确的英文单词</h3><div class="test-word">' + (d.zh_definition || d.meaning || '') + '</div>';
+                const opts = [correct];
+                while (opts.length < 4) {
+                    const rw = testQuestions[Math.floor(Math.random() * testQuestions.length)];
+                    if (!opts.includes(rw)) opts.push(rw);
+                }
+                opts.sort(() => Math.random() - 0.5);
+                html += '<div class="score-display">✅ ' + testScore + ' | 📝 ' + testTotal + '/' + testQuestions.length + '</div><div class="test-options">';
+                for (const o of opts) html += '<div class="test-option" onclick="checkAnswer(\'' + o + '\',\'' + correct + '\',this)">' + o + '</div>';
+                html += '</div>';
             }
-            
-            return options.sort(() => Math.random() - 0.5);
+            html += '</div>';
+            area.innerHTML = html;
         }
 
-        function checkAnswer(selected, correct, element) {
-            const allOptions = document.querySelectorAll('.test-option');
-            allOptions.forEach(opt => opt.style.pointerEvents = 'none');
-            
+        function checkAnswer(selected, correct, el) {
+            const opts = document.querySelectorAll('.test-option');
+            opts.forEach(o => o.style.pointerEvents = 'none');
             if (selected === correct) {
-                element.classList.add('correct');
+                el.classList.add('correct');
                 testScore++;
-                showToast('✅ 正确！');
             } else {
-                element.classList.add('wrong');
-                allOptions.forEach(opt => {
-                    if (opt.textContent === correct) {
-                        opt.classList.add('correct');
-                    }
-                });
-                showToast('❌ 错误');
+                el.classList.add('wrong');
+                opts.forEach(o => { if (o.textContent === correct) o.classList.add('correct'); });
             }
-            
             testTotal++;
-            
-            setTimeout(() => {
-                showNextQuestion();
-            }, 1500);
+            setTimeout(showNextQuestion, 1500);
         }
 
         function showTestResult() {
-            const testArea = document.getElementById('testArea');
-            const accuracy = testTotal > 0 ? Math.round((testScore / testTotal) * 100) : 0;
-            
-            let html = '<div class="test-container">';
-            html += '<h2>测试完成！</h2>';
-            html += `<div class="score-display">得分：${testScore}/${testTotal}</div>`;
-            html += `<div class="score-display">正确率：${accuracy}%</div>`;
-            html += '<div class="level-btns" style="margin-top:20px;">';
-            html += '<button class="level-btn" onclick="showTestLevels()">返回选择</button>';
-            html += `<button class="level-btn" onclick="startTest('${currentLevel}')">再来一次</button>`;
-            html += '</div></div>';
-            
-            testArea.innerHTML = html;
+            const area = document.getElementById('testArea');
+            const acc = testTotal ? Math.round(testScore / testTotal * 100) : 0;
+            area.innerHTML = '<div class="test-container"><h2>测试完成！</h2><div class="score-display">得分：' + testScore + '/' + testTotal + '</div><div class="score-display">正确率：' + acc + '%</div><div class="level-btns" style="margin-top:20px;"><button class="level-btn" onclick="showTestLevels()">返回选择</button><button class="level-btn" onclick="startTest(\'' + currentLevel + '\')">再来一次</button></div></div>';
         }
 
-        // ============ Toast提示 ============
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.className = 'toast';
-            if (type === 'error') toast.classList.add('error');
-            toast.classList.add('show');
-            
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 1500);
+        // ============ Toast ============
+        function showToast(msg, type) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = 'toast' + (type === 'error' ? ' error' : '');
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
         }
 
         // ============ 初始化 ============
