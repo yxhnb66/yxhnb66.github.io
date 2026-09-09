@@ -244,324 +244,333 @@
     "zh_definition": "交流",
     "examples": [{"en": "Communication is key.", "zh": "沟通是关键。"}],
     "level": "高中"
-  }，
-"academic": {
-  "phonetic": "/ˌækəˈdemɪk/",
-  "pos": "形容词",
-  "en_definition": "relating to education and study",
-  "zh_definition": "学术的",
-  "examples": [{"en": "Academic success matters.", "zh": "学业成功很重要。"}],
-  "level": "四级"
-},
-"significant": {
-  "phonetic": "/sɪɡˈnɪfɪkənt/",
-  "pos": "形容词",
-  "en_definition": "important or noticeable",
-  "zh_definition": "重要的",
-  "examples": [{"en": "A significant change happened.", "zh": "发生了重大变化。"}],
-  "level": "四级"
-},
-"economy": {
-  "phonetic": "/ɪˈkɒnəmi/",
-  "pos": "名词",
-  "en_definition": "the system of money and trade",
-  "zh_definition": "经济",
-  "examples": [{"en": "The economy is growing.", "zh": "经济在增长。"}],
-  "level": "四级"
-},
-"culture": {
-  "phonetic": "/ˈkʌltʃə/",
-  "pos": "名词",
-  "en_definition": "the customs and beliefs of a group",
-  "zh_definition": "文化",
-  "examples": [{"en": "Culture shapes us.", "zh": "文化塑造我们。"}],
-  "level": "四级"
-},
-"analysis": {
-  "phonetic": "/əˈnæləsɪs/",
-  "pos": "名词",
-  "en_definition": "a detailed examination",
-  "zh_definition": "分析",
-  "examples": [{"en": "The analysis was thorough.", "zh": "分析很彻底。"}],
-  "level": "四级"
-},
-"approach": {
-  "phonetic": "/əˈprəʊtʃ/",
-  "pos": "名词/动词",
-  "en_definition": "a way of doing something",
-  "zh_definition": "方法；接近",
-  "examples": [{"en": "We need a new approach.", "zh": "我们需要新方法。"}],
-  "level": "四级"
-},
-"benefit": {
-  "phonetic": "/ˈbenɪfɪt/",
-  "pos": "名词/动词",
-  "en_definition": "an advantage or profit",
-  "zh_definition": "好处",
-  "examples": [{"en": "Exercise has benefits.", "zh": "运动有好处。"}],
-  "level": "四级"
-},
-"challenge": {
-  "phonetic": "/ˈtʃælɪndʒ/",
-  "pos": "名词/动词",
-  "en_definition": "a difficult task",
-  "zh_definition": "挑战",
-  "examples": [{"en": "It's a big challenge.", "zh": "这是个大挑战。"}],
-  "level": "四级"
-},
-"community": {
-  "phonetic": "/kəˈmjuːnəti/",
-  "pos": "名词",
-  "en_definition": "a group of people living together",
-  "zh_definition": "社区",
-  "examples": [{"en": "Our community is close.", "zh": "我们的社区很紧密。"}],
-  "level": "四级"
-},
-"consequence": {
-  "phonetic": "/ˈkɒnsɪkwəns/",
-  "pos": "名词",
-  "en_definition": "a result of an action",
-  "zh_definition": "后果",
-  "examples": [{"en": "Actions have consequences.", "zh": "行为有后果。"}],
-  "level": "四级"
-},
-"sophisticated": {
-  "phonetic": "/səˈfɪstɪkeɪtɪd/",
-  "pos": "形容词",
-  "en_definition": "complex and advanced",
-  "zh_definition": "复杂的",
-  "examples": [{"en": "The system is sophisticated.", "zh": "这个系统很复杂。"}],
-  "level": "六级"
-},
-"phenomenon": {
-  "phonetic": "/fəˈnɒmɪnən/",
-  "pos": "名词",
-  "en_definition": "an observable fact or event",
-  "zh_definition": "现象",
-  "examples": [{"en": "It's a natural phenomenon.", "zh": "这是自然现象。"}],
-  "level": "六级"
-},
-"contemporary": {
-  "phonetic": "/kənˈtemprəri/",
-  "pos": "形容词",
-  "en_definition": "belonging to the present time",
-  "zh_definition": "当代的",
-  "examples": [{"en": "Contemporary art is popular.", "zh": "当代艺术很流行。"}],
-  "level": "六级"
-},
-"perspective": {
-  "phonetic": "/pəˈspektɪv/",
-  "pos": "名词",
-  "en_definition": "a particular way of viewing things",
-  "zh_definition": "观点",
-  "examples": [{"en": "See it from my perspective.", "zh": "从我的角度看。"}],
-  "level": "六级"
-},
-"fundamental": {
-  "phonetic": "/ˌfʌndəˈmentl/",
-  "pos": "形容词",
-  "en_definition": "basic and essential",
-  "zh_definition": "基本的",
-  "examples": [{"en": "This is fundamental.", "zh": "这是基本的。"}],
-  "level": "六级"
-},
-"inevitable": {
-  "phonetic": "/ɪnˈevɪtəbl/",
-  "pos": "形容词",
-  "en_definition": "certain to happen",
-  "zh_definition": "不可避免的",
-  "examples": [{"en": "Change is inevitable.", "zh": "变化不可避免。"}],
-  "level": "六级"
-},
-"justify": {
-  "phonetic": "/ˈdʒʌstɪfaɪ/",
-  "pos": "动词",
-  "en_definition": "to show something is right",
-  "zh_definition": "证明合理",
-  "examples": [{"en": "Justify your answer.", "zh": "证明你的答案。"}],
-  "level": "六级"
-},
-"maintain": {
-  "phonetic": "/meɪnˈteɪn/",
-  "pos": "动词",
-  "en_definition": "to keep something going",
-  "zh_definition": "维持",
-  "examples": [{"en": "Maintain a healthy life.", "zh": "保持健康生活。"}],
-  "level": "六级"
-},
-"negotiate": {
-  "phonetic": "/nɪˈɡəʊʃieɪt/",
-  "pos": "动词",
-  "en_definition": "to discuss to reach agreement",
-  "zh_definition": "谈判",
-  "examples": [{"en": "They negotiate a deal.", "zh": "他们谈判协议。"}],
-  "level": "六级"
-},
-"potential": {
-  "phonetic": "/pəˈtenʃl/",
-  "pos": "形容词/名词",
-  "en_definition": "possible; capacity to develop",
-  "zh_definition": "潜在的；潜力",
-  "examples": [{"en": "She has great potential.", "zh": "她潜力很大。"}],
-  "level": "六级"
-},
-"epistemology": {
-  "phonetic": "/ɪˌpɪstəˈmɒlədʒi/",
-  "pos": "名词",
-  "en_definition": "the study of knowledge",
-  "zh_definition": "认识论",
-  "examples": [{"en": "Epistemology is philosophy.", "zh": "认识论是哲学。"}],
-  "level": "专八"
-},
-"paradigm": {
-  "phonetic": "/ˈpærədaɪm/",
-  "pos": "名词",
-  "en_definition": "a typical example or pattern",
-  "zh_definition": "范式",
-  "examples": [{"en": "A paradigm shift.", "zh": "范式转移。"}],
-  "level": "专八"
-},
-"ubiquitous": {
-  "phonetic": "/juːˈbɪkwɪtəs/",
-  "pos": "形容词",
-  "en_definition": "present everywhere",
-  "zh_definition": "无处不在的",
-  "examples": [{"en": "Phones are ubiquitous.", "zh": "手机无处不在。"}],
-  "level": "专八"
-},
-"meticulous": {
-  "phonetic": "/məˈtɪkjələs/",
-  "pos": "形容词",
-  "en_definition": "very careful and precise",
-  "zh_definition": "一丝不苟的",
-  "examples": [{"en": "He is meticulous.", "zh": "他一丝不苟。"}],
-  "level": "专八"
-},
-"ambiguous": {
-  "phonetic": "/æmˈbɪɡjuəs/",
-  "pos": "形容词",
-  "en_definition": "unclear; having more than one meaning",
-  "zh_definition": "模糊的",
-  "examples": [{"en": "The message is ambiguous.", "zh": "信息模糊。"}],
-  "level": "专八"
-},
-"coherent": {
-  "phonetic": "/kəʊˈhɪərənt/",
-  "pos": "形容词",
-  "en_definition": "logical and consistent",
-  "zh_definition": "连贯的",
-  "examples": [{"en": "A coherent argument.", "zh": "连贯的论点。"}],
-  "level": "专八"
-},
-"dichotomy": {
-  "phonetic": "/daɪˈkɒtəmi/",
-  "pos": "名词",
-  "en_definition": "a division into two opposite groups",
-  "zh_definition": "二分法",
-  "examples": [{"en": "A dichotomy exists.", "zh": "存在二分法。"}],
-  "level": "专八"
-},
-"empirical": {
-  "phonetic": "/ɪmˈpɪrɪkl/",
-  "pos": "形容词",
-  "en_definition": "based on observation or experience",
-  "zh_definition": "经验的",
-  "examples": [{"en": "Empirical evidence.", "zh": "经验证据。"}],
-  "level": "专八"
-},
-"hegemony": {
-  "phonetic": "/hɪˈdʒeməni/",
-  "pos": "名词",
-  "en_definition": "dominance of one group over others",
-  "zh_definition": "霸权",
-  "examples": [{"en": "Cultural hegemony.", "zh": "文化霸权。"}],
-  "level": "专八"
-},
-"juxtapose": {
-  "phonetic": "/ˌdʒʌkstəˈpəʊz/",
-  "pos": "动词",
-  "en_definition": "to place side by side",
-  "zh_definition": "并列",
-  "examples": [{"en": "Juxtapose two images.", "zh": "将两图并列。"}],
-  "level": "专八"
-},
-"hello": {
-  "phonetic": "/həˈləʊ/",
-  "pos": "感叹词",
-  "en_definition": "used as a greeting",
-  "zh_definition": "你好",
-  "examples": [{"en": "Hello, how are you?", "zh": "你好，你好吗？"}],
-  "level": "常用"
-},
-"world": {
-  "phonetic": "/wɜːld/",
-  "pos": "名词",
-  "en_definition": "the earth and all its people",
-  "zh_definition": "世界",
-  "examples": [{"en": "The world is vast.", "zh": "世界广阔。"}],
-  "level": "常用"
-},
-"computer": {
-  "phonetic": "/kəmˈpjuːtə/",
-  "pos": "名词",
-  "en_definition": "an electronic device for processing data",
-  "zh_definition": "电脑",
-  "examples": [{"en": "I use a computer.", "zh": "我用电脑。"}],
-  "level": "常用"
-},
-"dictionary": {
-  "phonetic": "/ˈdɪkʃənri/",
-  "pos": "名词",
-  "en_definition": "a book listing words and their meanings",
-  "zh_definition": "词典",
-  "examples": [{"en": "Check the dictionary.", "zh": "查词典。"}],
-  "level": "常用"
-},
-"study": {
-  "phonetic": "/ˈstʌdi/",
-  "pos": "动词/名词",
-  "en_definition": "to learn about a subject",
-  "zh_definition": "学习",
-  "examples": [{"en": "I study English.", "zh": "我学英语。"}],
-  "level": "常用"
-},
-"learn": {
-  "phonetic": "/lɜːn/",
-  "pos": "动词",
-  "en_definition": "to gain knowledge or skill",
-  "zh_definition": "学会",
-  "examples": [{"en": "We learn daily.", "zh": "我们每天学习。"}],
-  "level": "常用"
-},
-"fast": {
-  "phonetic": "/fɑːst/",
-  "pos": "形容词/副词",
-  "en_definition": "moving quickly",
-  "zh_definition": "快的",
-  "examples": [{"en": "He runs fast.", "zh": "他跑得快。"}],
-  "level": "常用"
-},
-"quick": {
-  "phonetic": "/kwɪk/",
-  "pos": "形容词",
-  "en_definition": "done in a short time",
-  "zh_definition": "迅速的",
-  "examples": [{"en": "A quick reply.", "zh": "快速回复。"}],
-  "level": "常用"
-},
-"smooth": {
-  "phonetic": "/smuːð/",
-  "pos": "形容词",
-  "en_definition": "having an even surface",
-  "zh_definition": "光滑的",
-  "examples": [{"en": "Smooth surface.", "zh": "光滑的表面。"}],
-  "level": "常用"
-},
-"love": {
-  "phonetic": "/lʌv/",
-  "pos": "名词/动词",
-  "en_definition": "deep affection",
-  "zh_definition": "爱",
-  "examples": [{"en": "I love you.", "zh": "我爱你。"}],
-  "level": "常用"
+  },
+  "academic": {
+    "phonetic": "/ˌækəˈdemɪk/",
+    "pos": "形容词",
+    "en_definition": "relating to education and study",
+    "zh_definition": "学术的",
+    "examples": [{"en": "Academic success matters.", "zh": "学业成功很重要。"}],
+    "level": "四级"
+  },
+  "significant": {
+    "phonetic": "/sɪɡˈnɪfɪkənt/",
+    "pos": "形容词",
+    "en_definition": "important or noticeable",
+    "zh_definition": "重要的",
+    "examples": [{"en": "A significant change happened.", "zh": "发生了重大变化。"}],
+    "level": "四级"
+  },
+  "economy": {
+    "phonetic": "/ɪˈkɒnəmi/",
+    "pos": "名词",
+    "en_definition": "the system of money and trade",
+    "zh_definition": "经济",
+    "examples": [{"en": "The economy is growing.", "zh": "经济在增长。"}],
+    "level": "四级"
+  },
+  "culture": {
+    "phonetic": "/ˈkʌltʃə/",
+    "pos": "名词",
+    "en_definition": "the customs and beliefs of a group",
+    "zh_definition": "文化",
+    "examples": [{"en": "Culture shapes us.", "zh": "文化塑造我们。"}],
+    "level": "四级"
+  },
+  "analysis": {
+    "phonetic": "/əˈnæləsɪs/",
+    "pos": "名词",
+    "en_definition": "a detailed examination",
+    "zh_definition": "分析",
+    "examples": [{"en": "The analysis was thorough.", "zh": "分析很彻底。"}],
+    "level": "四级"
+  },
+  "approach": {
+    "phonetic": "/əˈprəʊtʃ/",
+    "pos": "名词/动词",
+    "en_definition": "a way of doing something",
+    "zh_definition": "方法；接近",
+    "examples": [{"en": "We need a new approach.", "zh": "我们需要新方法。"}],
+    "level": "四级"
+  },
+  "benefit": {
+    "phonetic": "/ˈbenɪfɪt/",
+    "pos": "名词/动词",
+    "en_definition": "an advantage or profit",
+    "zh_definition": "好处",
+    "examples": [{"en": "Exercise has benefits.", "zh": "运动有好处。"}],
+    "level": "四级"
+  },
+  "challenge": {
+    "phonetic": "/ˈtʃælɪndʒ/",
+    "pos": "名词/动词",
+    "en_definition": "a difficult task",
+    "zh_definition": "挑战",
+    "examples": [{"en": "It's a big challenge.", "zh": "这是个大挑战。"}],
+    "level": "四级"
+  },
+  "community": {
+    "phonetic": "/kəˈmjuːnəti/",
+    "pos": "名词",
+    "en_definition": "a group of people living together",
+    "zh_definition": "社区",
+    "examples": [{"en": "Our community is close.", "zh": "我们的社区很紧密。"}],
+    "level": "四级"
+  },
+  "consequence": {
+    "phonetic": "/ˈkɒnsɪkwəns/",
+    "pos": "名词",
+    "en_definition": "a result of an action",
+    "zh_definition": "后果",
+    "examples": [{"en": "Actions have consequences.", "zh": "行为有后果。"}],
+    "level": "四级"
+  },
+  "sophisticated": {
+    "phonetic": "/səˈfɪstɪkeɪtɪd/",
+    "pos": "形容词",
+    "en_definition": "complex and advanced",
+    "zh_definition": "复杂的",
+    "examples": [{"en": "The system is sophisticated.", "zh": "这个系统很复杂。"}],
+    "level": "六级"
+  },
+  "phenomenon": {
+    "phonetic": "/fəˈnɒmɪnən/",
+    "pos": "名词",
+    "en_definition": "an observable fact or event",
+    "zh_definition": "现象",
+    "examples": [{"en": "It's a natural phenomenon.", "zh": "这是自然现象。"}],
+    "level": "六级"
+  },
+  "contemporary": {
+    "phonetic": "/kənˈtemprəri/",
+    "pos": "形容词",
+    "en_definition": "belonging to the present time",
+    "zh_definition": "当代的",
+    "examples": [{"en": "Contemporary art is popular.", "zh": "当代艺术很流行。"}],
+    "level": "六级"
+  },
+  "perspective": {
+    "phonetic": "/pəˈspektɪv/",
+    "pos": "名词",
+    "en_definition": "a particular way of viewing things",
+    "zh_definition": "观点",
+    "examples": [{"en": "See it from my perspective.", "zh": "从我的角度看。"}],
+    "level": "六级"
+  },
+  "fundamental": {
+    "phonetic": "/ˌfʌndəˈmentl/",
+    "pos": "形容词",
+    "en_definition": "basic and essential",
+    "zh_definition": "基本的",
+    "examples": [{"en": "This is fundamental.", "zh": "这是基本的。"}],
+    "level": "六级"
+  },
+  "inevitable": {
+    "phonetic": "/ɪnˈevɪtəbl/",
+    "pos": "形容词",
+    "en_definition": "certain to happen",
+    "zh_definition": "不可避免的",
+    "examples": [{"en": "Change is inevitable.", "zh": "变化不可避免。"}],
+    "level": "六级"
+  },
+  "justify": {
+    "phonetic": "/ˈdʒʌstɪfaɪ/",
+    "pos": "动词",
+    "en_definition": "to show something is right",
+    "zh_definition": "证明合理",
+    "examples": [{"en": "Justify your answer.", "zh": "证明你的答案。"}],
+    "level": "六级"
+  },
+  "maintain": {
+    "phonetic": "/meɪnˈteɪn/",
+    "pos": "动词",
+    "en_definition": "to keep something going",
+    "zh_definition": "维持",
+    "examples": [{"en": "Maintain a healthy life.", "zh": "保持健康生活。"}],
+    "level": "六级"
+  },
+  "negotiate": {
+    "phonetic": "/nɪˈɡəʊʃieɪt/",
+    "pos": "动词",
+    "en_definition": "to discuss to reach agreement",
+    "zh_definition": "谈判",
+    "examples": [{"en": "They negotiate a deal.", "zh": "他们谈判协议。"}],
+    "level": "六级"
+  },
+  "potential": {
+    "phonetic": "/pəˈtenʃl/",
+    "pos": "形容词/名词",
+    "en_definition": "possible; capacity to develop",
+    "zh_definition": "潜在的；潜力",
+    "examples": [{"en": "She has great potential.", "zh": "她潜力很大。"}],
+    "level": "六级"
+  },
+  "epistemology": {
+    "phonetic": "/ɪˌpɪstəˈmɒlədʒi/",
+    "pos": "名词",
+    "en_definition": "the study of knowledge",
+    "zh_definition": "认识论",
+    "examples": [{"en": "Epistemology is philosophy.", "zh": "认识论是哲学。"}],
+    "level": "专八"
+  },
+  "paradigm": {
+    "phonetic": "/ˈpærədaɪm/",
+    "pos": "名词",
+    "en_definition": "a typical example or pattern",
+    "zh_definition": "范式",
+    "examples": [{"en": "A paradigm shift.", "zh": "范式转移。"}],
+    "level": "专八"
+  },
+  "ubiquitous": {
+    "phonetic": "/juːˈbɪkwɪtəs/",
+    "pos": "形容词",
+    "en_definition": "present everywhere",
+    "zh_definition": "无处不在的",
+    "examples": [{"en": "Phones are ubiquitous.", "zh": "手机无处不在。"}],
+    "level": "专八"
+  },
+  "meticulous": {
+    "phonetic": "/məˈtɪkjələs/",
+    "pos": "形容词",
+    "en_definition": "very careful and precise",
+    "zh_definition": "一丝不苟的",
+    "examples": [{"en": "He is meticulous.", "zh": "他一丝不苟。"}],
+    "level": "专八"
+  },
+  "ambiguous": {
+    "phonetic": "/æmˈbɪɡjuəs/",
+    "pos": "形容词",
+    "en_definition": "unclear; having more than one meaning",
+    "zh_definition": "模糊的",
+    "examples": [{"en": "The message is ambiguous.", "zh": "信息模糊。"}],
+    "level": "专八"
+  },
+  "coherent": {
+    "phonetic": "/kəʊˈhɪərənt/",
+    "pos": "形容词",
+    "en_definition": "logical and consistent",
+    "zh_definition": "连贯的",
+    "examples": [{"en": "A coherent argument.", "zh": "连贯的论点。"}],
+    "level": "专八"
+  },
+  "dichotomy": {
+    "phonetic": "/daɪˈkɒtəmi/",
+    "pos": "名词",
+    "en_definition": "a division into two opposite groups",
+    "zh_definition": "二分法",
+    "examples": [{"en": "A dichotomy exists.", "zh": "存在二分法。"}],
+    "level": "专八"
+  },
+  "empirical": {
+    "phonetic": "/ɪmˈpɪrɪkl/",
+    "pos": "形容词",
+    "en_definition": "based on observation or experience",
+    "zh_definition": "经验的",
+    "examples": [{"en": "Empirical evidence.", "zh": "经验证据。"}],
+    "level": "专八"
+  },
+  "hegemony": {
+    "phonetic": "/hɪˈdʒeməni/",
+    "pos": "名词",
+    "en_definition": "dominance of one group over others",
+    "zh_definition": "霸权",
+    "examples": [{"en": "Cultural hegemony.", "zh": "文化霸权。"}],
+    "level": "专八"
+  },
+  "juxtapose": {
+    "phonetic": "/ˌdʒʌkstəˈpəʊz/",
+    "pos": "动词",
+    "en_definition": "to place side by side",
+    "zh_definition": "并列",
+    "examples": [{"en": "Juxtapose two images.", "zh": "将两图并列。"}],
+    "level": "专八"
+  },
+  "hello": {
+    "phonetic": "/həˈləʊ/",
+    "pos": "感叹词",
+    "en_definition": "used as a greeting",
+    "zh_definition": "你好",
+    "examples": [{"en": "Hello, how are you?", "zh": "你好，你好吗？"}],
+    "level": "常用"
+  },
+  "world": {
+    "phonetic": "/wɜːld/",
+    "pos": "名词",
+    "en_definition": "the earth and all its people",
+    "zh_definition": "世界",
+    "examples": [{"en": "The world is vast.", "zh": "世界广阔。"}],
+    "level": "常用"
+  },
+  "computer": {
+    "phonetic": "/kəmˈpjuːtə/",
+    "pos": "名词",
+    "en_definition": "an electronic device for processing data",
+    "zh_definition": "电脑",
+    "examples": [{"en": "I use a computer.", "zh": "我用电脑。"}],
+    "level": "常用"
+  },
+  "dictionary": {
+    "phonetic": "/ˈdɪkʃənri/",
+    "pos": "名词",
+    "en_definition": "a book listing words and their meanings",
+    "zh_definition": "词典",
+    "examples": [{"en": "Check the dictionary.", "zh": "查词典。"}],
+    "level": "常用"
+  },
+  "study": {
+    "phonetic": "/ˈstʌdi/",
+    "pos": "动词/名词",
+    "en_definition": "to learn about a subject",
+    "zh_definition": "学习",
+    "examples": [{"en": "I study English.", "zh": "我学英语。"}],
+    "level": "常用"
+  },
+  "learn": {
+    "phonetic": "/lɜːn/",
+    "pos": "动词",
+    "en_definition": "to gain knowledge or skill",
+    "zh_definition": "学会",
+    "examples": [{"en": "We learn daily.", "zh": "我们每天学习。"}],
+    "level": "常用"
+  },
+  "fast": {
+    "phonetic": "/fɑːst/",
+    "pos": "形容词/副词",
+    "en_definition": "moving quickly",
+    "zh_definition": "快的",
+    "examples": [{"en": "He runs fast.", "zh": "他跑得快。"}],
+    "level": "常用"
+  },
+  "quick": {
+    "phonetic": "/kwɪk/",
+    "pos": "形容词",
+    "en_definition": "done in a short time",
+    "zh_definition": "迅速的",
+    "examples": [{"en": "A quick reply.", "zh": "快速回复。"}],
+    "level": "常用"
+  },
+  "smooth": {
+    "phonetic": "/smuːð/",
+    "pos": "形容词",
+    "en_definition": "having an even surface",
+    "zh_definition": "光滑的",
+    "examples": [{"en": "Smooth surface.", "zh": "光滑的表面。"}],
+    "level": "常用"
+  },
+  "love": {
+    "phonetic": "/lʌv/",
+    "pos": "名词/动词",
+    "en_definition": "deep affection",
+    "zh_definition": "爱",
+    "examples": [{"en": "I love you.", "zh": "我爱你。"}],
+    "level": "常用"
+  },
+  "time": {
+    "phonetic": "/taɪm/",
+    "pos": "名词",
+    "en_definition": "the ongoing sequence of events",
+    "zh_definition": "时间",
+    "examples": [{"en": "Time flies.", "zh": "时间飞逝。"}],
+    "level": "常用"
+  }
 }
