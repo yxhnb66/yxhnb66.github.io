@@ -572,5 +572,540 @@
     "zh_definition": "时间",
     "examples": [{"en": "Time flies.", "zh": "时间飞逝。"}],
     "level": "常用"
-  }
-}
+  }，
+ "chair": {
+  "phonetic": "/tʃeə/",
+  "pos": "名词",
+  "en_definition": "a seat with a back, for one person",
+  "zh_definition": "椅子",
+  "examples": [{"en": "Sit on the chair.", "zh": "坐在椅子上。"}],
+  "level": "小学"
+},
+"table": {
+  "phonetic": "/ˈteɪbl/",
+  "pos": "名词",
+  "en_definition": "a piece of furniture with a flat top and legs",
+  "zh_definition": "桌子",
+  "examples": [{"en": "The book is on the table.", "zh": "书在桌子上。"}],
+  "level": "小学"
+},
+"door": {
+  "phonetic": "/dɔː/",
+  "pos": "名词",
+  "en_definition": "a movable barrier used to open and close an entrance",
+  "zh_definition": "门",
+  "examples": [{"en": "Close the door.", "zh": "关上门。"}],
+  "level": "小学"
+},
+"window": {
+  "phonetic": "/ˈwɪndəʊ/",
+  "pos": "名词",
+  "en_definition": "an opening in a wall that lets in light and air",
+  "zh_definition": "窗户",
+  "examples": [{"en": "Open the window.", "zh": "打开窗户。"}],
+  "level": "小学"
+},
+"bed": {
+  "phonetic": "/bed/",
+  "pos": "名词",
+  "en_definition": "a piece of furniture for sleeping on",
+  "zh_definition": "床",
+  "examples": [{"en": "I go to bed at ten.", "zh": "我十点睡觉。"}],
+  "level": "小学"
+},
+"milk": {
+  "phonetic": "/mɪlk/",
+  "pos": "名词",
+  "en_definition": "a white liquid produced by female mammals",
+  "zh_definition": "牛奶",
+  "examples": [{"en": "I drink milk every morning.", "zh": "我每天早上喝牛奶。"}],
+  "level": "小学"
+},
+"rice": {
+  "phonetic": "/raɪs/",
+  "pos": "名词",
+  "en_definition": "a grain used as food",
+  "zh_definition": "米饭",
+  "examples": [{"en": "We eat rice every day.", "zh": "我们每天吃米饭。"}],
+  "level": "小学"
+},
+"fish": {
+  "phonetic": "/fɪʃ/",
+  "pos": "名词/动词",
+  "en_definition": "an animal that lives in water; to catch fish",
+  "zh_definition": "鱼；钓鱼",
+  "examples": [{"en": "The fish swims fast.", "zh": "鱼游得很快。"}],
+  "level": "小学"
+},
+"bird": {
+  "phonetic": "/bɜːd/",
+  "pos": "名词",
+  "en_definition": "an animal with feathers and wings",
+  "zh_definition": "鸟",
+  "examples": [{"en": "The bird is singing.", "zh": "鸟在唱歌。"}],
+  "level": "小学"
+},
+"tree": {
+  "phonetic": "/triː/",
+  "pos": "名词",
+  "en_definition": "a tall plant with a trunk and branches",
+  "zh_definition": "树",
+  "examples": [{"en": "The tree is tall.", "zh": "这棵树很高。"}],
+  "level": "小学"
+},
+"flower": {
+  "phonetic": "/ˈflaʊə/",
+  "pos": "名词",
+  "en_definition": "the colorful part of a plant",
+  "zh_definition": "花",
+  "examples": [{"en": "The flower is beautiful.", "zh": "花很美。"}],
+  "level": "小学"
+},
+"sun": {
+  "phonetic": "/sʌn/",
+  "pos": "名词",
+  "en_definition": "the star that gives us light and heat",
+  "zh_definition": "太阳",
+  "examples": [{"en": "The sun is shining.", "zh": "阳光明媚。"}],
+  "level": "小学"
+},
+"moon": {
+  "phonetic": "/muːn/",
+  "pos": "名词",
+  "en_definition": "the natural satellite of the earth",
+  "zh_definition": "月亮",
+  "examples": [{"en": "The moon is bright tonight.", "zh": "今晚月亮很亮。"}],
+  "level": "小学"
+},
+"star": {
+  "phonetic": "/stɑː/",
+  "pos": "名词",
+  "en_definition": "a bright point in the night sky",
+  "zh_definition": "星星",
+  "examples": [{"en": "The stars are twinkling.", "zh": "星星在闪烁。"}],
+  "level": "小学"
+},
+"weather": {
+  "phonetic": "/ˈweðə/",
+  "pos": "名词",
+  "en_definition": "the condition of the atmosphere at a particular time",
+  "zh_definition": "天气",
+  "examples": [{"en": "The weather is nice today.", "zh": "今天天气很好。"}],
+  "level": "初中"
+},
+"travel": {
+  "phonetic": "/ˈtrævl/",
+  "pos": "动词/名词",
+  "en_definition": "to go from one place to another",
+  "zh_definition": "旅行",
+  "examples": [{"en": "I love to travel.", "zh": "我喜欢旅行。"}],
+  "level": "初中"
+},
+"healthy": {
+  "phonetic": "/ˈhelθi/",
+  "pos": "形容词",
+  "en_definition": "in good physical or mental condition",
+  "zh_definition": "健康的",
+  "examples": [{"en": "Eat healthy food.", "zh": "吃健康的食物。"}],
+  "level": "初中"
+},
+"favorite": {
+  "phonetic": "/ˈfeɪvərɪt/",
+  "pos": "形容词/名词",
+  "en_definition": "preferred above all others",
+  "zh_definition": "最喜欢的",
+  "examples": [{"en": "Blue is my favorite color.", "zh": "蓝色是我最喜欢的颜色。"}],
+  "level": "初中"
+},
+"holiday": {
+  "phonetic": "/ˈhɒlədeɪ/",
+  "pos": "名词",
+  "en_definition": "a day of rest from work or school",
+  "zh_definition": "假期；假日",
+  "examples": [{"en": "We went to the beach on holiday.", "zh": "我们假期去了海滩。"}],
+  "level": "初中"
+},
+"language": {
+  "phonetic": "/ˈlæŋɡwɪdʒ/",
+  "pos": "名词",
+  "en_definition": "a system of communication used by people",
+  "zh_definition": "语言",
+  "examples": [{"en": "English is a global language.", "zh": "英语是全球性语言。"}],
+  "level": "初中"
+},
+"practice": {
+  "phonetic": "/ˈpræktɪs/",
+  "pos": "动词/名词",
+  "en_definition": "to do something repeatedly to improve",
+  "zh_definition": "练习",
+  "examples": [{"en": "Practice makes perfect.", "zh": "熟能生巧。"}],
+  "level": "初中"
+},
+"remember": {
+  "phonetic": "/rɪˈmembə/",
+  "pos": "动词",
+  "en_definition": "to keep something in your mind",
+  "zh_definition": "记得",
+  "examples": [{"en": "Remember to do your homework.", "zh": "记得做作业。"}],
+  "level": "初中"
+},
+"believe": {
+  "phonetic": "/bɪˈliːv/",
+  "pos": "动词",
+  "en_definition": "to accept something as true",
+  "zh_definition": "相信",
+  "examples": [{"en": "I believe in you.", "zh": "我相信你。"}],
+  "level": "初中"
+},
+"promise": {
+  "phonetic": "/ˈprɒmɪs/",
+  "pos": "动词/名词",
+  "en_definition": "to say you will definitely do something",
+  "zh_definition": "承诺；保证",
+  "examples": [{"en": "I promise to help you.", "zh": "我保证帮助你。"}],
+  "level": "初中"
+},
+"protect": {
+  "phonetic": "/prəˈtekt/",
+  "pos": "动词",
+  "en_definition": "to keep safe from harm",
+  "zh_definition": "保护",
+  "examples": [{"en": "Protect your eyes from the sun.", "zh": "保护眼睛免受阳光伤害。"}],
+  "level": "高中"
+},
+"influence": {
+  "phonetic": "/ˈɪnfluəns/",
+  "pos": "名词/动词",
+  "en_definition": "the power to affect someone or something",
+  "zh_definition": "影响",
+  "examples": [{"en": "Parents have a great influence on children.", "zh": "父母对孩子有很大影响。"}],
+  "level": "高中"
+},
+"responsible": {
+  "phonetic": "/rɪˈspɒnsəbl/",
+  "pos": "形容词",
+  "en_definition": "having a duty to deal with something",
+  "zh_definition": "负责的",
+  "examples": [{"en": "She is responsible for the project.", "zh": "她负责这个项目。"}],
+  "level": "高中"
+},
+"solution": {
+  "phonetic": "/səˈluːʃn/",
+  "pos": "名词",
+  "en_definition": "a way of solving a problem",
+  "zh_definition": "解决方案",
+  "examples": [{"en": "We found a solution.", "zh": "我们找到了解决方案。"}],
+  "level": "高中"
+},
+"attitude": {
+  "phonetic": "/ˈætɪtjuːd/",
+  "pos": "名词",
+  "en_definition": "a way of thinking or feeling about something",
+  "zh_definition": "态度",
+  "examples": [{"en": "A positive attitude helps.", "zh": "积极的态度有帮助。"}],
+  "level": "高中"
+},
+"independent": {
+  "phonetic": "/ˌɪndɪˈpendənt/",
+  "pos": "形容词",
+  "en_definition": "not controlled by others",
+  "zh_definition": "独立的",
+  "examples": [{"en": "She is very independent.", "zh": "她非常独立。"}],
+  "level": "高中"
+},
+"necessary": {
+  "phonetic": "/ˈnesəsəri/",
+  "pos": "形容词",
+  "en_definition": "needed; essential",
+  "zh_definition": "必要的",
+  "examples": [{"en": "It is necessary to sleep well.", "zh": "睡好是必要的。"}],
+  "level": "高中"
+},
+"quality": {
+  "phonetic": "/ˈkwɒləti/",
+  "pos": "名词",
+  "en_definition": "the standard of something; how good it is",
+  "zh_definition": "质量；品质",
+  "examples": [{"en": "This product has good quality.", "zh": "这个产品质量好。"}],
+  "level": "高中"
+},
+"resource": {
+  "phonetic": "/rɪˈsɔːs/",
+  "pos": "名词",
+  "en_definition": "a supply of something that can be used",
+  "zh_definition": "资源",
+  "examples": [{"en": "Natural resources are limited.", "zh": "自然资源是有限的。"}],
+  "level": "高中"
+},
+"specific": {
+  "phonetic": "/spəˈsɪfɪk/",
+  "pos": "形容词",
+  "en_definition": "clearly defined or identified",
+  "zh_definition": "具体的；特定的",
+  "examples": [{"en": "Be more specific.", "zh": "更具体一点。"}],
+  "level": "四级"
+},
+"strategy": {
+  "phonetic": "/ˈstrætədʒi/",
+  "pos": "名词",
+  "en_definition": "a plan designed to achieve a goal",
+  "zh_definition": "策略；战略",
+  "examples": [{"en": "We need a good strategy.", "zh": "我们需要一个好的策略。"}],
+  "level": "四级"
+},
+"structure": {
+  "phonetic": "/ˈstrʌktʃə/",
+  "pos": "名词",
+  "en_definition": "the way something is organized or built",
+  "zh_definition": "结构",
+  "examples": [{"en": "The structure of the essay is clear.", "zh": "文章结构清晰。"}],
+  "level": "四级"
+},
+"tradition": {
+  "phonetic": "/trəˈdɪʃn/",
+  "pos": "名词",
+  "en_definition": "a belief or custom passed down through generations",
+  "zh_definition": "传统",
+  "examples": [{"en": "Family traditions are important.", "zh": "家庭传统很重要。"}],
+  "level": "四级"
+},
+"attitude": {
+  "phonetic": "/ˈætɪtjuːd/",
+  "pos": "名词",
+  "en_definition": "a way of thinking or feeling about something",
+  "zh_definition": "态度",
+  "examples": [{"en": "Your attitude matters.", "zh": "你的态度很重要。"}],
+  "level": "四级"
+},
+"efficient": {
+  "phonetic": "/ɪˈfɪʃnt/",
+  "pos": "形容词",
+  "en_definition": "working well without wasting time or energy",
+  "zh_definition": "高效的",
+  "examples": [{"en": "This method is efficient.", "zh": "这个方法很高效。"}],
+  "level": "四级"
+},
+"objective": {
+  "phonetic": "/əbˈdʒektɪv/",
+  "pos": "名词/形容词",
+  "en_definition": "a goal; not influenced by personal feelings",
+  "zh_definition": "目标；客观的",
+  "examples": [{"en": "Our objective is clear.", "zh": "我们的目标很明确。"}],
+  "level": "四级"
+},
+"emphasize": {
+  "phonetic": "/ˈemfəsaɪz/",
+  "pos": "动词",
+  "en_definition": "to give special importance to something",
+  "zh_definition": "强调",
+  "examples": [{"en": "He emphasized the importance of practice.", "zh": "他强调了练习的重要性。"}],
+  "level": "六级"
+},
+"controversial": {
+  "phonetic": "/ˌkɒntrəˈvɜːʃl/",
+  "pos": "形容词",
+  "en_definition": "causing disagreement or debate",
+  "zh_definition": "有争议的",
+  "examples": [{"en": "It is a controversial topic.", "zh": "这是一个有争议的话题。"}],
+  "level": "六级"
+},
+"deteriorate": {
+  "phonetic": "/dɪˈtɪəriəreɪt/",
+  "pos": "动词",
+  "en_definition": "to become worse",
+  "zh_definition": "恶化",
+  "examples": [{"en": "The situation is deteriorating.", "zh": "情况正在恶化。"}],
+  "level": "六级"
+},
+"comprehensive": {
+  "phonetic": "/ˌkɒmprɪˈhensɪv/",
+  "pos": "形容词",
+  "en_definition": "covering all aspects; thorough",
+  "zh_definition": "全面的；综合的",
+  "examples": [{"en": "This is a comprehensive guide.", "zh": "这是一份全面的指南。"}],
+  "level": "六级"
+},
+"acknowledge": {
+  "phonetic": "/əkˈnɒlɪdʒ/",
+  "pos": "动词",
+  "en_definition": "to accept or admit something exists or is true",
+  "zh_definition": "承认",
+  "examples": [{"en": "He acknowledged his mistake.", "zh": "他承认了自己的错误。"}],
+  "level": "六级"
+},
+"implement": {
+  "phonetic": "/ˈɪmplɪment/",
+  "pos": "动词",
+  "en_definition": "to put into effect",
+  "zh_definition": "实施；执行",
+  "examples": [{"en": "Implement the new plan.", "zh": "实施新计划。"}],
+  "level": "六级"
+},
+"scrutiny": {
+  "phonetic": "/ˈskruːtəni/",
+  "pos": "名词",
+  "en_definition": "careful examination",
+  "zh_definition": "仔细审查",
+  "examples": [{"en": "The report is under scrutiny.", "zh": "报告正在审查中。"}],
+  "level": "六级"
+},
+"proliferation": {
+  "phonetic": "/prəˌlɪfəˈreɪʃn/",
+  "pos": "名词",
+  "en_definition": "rapid increase in number or amount",
+  "zh_definition": "扩散；激增",
+  "examples": [{"en": "The proliferation of data is rapid.", "zh": "数据的激增很快。"}],
+  "level": "六级"
+},
+"indispensable": {
+  "phonetic": "/ˌɪndɪˈspensəbl/",
+  "pos": "形容词",
+  "en_definition": "absolutely necessary",
+  "zh_definition": "不可或缺的",
+  "examples": [{"en": "Water is indispensable for life.", "zh": "水对生命不可或缺。"}],
+  "level": "六级"
+},
+"ephemeral": {
+  "phonetic": "/ɪˈfemərəl/",
+  "pos": "形容词",
+  "en_definition": "lasting for a very short time",
+  "zh_definition": "短暂的；转瞬即逝的",
+  "examples": [{"en": "Fame is ephemeral.", "zh": "名声是短暂的。"}],
+  "level": "专八"
+},
+"cacophony": {
+  "phonetic": "/kəˈkɒfəni/",
+  "pos": "名词",
+  "en_definition": "a harsh mixture of sounds",
+  "zh_definition": "刺耳的声音",
+  "examples": [{"en": "A cacophony of horns.", "zh": "一片刺耳的喇叭声。"}],
+  "level": "专八"
+},
+"quintessential": {
+  "phonetic": "/ˌkwɪntɪˈsenʃl/",
+  "pos": "形容词",
+  "en_definition": "representing the most perfect example of something",
+  "zh_definition": "典型的；精髓的",
+  "examples": [{"en": "It is the quintessential English novel.", "zh": "这是典型的英国小说。"}],
+  "level": "专八"
+},
+"perfunctory": {
+  "phonetic": "/pəˈfʌŋktəri/",
+  "pos": "形容词",
+  "en_definition": "done quickly without care or interest",
+  "zh_definition": "敷衍的；草率的",
+  "examples": [{"en": "He gave a perfunctory nod.", "zh": "他敷衍地点了点头。"}],
+  "level": "专八"
+},
+"sycophant": {
+  "phonetic": "/ˈsɪkəfænt/",
+  "pos": "名词",
+  "en_definition": "a person who flatters others for personal gain",
+  "zh_definition": "谄媚者；马屁精",
+  "examples": [{"en": "He is a sycophant.", "zh": "他是个马屁精。"}],
+  "level": "专八"
+},
+"obfuscate": {
+  "phonetic": "/ˈɒbfʌskeɪt/",
+  "pos": "动词",
+  "en_definition": "to make something unclear or confusing",
+  "zh_definition": "使模糊；使混乱",
+  "examples": [{"en": "Don't obfuscate the issue.", "zh": "不要混淆问题。"}],
+  "level": "专八"
+},
+"magnanimous": {
+  "phonetic": "/mæɡˈnænɪməs/",
+  "pos": "形容词",
+  "en_definition": "generous and forgiving, especially to a rival",
+  "zh_definition": "宽宏大量的",
+  "examples": [{"en": "He was magnanimous in victory.", "zh": "他胜利后很大度。"}],
+  "level": "专八"
+},
+"serendipity": {
+  "phonetic": "/ˌserənˈdɪpəti/",
+  "pos": "名词",
+  "en_definition": "the occurrence of happy or beneficial events by chance",
+  "zh_definition": "意外发现珍奇事物的能力；缘分",
+  "examples": [{"en": "Meeting her was pure serendipity.", "zh": "遇见她纯属缘分。"}],
+  "level": "专八"
+},
+"quixotic": {
+  "phonetic": "/kwɪkˈsɒtɪk/",
+  "pos": "形容词",
+  "en_definition": "unrealistic and impractical",
+  "zh_definition": "不切实际的",
+  "examples": [{"en": "It's a quixotic dream.", "zh": "这是个不切实际的梦想。"}],
+  "level": "专八"
+},
+"paradoxical": {
+  "phonetic": "/ˌpærəˈdɒksɪkl/",
+  "pos": "形容词",
+  "en_definition": "seemingly contradictory but possibly true",
+  "zh_definition": "矛盾的；悖论的",
+  "examples": [{"en": "It sounds paradoxical.", "zh": "这听起来很矛盾。"}],
+  "level": "专八"
+},
+"delicious": {
+  "phonetic": "/dɪˈlɪʃəs/",
+  "pos": "形容词",
+  "en_definition": "very tasty; pleasant to eat",
+  "zh_definition": "美味的",
+  "examples": [{"en": "The food is delicious.", "zh": "食物很美味。"}],
+  "level": "常用"
+},
+"weather": {
+  "phonetic": "/ˈweðə/",
+  "pos": "名词",
+  "en_definition": "the condition of the atmosphere",
+  "zh_definition": "天气",
+  "examples": [{"en": "The weather is good.", "zh": "天气很好。"}],
+  "level": "常用"
+},
+"music": {
+  "phonetic": "/ˈmjuːzɪk/",
+  "pos": "名词",
+  "en_definition": "sounds arranged in a pleasing way",
+  "zh_definition": "音乐",
+  "examples": [{"en": "I listen to music.", "zh": "我听音乐。"}],
+  "level": "常用"
+},
+"movie": {
+  "phonetic": "/ˈmuːvi/",
+  "pos": "名词",
+  "en_definition": "a film; a motion picture",
+  "zh_definition": "电影",
+  "examples": [{"en": "Let's watch a movie.", "zh": "我们看电影吧。"}],
+  "level": "常用"
+},
+"phone": {
+  "phonetic": "/fəʊn/",
+  "pos": "名词/动词",
+  "en_definition": "a device for communication; to call someone",
+  "zh_definition": "电话；打电话",
+  "examples": [{"en": "My phone is ringing.", "zh": "我的电话在响。"}],
+  "level": "常用"
+},
+"coffee": {
+  "phonetic": "/ˈkɒfi/",
+  "pos": "名词",
+  "en_definition": "a hot drink made from roasted beans",
+  "zh_definition": "咖啡",
+  "examples": [{"en": "I drink coffee every morning.", "zh": "我每天早上喝咖啡。"}],
+  "level": "常用"
+},
+"money": {
+  "phonetic": "/ˈmʌni/",
+  "pos": "名词",
+  "en_definition": "coins and bills used to buy things",
+  "zh_definition": "钱；货币",
+  "examples": [{"en": "Money doesn't buy happiness.", "zh": "金钱买不到幸福。"}],
+  "level": "常用"
+},
+"shopping": {
+  "phonetic": "/ˈʃɒpɪŋ/",
+  "pos": "名词",
+  "en_definition": "the activity of buying things",
+  "zh_definition": "购物",
+  "examples": [{"en": "I go shopping on weekends.", "zh": "我周末去购物。"}],
+  "level": "常用"
+} 
