@@ -635,4 +635,6 @@
 "phone": {"phonetic": "/fəʊn/", "pos": "名词/动词", "en_definition": "a device for communication; to call someone", "zh_definition": "电话；打电话", "examples": [{"en": "My phone is ringing.", "zh": "我的电话在响。"}], "level": "常用"},
 "coffee": {"phonetic": "/ˈkɒfi/", "pos": "名词", "en_definition": "a hot drink made from roasted beans", "zh_definition": "咖啡", "examples": [{"en": "I drink coffee every morning.", "zh": "我每天早上喝咖啡。"}], "level": "常用"},
 "money": {"phonetic": "/ˈmʌni/", "pos": "名词", "en_definition": "coins and bills used to buy things", "zh_definition": "钱；货币", "examples": [{"en": "Money doesn't buy happiness.", "zh": "金钱买不到幸福。"}], "level": "常用"},
-"shopping": {"phonetic": "/ˈʃɒpɪŋ/", "pos": "名词", "en_definition": "the activity of buying things", "zh_definition": "购物", "examples": [{"en": "I go shopping on weekends.", "zh": "我周末去购物。"}], "level": "常用"}
+"shopping": {"phonetic": "/ˈʃɒpɪŋ/", "pos": "名词", "en_definition": "the activity of buying things", "zh_definition": "购物", "examples": [{"en": "I go shopping on weekends.", "zh": "我周末去购物。"}], "level": "常用"
+  }
+}
