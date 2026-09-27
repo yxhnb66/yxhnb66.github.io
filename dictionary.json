@@ -1,122 +1,52 @@
 {
-  "take": {
-    "phonetic": "/teɪk/",
-    "pos": "动词",
-    "en_definition": "to carry or move something",
-    "zh_definition": "拿；带走",
-    "examples": [{"en": "Take this book.", "zh": "把这本书拿走。"}],
-    "phrases": [
-      {"en": "take off", "zh": "起飞；脱下"},
-      {"en": "take care of", "zh": "照顾"}
-    ],
-    "level": "常用"
-  },
-  "make": {
-    "phonetic": "/meɪk/",
-    "pos": "动词",
-    "en_definition": "to create or produce",
-    "zh_definition": "制作；使得",
-    "examples": [{"en": "She made a cake.", "zh": "她做了一个蛋糕。"}],
-    "phrases": [
-      {"en": "make up", "zh": "编造；化妆"},
-      {"en": "make sure", "zh": "确保"}
-    ],
-    "level": "常用"
-  },
-  "get": {
-    "phonetic": "/ɡet/",
-    "pos": "动词",
-    "en_definition": "to receive or obtain",
-    "zh_definition": "得到；变得",
-    "examples": [{"en": "I got a letter.", "zh": "我收到一封信。"}],
-    "phrases": [
-      {"en": "get up", "zh": "起床"},
-      {"en": "get rid of", "zh": "摆脱"}
-    ],
-    "level": "常用"
-  },
-  "go": {
-    "phonetic": "/ɡəʊ/",
-    "pos": "动词",
-    "en_definition": "to move from one place to another",
-    "zh_definition": "去；走",
-    "examples": [{"en": "I go to school.", "zh": "我去上学。"}],
-    "phrases": [
-      {"en": "go on", "zh": "继续"},
-      {"en": "go out", "zh": "外出"}
-    ],
-    "level": "常用"
-  },
-  "come": {
-    "phonetic": "/kʌm/",
-    "pos": "动词",
-    "en_definition": "to move toward the speaker",
-    "zh_definition": "来；来到",
-    "examples": [{"en": "Come here.", "zh": "过来。"}],
-    "phrases": [
-      {"en": "come up with", "zh": "想出"},
-      {"en": "come true", "zh": "实现"}
-    ],
-    "level": "常用"
-  },
-  "look": {
-    "phonetic": "/lʊk/",
-    "pos": "动词",
-    "en_definition": "to direct your eyes at something",
-    "zh_definition": "看；看起来",
-    "examples": [{"en": "Look at the sky.", "zh": "看天空。"}],
-    "phrases": [
-      {"en": "look for", "zh": "寻找"},
-      {"en": "look forward to", "zh": "期待"}
-    ],
-    "level": "常用"
-  },
-  "make": {
-    "phonetic": "/meɪk/",
-    "pos": "动词",
-    "en_definition": "to create or produce",
-    "zh_definition": "制作；使得",
-    "examples": [{"en": "She made a cake.", "zh": "她做了一个蛋糕。"}],
-    "phrases": [
-      {"en": "make up", "zh": "编造；化妆"},
-      {"en": "make sure", "zh": "确保"}
-    ],
-    "level": "常用"
-  },
-  "put": {
-    "phonetic": "/pʊt/",
-    "pos": "动词",
-    "en_definition": "to place something somewhere",
-    "zh_definition": "放置",
-    "examples": [{"en": "Put the book.", "zh": "把书放好。"}],
-    "phrases": [
-      {"en": "put on", "zh": "穿上"},
-      {"en": "put off", "zh": "推迟"}
-    ],
-    "level": "常用"
-  },
-  "turn": {
-    "phonetic": "/tɜːn/",
-    "pos": "动词",
-    "en_definition": "to move around; to change direction",
-    "zh_definition": "转动；转弯",
-    "examples": [{"en": "Turn left.", "zh": "左转。"}],
-    "phrases": [
-      {"en": "turn on", "zh": "打开"},
-      {"en": "turn off", "zh": "关掉"}
-    ],
-    "level": "常用"
-  },
-  "give": {
-    "phonetic": "/ɡɪv/",
-    "pos": "动词",
-    "en_definition": "to hand something to someone",
-    "zh_definition": "给；给予",
-    "examples": [{"en": "Give me the book.", "zh": "把书给我。"}],
-    "phrases": [
-      {"en": "give up", "zh": "放弃"},
-      {"en": "give in", "zh": "屈服"}
-    ],
-    "level": "常用"
-  }
+  "apple": {"phonetic": "/ˈæpəl/", "pos": "名词", "en_definition": "a round fruit with red or green skin", "zh_definition": "苹果", "forms": {"plural": "apples"}, "examples": [{"en": "I eat an apple every day.", "zh": "我每天吃一个苹果。"}], "phrases": [{"en": "apple pie", "zh": "苹果派"}, {"en": "apple tree", "zh": "苹果树"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "banana": {"phonetic": "/bəˈnɑːnə/", "pos": "名词", "en_definition": "a long curved fruit with yellow skin", "zh_definition": "香蕉", "forms": {"plural": "bananas"}, "examples": [{"en": "Monkeys like bananas.", "zh": "猴子喜欢香蕉。"}], "phrases": [{"en": "banana milk", "zh": "香蕉牛奶"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "orange": {"phonetic": "/ˈɒrɪndʒ/", "pos": "名词", "en_definition": "a round citrus fruit with a thick reddish-yellow skin", "zh_definition": "橙子；橘子", "forms": {"plural": "oranges"}, "examples": [{"en": "I want to drink orange juice.", "zh": "我想喝橙汁。"}], "phrases": [{"en": "orange juice", "zh": "橙汁"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "cat": {"phonetic": "/kæt/", "pos": "名词", "en_definition": "a small animal with soft fur", "zh_definition": "猫", "forms": {"plural": "cats"}, "examples": [{"en": "The cat is sleeping.", "zh": "猫在睡觉。"}], "phrases": [{"en": "black cat", "zh": "黑猫"}, {"en": "cat food", "zh": "猫粮"}], "synonyms": ["kitten"], "antonyms": ["dog"], "level": "小学"},
+  "dog": {"phonetic": "/dɒɡ/", "pos": "名词", "en_definition": "a common animal that people keep as a pet", "zh_definition": "狗", "forms": {"plural": "dogs"}, "examples": [{"en": "The dog is barking.", "zh": "狗在叫。"}], "phrases": [{"en": "hot dog", "zh": "热狗"}, {"en": "guide dog", "zh": "导盲犬"}], "synonyms": ["puppy"], "antonyms": ["cat"], "level": "小学"},
+  "bird": {"phonetic": "/bɜːd/", "pos": "名词", "en_definition": "an animal with feathers and wings", "zh_definition": "鸟", "forms": {"plural": "birds"}, "examples": [{"en": "The bird can fly.", "zh": "鸟会飞。"}], "phrases": [{"en": "early bird", "zh": "早起的人"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "fish": {"phonetic": "/fɪʃ/", "pos": "名词/动词", "en_definition": "an animal that lives in water; to catch fish", "zh_definition": "鱼；钓鱼", "forms": {"plural": "fish", "past": "fished", "past_participle": "fished", "present_participle": "fishing"}, "examples": [{"en": "Fish can swim.", "zh": "鱼会游泳。"}], "phrases": [{"en": "go fishing", "zh": "去钓鱼"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "book": {"phonetic": "/bʊk/", "pos": "名词/动词", "en_definition": "a set of printed pages that you read; to reserve", "zh_definition": "书；预订", "forms": {"plural": "books", "past": "booked", "past_participle": "booked", "present_participle": "booking"}, "examples": [{"en": "This is my book.", "zh": "这是我的书。"}], "phrases": [{"en": "read a book", "zh": "看书"}, {"en": "story book", "zh": "故事书"}], "synonyms": ["volume"], "antonyms": [], "level": "小学"},
+  "pen": {"phonetic": "/pen/", "pos": "名词", "en_definition": "a tool used for writing with ink", "zh_definition": "钢笔", "forms": {"plural": "pens"}, "examples": [{"en": "I write with a pen.", "zh": "我用钢笔写字。"}], "phrases": [{"en": "pen pal", "zh": "笔友"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "pencil": {"phonetic": "/ˈpensl/", "pos": "名词", "en_definition": "a tool used for writing or drawing", "zh_definition": "铅笔", "forms": {"plural": "pencils"}, "examples": [{"en": "Draw a line with a pencil.", "zh": "用铅笔画一条线。"}], "phrases": [{"en": "pencil box", "zh": "铅笔盒"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "ruler": {"phonetic": "/ˈruːlə/", "pos": "名词", "en_definition": "a straight tool used for measuring and drawing lines", "zh_definition": "尺子", "forms": {"plural": "rulers"}, "examples": [{"en": "I need a ruler.", "zh": "我需要一把尺子。"}], "phrases": [{"en": "a ruler", "zh": "一把尺子"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "bag": {"phonetic": "/bæɡ/", "pos": "名词", "en_definition": "a container made of cloth, paper, or plastic", "zh_definition": "包；袋子", "forms": {"plural": "bags"}, "examples": [{"en": "My bag is heavy.", "zh": "我的包很重。"}], "phrases": [{"en": "school bag", "zh": "书包"}], "synonyms": ["sack", "pouch"], "antonyms": [], "level": "小学"},
+  "desk": {"phonetic": "/desk/", "pos": "名词", "en_definition": "a table that you sit at to write or work", "zh_definition": "书桌", "forms": {"plural": "desks"}, "examples": [{"en": "The book is on the desk.", "zh": "书在书桌上。"}], "phrases": [{"en": "at the desk", "zh": "在书桌前"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "chair": {"phonetic": "/tʃeə/", "pos": "名词", "en_definition": "a seat for one person", "zh_definition": "椅子", "forms": {"plural": "chairs"}, "examples": [{"en": "Sit on the chair.", "zh": "坐在椅子上。"}], "phrases": [{"en": "armchair", "zh": "扶手椅"}], "synonyms": ["seat"], "antonyms": [], "level": "小学"},
+  "teacher": {"phonetic": "/ˈtiːtʃə/", "pos": "名词", "en_definition": "a person who teaches", "zh_definition": "老师", "forms": {"plural": "teachers"}, "examples": [{"en": "My teacher is very kind.", "zh": "我的老师非常和蔼。"}], "phrases": [{"en": "head teacher", "zh": "校长；班主任"}], "synonyms": ["instructor", "educator"], "antonyms": ["student"], "level": "小学"},
+  "student": {"phonetic": "/ˈstjuːdnt/", "pos": "名词", "en_definition": "a person who is studying at a school", "zh_definition": "学生", "forms": {"plural": "students"}, "examples": [{"en": "She is a good student.", "zh": "她是个好学生。"}], "phrases": [{"en": "college student", "zh": "大学生"}], "synonyms": ["pupil", "learner"], "antonyms": ["teacher"], "level": "小学"},
+  "friend": {"phonetic": "/frend/", "pos": "名词", "en_definition": "a person you know well and like", "zh_definition": "朋友", "forms": {"plural": "friends"}, "examples": [{"en": "He is my best friend.", "zh": "他是我最好的朋友。"}], "phrases": [{"en": "make friends", "zh": "交朋友"}, {"en": "best friend", "zh": "最好的朋友"}], "synonyms": ["companion", "buddy"], "antonyms": ["enemy"], "level": "小学"},
+  "family": {"phonetic": "/ˈfæməli/", "pos": "名词", "en_definition": "a group of people who are related to each other", "zh_definition": "家庭", "forms": {"plural": "families"}, "examples": [{"en": "I love my family.", "zh": "我爱我的家庭。"}], "phrases": [{"en": "family tree", "zh": "家谱"}, {"en": "family photo", "zh": "全家福"}], "synonyms": ["household"], "antonyms": [], "level": "小学"},
+  "father": {"phonetic": "/ˈfɑːðə/", "pos": "名词", "en_definition": "a male parent", "zh_definition": "父亲", "forms": {"plural": "fathers"}, "examples": [{"en": "My father is a doctor.", "zh": "我的父亲是医生。"}], "phrases": [{"en": "father's day", "zh": "父亲节"}], "synonyms": ["dad", "daddy"], "antonyms": ["mother"], "level": "小学"},
+  "mother": {"phonetic": "/ˈmʌðə/", "pos": "名词", "en_definition": "a female parent", "zh_definition": "母亲", "forms": {"plural": "mothers"}, "examples": [{"en": "My mother cooks well.", "zh": "我妈妈做饭很好吃。"}], "phrases": [{"en": "mother tongue", "zh": "母语"}], "synonyms": ["mom", "mum"], "antonyms": ["father"], "level": "小学"},
+  "brother": {"phonetic": "/ˈbrʌðə/", "pos": "名词", "en_definition": "a boy or man who has the same parents as you", "zh_definition": "兄弟", "forms": {"plural": "brothers"}, "examples": [{"en": "He is my brother.", "zh": "他是我的兄弟。"}], "phrases": [{"en": "big brother", "zh": "哥哥"}, {"en": "little brother", "zh": "弟弟"}], "synonyms": ["sibling"], "antonyms": ["sister"], "level": "小学"},
+  "sister": {"phonetic": "/ˈsɪstə/", "pos": "名词", "en_definition": "a girl or woman who has the same parents as you", "zh_definition": "姐妹", "forms": {"plural": "sisters"}, "examples": [{"en": "She is my sister.", "zh": "她是我的姐妹。"}], "phrases": [{"en": "big sister", "zh": "姐姐"}, {"en": "little sister", "zh": "妹妹"}], "synonyms": ["sibling"], "antonyms": ["brother"], "level": "小学"},
+  "red": {"phonetic": "/red/", "pos": "形容词/名词", "en_definition": "the color of blood", "zh_definition": "红色", "forms": {"comparative": "redder", "superlative": "reddest"}, "examples": [{"en": "The apple is red.", "zh": "苹果是红色的。"}], "phrases": [{"en": "red packet", "zh": "红包"}], "synonyms": ["scarlet", "crimson"], "antonyms": [], "level": "小学"},
+  "blue": {"phonetic": "/bluː/", "pos": "形容词/名词", "en_definition": "the color of the sky on a clear day", "zh_definition": "蓝色", "forms": {"comparative": "bluer", "superlative": "bluest"}, "examples": [{"en": "The sky is blue.", "zh": "天空是蓝色的。"}], "phrases": [{"en": "blue sky", "zh": "蓝天"}], "synonyms": ["azure", "navy"], "antonyms": [], "level": "小学"},
+  "yellow": {"phonetic": "/ˈjeləʊ/", "pos": "形容词/名词", "en_definition": "the color of the sun", "zh_definition": "黄色", "forms": {"comparative": "yellower", "superlative": "yellowest"}, "examples": [{"en": "The banana is yellow.", "zh": "香蕉是黄色的。"}], "phrases": [{"en": "yellow pages", "zh": "黄页"}], "synonyms": ["golden"], "antonyms": [], "level": "小学"},
+  "green": {"phonetic": "/ɡriːn/", "pos": "形容词/名词", "en_definition": "the color of grass", "zh_definition": "绿色", "forms": {"comparative": "greener", "superlative": "greenest"}, "examples": [{"en": "The grass is green.", "zh": "草是绿色的。"}], "phrases": [{"en": "green tea", "zh": "绿茶"}], "synonyms": ["verdant"], "antonyms": ["red"], "level": "小学"},
+  "black": {"phonetic": "/blæk/", "pos": "形容词/名词", "en_definition": "the darkest color", "zh_definition": "黑色", "forms": {"comparative": "blacker", "superlative": "blackest"}, "examples": [{"en": "I have a black cat.", "zh": "我有一只黑猫。"}], "phrases": [{"en": "black board", "zh": "黑板"}], "synonyms": ["dark"], "antonyms": ["white"], "level": "小学"},
+  "white": {"phonetic": "/waɪt/", "pos": "形容词/名词", "en_definition": "the color of snow", "zh_definition": "白色", "forms": {"comparative": "whiter", "superlative": "whitest"}, "examples": [{"en": "Snow is white.", "zh": "雪是白色的。"}], "phrases": [{"en": "white snow", "zh": "白雪"}], "synonyms": ["pale"], "antonyms": ["black"], "level": "小学"},
+  "big": {"phonetic": "/bɪɡ/", "pos": "形容词", "en_definition": "large in size", "zh_definition": "大的", "forms": {"comparative": "bigger", "superlative": "biggest"}, "examples": [{"en": "A big house.", "zh": "一座大房子。"}], "phrases": [{"en": "big city", "zh": "大城市"}], "synonyms": ["large", "huge"], "antonyms": ["small", "little"], "level": "小学"},
+  "small": {"phonetic": "/smɔːl/", "pos": "形容词", "en_definition": "little in size", "zh_definition": "小的", "forms": {"comparative": "smaller", "superlative": "smallest"}, "examples": [{"en": "A small dog.", "zh": "一只小狗。"}], "phrases": [{"en": "small talk", "zh": "闲聊"}], "synonyms": ["little", "tiny"], "antonyms": ["big", "large"], "level": "小学"},
+  "long": {"phonetic": "/lɒŋ/", "pos": "形容词", "en_definition": "measuring a great distance", "zh_definition": "长的", "forms": {"comparative": "longer", "superlative": "longest"}, "examples": [{"en": "A long river.", "zh": "一条长河。"}], "phrases": [{"en": "long time", "zh": "长时间"}], "synonyms": ["lengthy"], "antonyms": ["short"], "level": "小学"},
+  "short": {"phonetic": "/ʃɔːt/", "pos": "形容词", "en_definition": "measuring a small distance", "zh_definition": "短的；矮的", "forms": {"comparative": "shorter", "superlative": "shortest"}, "examples": [{"en": "A short pencil.", "zh": "一支短铅笔。"}], "phrases": [{"en": "short cut", "zh": "捷径"}], "synonyms": ["brief", "small"], "antonyms": ["long", "tall"], "level": "小学"},
+  "happy": {"phonetic": "/ˈhæpi/", "pos": "形容词", "en_definition": "feeling pleasure", "zh_definition": "快乐的", "forms": {"comparative": "happier", "superlative": "happiest"}, "examples": [{"en": "I am happy.", "zh": "我很快乐。"}], "phrases": [{"en": "happy birthday", "zh": "生日快乐"}], "synonyms": ["glad", "joyful"], "antonyms": ["sad", "unhappy"], "level": "小学"},
+  "sad": {"phonetic": "/sæd/", "pos": "形容词", "en_definition": "feeling unhappy", "zh_definition": "悲伤的", "forms": {"comparative": "sadder", "superlative": "saddest"}, "examples": [{"en": "Don't be sad.", "zh": "别难过。"}], "phrases": [{"en": "sad story", "zh": "悲伤的故事"}], "synonyms": ["unhappy", "sorrowful"], "antonyms": ["happy", "glad"], "level": "小学"},
+  "hot": {"phonetic": "/hɒt/", "pos": "形容词", "en_definition": "having a high temperature", "zh_definition": "热的", "forms": {"comparative": "hotter", "superlative": "hottest"}, "examples": [{"en": "Hot water.", "zh": "热水。"}], "phrases": [{"en": "hot dog", "zh": "热狗"}], "synonyms": ["warm"], "antonyms": ["cold"], "level": "小学"},
+  "cold": {"phonetic": "/kəʊld/", "pos": "形容词", "en_definition": "having a low temperature", "zh_definition": "冷的", "forms": {"comparative": "colder", "superlative": "coldest"}, "examples": [{"en": "Cold weather.", "zh": "冷天气。"}], "phrases": [{"en": "cold water", "zh": "冷水"}], "synonyms": ["chilly", "freezing"], "antonyms": ["hot", "warm"], "level": "小学"},
+  "day": {"phonetic": "/deɪ/", "pos": "名词", "en_definition": "a period of 24 hours", "zh_definition": "天；白天", "forms": {"plural": "days"}, "examples": [{"en": "Have a nice day.", "zh": "祝你有美好的一天。"}], "phrases": [{"en": "day by day", "zh": "一天天"}], "synonyms": ["daytime"], "antonyms": ["night"], "level": "小学"},
+  "night": {"phonetic": "/naɪt/", "pos": "名词", "en_definition": "the time when it is dark", "zh_definition": "夜晚", "forms": {"plural": "nights"}, "examples": [{"en": "Good night.", "zh": "晚安。"}], "phrases": [{"en": "at night", "zh": "在晚上"}], "synonyms": ["evening"], "antonyms": ["day"], "level": "小学"},
+  "morning": {"phonetic": "/ˈmɔːnɪŋ/", "pos": "名词", "en_definition": "the early part of the day", "zh_definition": "早晨", "forms": {"plural": "mornings"}, "examples": [{"en": "Good morning.", "zh": "早上好。"}], "phrases": [{"en": "in the morning", "zh": "在早上"}], "synonyms": ["dawn"], "antonyms": ["evening"], "level": "小学"},
+  "afternoon": {"phonetic": "/ˌɑːftəˈnuːn/", "pos": "名词", "en_definition": "the time after noon", "zh_definition": "下午", "forms": {"plural": "afternoons"}, "examples": [{"en": "Good afternoon.", "zh": "下午好。"}], "phrases": [{"en": "in the afternoon", "zh": "在下午"}], "synonyms": [], "antonyms": ["morning"], "level": "小学"},
+  "evening": {"phonetic": "/ˈiːvnɪŋ/", "pos": "名词", "en_definition": "the time at the end of the day", "zh_definition": "傍晚；晚上", "forms": {"plural": "evenings"}, "examples": [{"en": "Good evening.", "zh": "晚上好。"}], "phrases": [{"en": "in the evening", "zh": "在晚上"}], "synonyms": ["night"], "antonyms": ["morning"], "level": "小学"},
+  "week": {"phonetic": "/wiːk/", "pos": "名词", "en_definition": "a period of seven days", "zh_definition": "星期；周", "forms": {"plural": "weeks"}, "examples": [{"en": "Next week.", "zh": "下周。"}], "phrases": [{"en": "last week", "zh": "上周"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "month": {"phonetic": "/mʌnθ/", "pos": "名词", "en_definition": "a period of about 30 days", "zh_definition": "月", "forms": {"plural": "months"}, "examples": [{"en": "This month.", "zh": "这个月。"}], "phrases": [{"en": "last month", "zh": "上个月"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "year": {"phonetic": "/jɪə/", "pos": "名词", "en_definition": "a period of 365 days", "zh_definition": "年", "forms": {"plural": "years"}, "examples": [{"en": "Happy New Year.", "zh": "新年快乐。"}], "phrases": [{"en": "year after year", "zh": "年复一年"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "time": {"phonetic": "/taɪm/", "pos": "名词", "en_definition": "the ongoing sequence of events", "zh_definition": "时间", "forms": {"plural": "times"}, "examples": [{"en": "What time is it?", "zh": "几点了？"}], "phrases": [{"en": "on time", "zh": "准时"}, {"en": "all the time", "zh": "一直"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "water": {"phonetic": "/ˈwɔːtə/", "pos": "名词/动词", "en_definition": "a clear liquid essential for life; to pour water on plants", "zh_definition": "水；浇水", "forms": {"plural": "waters", "past": "watered", "past_participle": "watered", "present_participle": "watering"}, "examples": [{"en": "Drink more water.", "zh": "多喝水。"}], "phrases": [{"en": "water the flowers", "zh": "浇花"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "milk": {"phonetic": "/mɪlk/", "pos": "名词/动词", "en_definition": "a white liquid produced by cows; to get milk from cows", "zh_definition": "牛奶；挤奶", "forms": {"past": "milked", "past_participle": "milked", "present_participle": "milking"}, "examples": [{"en": "I drink milk every morning.", "zh": "我每天早上喝牛奶。"}], "phrases": [{"en": "milk tea", "zh": "奶茶"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "bread": {"phonetic": "/bred/", "pos": "名词", "en_definition": "a basic food made from flour and baked in an oven", "zh_definition": "面包", "forms": {"plural": "breads"}, "examples": [{"en": "I eat bread for breakfast.", "zh": "我早餐吃面包。"}], "phrases": [{"en": "bread and butter", "zh": "黄油面包；生计"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "egg": {"phonetic": "/eɡ/", "pos": "名词", "en_definition": "an oval object laid by a bird, used as food", "zh_definition": "鸡蛋", "forms": {"plural": "eggs"}, "examples": [{"en": "I eat an egg every day.", "zh": "我每天吃一个鸡蛋。"}], "phrases": [{"en": "egg soup", "zh": "蛋花汤"}], "synonyms": [], "antonyms": [], "level": "小学"},
+  "rice": {"phonetic": "/raɪs/", "pos": "名词", "en_definition": "a grain used as food", "zh_definition": "米饭", "forms": {}, "examples": [{"en": "We eat rice every day.", "zh": "我们每天吃米饭。"}], "phrases": [{"en": "fried rice", "zh": "炒饭"}], "synonyms": [], "antonyms": [], "level": "小学"}
 }
