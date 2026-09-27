@@ -81,15 +81,23 @@
         .definition { padding-left: 15px; line-height: 1.7; color: #333; }
         .example { padding-left: 30px; color: #555; font-size: 14px; margin-bottom: 3px; }
         .example-zh { padding-left: 45px; color: #888; font-size: 13px; margin-bottom: 8px; }
+        
+        /* 短语横排样式 */
+        .phrase-list { display: flex; flex-wrap: wrap; gap: 8px; padding-left: 15px; margin-top: 5px; }
         .phrase-item {
-            padding: 10px 15px;
+            padding: 6px 12px;
             background: white;
-            border-radius: 8px;
-            margin-bottom: 8px;
-            border-left: 3px solid #667eea;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            white-space: nowrap;
         }
         .phrase-en { font-weight: bold; color: #333; }
-        .phrase-zh { color: #666; font-size: 13px; margin-top: 2px; }
+        .phrase-zh { color: #666; }
+
         .fav-item {
             background: #fafafa; padding: 12px 15px; border-radius: 8px;
             margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
@@ -167,6 +175,7 @@
     <div class="page" id="statsPage"><div id="statsArea"></div></div>
 </div>
 <div class="toast" id="toast"></div>
+
 <script>
 // ============ 全局变量 ============
 let dictionary = {};
@@ -241,6 +250,17 @@ function displayResult(word, d) {
     if (d.en_definition) html += '<div class="meaning-block"><div class="pos">📖 英文释义</div><div class="definition">' + d.en_definition + '</div></div>';
     if (d.zh_definition) html += '<div class="meaning-block"><div class="pos">🇨🇳 中文释义</div><div class="definition">' + d.zh_definition + '</div></div>';
     
+    // 词形变化
+    if (d.forms) {
+        html += '<div class="meaning-block"><div class="pos">🔄 词形变化</div><div class="definition">';
+        let formArr = [];
+        if (d.forms.past) formArr.push('过去式: ' + d.forms.past);
+        if (d.forms.past_participle) formArr.push('过去分词: ' + d.forms.past_participle);
+        if (d.forms.present_participle) formArr.push('现在分词: ' + d.forms.present_participle);
+        html += formArr.join(' | ');
+        html += '</div></div>';
+    }
+    
     // 例句
     if (d.examples) {
         html += '<div class="meaning-block"><div class="pos">例句</div>';
@@ -254,17 +274,25 @@ function displayResult(word, d) {
         html += '</div>';
     }
     
-    // 相关短语
+    // 相关短语（横排样式）
     if (d.phrases && d.phrases.length) {
-        html += '<div class="meaning-block"><div class="pos">🔗 相关短语</div>';
+        html += '<div class="meaning-block"><div class="pos">🔗 相关短语</div><div class="phrase-list">';
         d.phrases.forEach(p => {
-            html += '<div class="phrase-item"><div class="phrase-en">' + p.en + '</div><div class="phrase-zh">' + p.zh + '</div></div>';
+            html += '<div class="phrase-item"><span class="phrase-en">' + p.en + '</span> <span class="phrase-zh">' + p.zh + '</span></div>';
         });
-        html += '</div>';
+        html += '</div></div>';
     }
     
-    if (d.synonyms && d.synonyms.length) html += '<div class="meaning-block"><div class="pos">同义词</div><div class="definition">' + d.synonyms.join(', ') + '</div></div>';
-    if (d.antonyms && d.antonyms.length) html += '<div class="meaning-block"><div class="pos">反义词</div><div class="definition">' + d.antonyms.join(', ') + '</div></div>';
+    // 近义词
+    if (d.synonyms && d.synonyms.length) {
+        html += '<div class="meaning-block"><div class="pos">🟢 近义词</div><div class="definition">' + d.synonyms.join(', ') + '</div></div>';
+    }
+    
+    // 反义词
+    if (d.antonyms && d.antonyms.length) {
+        html += '<div class="meaning-block"><div class="pos">🔴 反义词</div><div class="definition">' + d.antonyms.join(', ') + '</div></div>';
+    }
+    
     if (d.level) html += '<div class="meaning-block"><div class="pos">等级</div><div class="definition">' + d.level + '</div></div>';
     
     html += '</div>';
