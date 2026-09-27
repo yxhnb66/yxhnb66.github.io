@@ -252,13 +252,20 @@ function displayResult(word, d) {
     
     // 词形变化
     if (d.forms) {
-        html += '<div class="meaning-block"><div class="pos">🔄 词形变化</div><div class="definition">';
         let formArr = [];
-        if (d.forms.past) formArr.push('过去式: ' + d.forms.past);
-        if (d.forms.past_participle) formArr.push('过去分词: ' + d.forms.past_participle);
-        if (d.forms.present_participle) formArr.push('现在分词: ' + d.forms.present_participle);
-        html += formArr.join(' | ');
-        html += '</div></div>';
+        for (let key in d.forms) {
+            let label = key;
+            if (key === 'past') label = '过去式';
+            else if (key === 'past_participle') label = '过去分词';
+            else if (key === 'present_participle') label = '现在分词';
+            else if (key === 'plural') label = '复数';
+            else if (key === 'comparative') label = '比较级';
+            else if (key === 'superlative') label = '最高级';
+            formArr.push(label + ': ' + d.forms[key]);
+        }
+        if (formArr.length) {
+            html += '<div class="meaning-block"><div class="pos">🔄 词形变化</div><div class="definition">' + formArr.join(' | ') + '</div></div>';
+        }
     }
     
     // 例句
